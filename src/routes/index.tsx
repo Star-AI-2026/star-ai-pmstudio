@@ -1,24 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { StarApp } from "@/components/star/StarApp";
+import { Toaster } from "@/components/ui/sonner";
+import { StarProvider } from "@/lib/star/store";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Star-AI — Advanced AI assistant with two generations" },
+      {
+        name: "description",
+        content:
+          "Star-AI is an AI assistant with two generations: Star-AI 2.0 for everyday tasks and Star-AI 3.0 for advanced reasoning, coding, analysis and file understanding.",
+      },
+      { property: "og:title", content: "Star-AI — Advanced AI assistant" },
+      {
+        property: "og:description",
+        content:
+          "Switch between Star-AI 2.0 and Star-AI 3.0: two generations of one assistant, each with its own theme, capabilities and AI configuration.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <StarProvider>
+      <StarApp />
+      <Toaster position="top-center" />
+    </StarProvider>
   );
 }
