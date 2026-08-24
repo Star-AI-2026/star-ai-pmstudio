@@ -68,7 +68,7 @@ export function getVersionConfig(version: StarVersion): VersionRuntimeConfig {
 export function buildSystemPrompt(opts: {
   version: StarVersion;
   style: ResponseStyle;
-  memories?: string[];
+  memories?: string[] | undefined;
 }): string {
   const cfg = getVersionConfig(opts.version);
   const parts = [cfg.systemPrompt, STYLE_INSTRUCTIONS[opts.style] ?? STYLE_INSTRUCTIONS.balanced];
