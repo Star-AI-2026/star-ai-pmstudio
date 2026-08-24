@@ -7,6 +7,7 @@
  */
 
 import { buildSystemPrompt, getVersionConfig } from "./config.server";
+import type { AIMode } from "./modes";
 import type { ResponseStyle, StarVersion } from "./versions";
 
 export type Attachment = {
@@ -26,7 +27,11 @@ export type ChatMessage = {
 export type GenerateOptions = {
   version: StarVersion;
   style: ResponseStyle;
+  mode?: AIMode | undefined;
+  assistantName?: string | undefined;
+  language?: string | undefined;
   memories?: string[] | undefined;
+  searchContext?: string | undefined;
   messages: ChatMessage[];
   signal?: AbortSignal | undefined;
 };
@@ -127,7 +132,11 @@ export class LovableGatewayProvider implements AIProvider {
       instructions: buildSystemPrompt({
         version: opts.version,
         style: opts.style,
+        mode: opts.mode,
+        assistantName: opts.assistantName,
+        language: opts.language,
         memories: opts.memories,
+        searchContext: opts.searchContext,
       }),
       input: buildInput(opts.messages),
     };
