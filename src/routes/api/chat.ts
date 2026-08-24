@@ -3,11 +3,26 @@ import { z } from "zod";
 
 import { getAIProvider } from "@/lib/ai/provider.server";
 import { clientKey, rateLimit } from "@/lib/ai/rate-limit.server";
+import { buildSearchContext, getWebSearchProvider } from "@/lib/ai/search.server";
+
+/** Server-side upload policy. Client validation is never trusted. */
+const MAX_ATTACHMENT_BYTES = Number(process.env["MAX_UPLOAD_BYTES"] ?? 12 * 1024 * 1024);
+const MAX_ATTACHMENTS = Number(process.env["MAX_UPLOAD_COUNT"] ?? 6);
+
+const ALLOWED_MIME = [
+  /^image\/(png|jpe?g|webp|gif|svg\+xml)$/,
+  /^application\/pdf$/,
+  /^application\/json$/,
+  /^text\//,
+  /^application\/vnd\.openxmlformats-officedocument\./,
+  /^application\/vnd\.ms-excel$/,
+  /^application\/octet-stream$/,
+];
 
 const AttachmentSchema = z.object({
   name: z.string().max(300),
   mimeType: z.string().max(200),
-  dataUrl: z.string().max(20_000_000).optional(),
+  dataUrl: z.string().max(24_000_000).optional(),
   text: z.string().max(400_000).optional(),
 });
 
@@ -17,13 +32,19 @@ const BodySchema = z.object({
   style: z
     .enum(["balanced", "creative", "precise", "friendly", "professional", "short", "detailed"])
     .default("balanced"),
+  mode: z
+    .enum(["general", "coding", "writing", "research", "math", "data", "creative", "study"])
+    .default("general"),
+  assistantName: z.string().max(40).optional(),
+  language: z.string().max(40).optional(),
+  webSearch: z.boolean().default(false),
   memories: z.array(z.string().max(1000)).max(50).optional(),
   messages: z
     .array(
       z.object({
         role: z.enum(["user", "assistant"]),
         content: z.string().max(60_000),
-        attachments: z.array(AttachmentSchema).max(6).optional(),
+        attachments: z.array(AttachmentSchema).max(20).optional(),
       }),
     )
     .min(1)
@@ -32,6 +53,27 @@ const BodySchema = z.object({
 
 function line(obj: unknown) {
   return new TextEncoder().encode(JSON.stringify(obj) + "\n");
+}
+
+function approxBytes(a: { dataUrl?: string | undefined; text?: string | undefined }) {
+  if (a.dataUrl) return Math.floor((a.dataUrl.length - (a.dataUrl.indexOf(",") + 1)) * 0.75);
+  return a.text ? a.text.length : 0;
+}
+
+function validateAttachments(messages: z.infer<typeof BodySchema>["messages"]): string | null {
+  for (const m of messages) {
+    const list = m.attachments ?? [];
+    if (list.length > MAX_ATTACHMENTS) return `You can attach at most ${MAX_ATTACHMENTS} files per message.`;
+    for (const a of list) {
+      if (!ALLOWED_MIME.some((re) => re.test(a.mimeType))) {
+        return `"${a.name}" is not a supported file type.`;
+      }
+      if (approxBytes(a) > MAX_ATTACHMENT_BYTES) {
+        return `"${a.name}" is larger than the ${Math.round(MAX_ATTACHMENT_BYTES / 1024 / 1024)} MB upload limit.`;
+      }
+    }
+  }
+  return null;
 }
 
 export const Route = createFileRoute("/api/chat")({
@@ -55,6 +97,11 @@ export const Route = createFileRoute("/api/chat")({
           });
         }
 
+        const attachmentError = validateAttachments(parsed.messages);
+        if (attachmentError) {
+          return new Response(JSON.stringify({ error: attachmentError }), { status: 413 });
+        }
+
         let provider;
         try {
           provider = getAIProvider();
@@ -69,11 +116,38 @@ export const Route = createFileRoute("/api/chat")({
 
         const stream = new ReadableStream<Uint8Array>({
           async start(controller) {
+            let searchContext: string | undefined;
+
             try {
+              if (parsed.webSearch) {
+                const search = getWebSearchProvider();
+                const query = [...parsed.messages].reverse().find((m) => m.role === "user")?.content ?? "";
+                if (!search) {
+                  controller.enqueue(line({ type: "notice", value: "Web Search is not configured yet." }));
+                } else if (query.trim()) {
+                  controller.enqueue(line({ type: "status", value: "Searching the web…" }));
+                  try {
+                    const results = await search.search(query, request.signal);
+                    if (results.length) {
+                      controller.enqueue(line({ type: "sources", sources: results }));
+                      searchContext = buildSearchContext(query, results);
+                    } else {
+                      controller.enqueue(line({ type: "notice", value: "No web results were found for this question." }));
+                    }
+                  } catch {
+                    controller.enqueue(line({ type: "notice", value: "Web search failed, answering without it." }));
+                  }
+                }
+              }
+
               for await (const event of provider.streamMessage({
                 version: parsed.version,
                 style: parsed.style,
+                mode: parsed.mode,
+                assistantName: parsed.assistantName,
+                language: parsed.language,
                 memories: parsed.memories,
+                searchContext,
                 messages: parsed.messages,
                 signal: request.signal,
               })) {
