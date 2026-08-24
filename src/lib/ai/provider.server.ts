@@ -13,22 +13,22 @@ export type Attachment = {
   name: string;
   mimeType: string;
   /** data: URL for binary files, plain text for text-like files */
-  dataUrl?: string;
-  text?: string;
+  dataUrl?: string | undefined;
+  text?: string | undefined;
 };
 
 export type ChatMessage = {
   role: "user" | "assistant";
   content: string;
-  attachments?: Attachment[];
+  attachments?: Attachment[] | undefined;
 };
 
 export type GenerateOptions = {
   version: StarVersion;
   style: ResponseStyle;
-  memories?: string[];
+  memories?: string[] | undefined;
   messages: ChatMessage[];
-  signal?: AbortSignal;
+  signal?: AbortSignal | undefined;
 };
 
 export type StreamEvent =
@@ -146,7 +146,7 @@ export class LovableGatewayProvider implements AIProvider {
           "X-Lovable-AIG-SDK": "fetch",
         },
         body: JSON.stringify(body),
-        signal: opts.signal,
+        signal: opts.signal ?? null,
       });
     } catch {
       yield { type: "error", value: "Star-AI is temporarily unavailable. Please try again." };

@@ -281,7 +281,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
             if (evt.type === "text") patch((m) => ({ ...m, content: m.content + (evt.value ?? "") }));
             else if (evt.type === "reasoning")
               patch((m) => ({ ...m, reasoning: (m.reasoning ?? "") + (evt.value ?? "") }));
-            else if (evt.type === "error") patch((m) => ({ ...m, error: evt.value }));
+            else if (evt.type === "error") patch((m) => ({ ...m, error: evt.value ?? "Something went wrong. Please try again." }));
           }
         }
         patch((m) =>
