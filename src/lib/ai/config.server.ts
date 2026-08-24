@@ -9,6 +9,7 @@
  *   LOVABLE_API_KEY   -> credential for the AI provider (server-side only)
  */
 
+import type { AIMode } from "./modes";
 import type { ResponseStyle, StarVersion } from "./versions";
 
 export type VersionRuntimeConfig = {
