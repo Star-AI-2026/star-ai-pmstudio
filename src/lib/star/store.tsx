@@ -9,14 +9,17 @@ import {
   type ReactNode,
 } from "react";
 
+import type { AIMode } from "@/lib/ai/modes";
 import type { StarVersion } from "@/lib/ai/versions";
 import {
   DEFAULT_SETTINGS,
   type Attachment,
   type Conversation,
+  type Folder,
   type Memory,
   type Message,
   type Settings,
+  type Source,
 } from "./types";
 
 const KEY = "star-ai:state:v1";
@@ -25,7 +28,18 @@ type Persisted = {
   settings: Settings;
   conversations: Conversation[];
   memories: Memory[];
+  folders: Folder[];
 };
+
+/** Local auto-title: first meaningful sentence of the opening question. */
+export function autoTitle(text: string, fallback = "New chat") {
+  const clean = text.replace(/\s+/g, " ").replace(/^[^\w]+/, "").trim();
+  if (!clean) return fallback;
+  const sentence = clean.split(/(?<=[.!?])\s/)[0] ?? clean;
+  const words = sentence.split(" ").slice(0, 8).join(" ");
+  const title = words.length > 52 ? `${words.slice(0, 52)}…` : words;
+  return title.charAt(0).toUpperCase() + title.slice(1);
+}
 
 export const uid = () =>
   typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -34,7 +48,7 @@ export const uid = () =>
 
 function load(): Persisted {
   if (typeof window === "undefined")
-    return { settings: DEFAULT_SETTINGS, conversations: [], memories: [] };
+    return { settings: DEFAULT_SETTINGS, conversations: [], memories: [], folders: [] };
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) throw new Error("empty");
@@ -43,13 +57,18 @@ function load(): Persisted {
       settings: { ...DEFAULT_SETTINGS, ...(parsed.settings ?? {}) },
       conversations: parsed.conversations ?? [],
       memories: parsed.memories ?? [],
+      folders: parsed.folders ?? [],
     };
   } catch {
-    return { settings: DEFAULT_SETTINGS, conversations: [], memories: [] };
+    return { settings: DEFAULT_SETTINGS, conversations: [], memories: [], folders: [] };
   }
 }
 
-type StreamState = { conversationId: string | null; busy: boolean };
+type StreamState = {
+  conversationId: string | null;
+  busy: boolean;
+  status?: string | undefined;
+};
 
 type StarContextValue = {
   hydrated: boolean;
@@ -68,6 +87,17 @@ type StarContextValue = {
   deleteConversation: (id: string) => void;
   togglePin: (id: string) => void;
   clearConversation: (id: string) => void;
+  moveConversation: (id: string, folderId: string | null) => void;
+
+  folders: Folder[];
+  createFolder: (name: string) => void;
+  renameFolder: (id: string, name: string) => void;
+  deleteFolder: (id: string) => void;
+
+  mode: AIMode;
+  setMode: (m: AIMode) => void;
+  webSearch: boolean;
+  setWebSearch: (v: boolean) => void;
 
   memories: Memory[];
   addMemory: (text: string) => void;
@@ -94,6 +124,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [memories, setMemories] = useState<Memory[]>([]);
+  const [folders, setFolders] = useState<Folder[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [switching, setSwitching] = useState(false);
   const [stream, setStream] = useState<StreamState>({ conversationId: null, busy: false });
@@ -104,17 +135,18 @@ export function StarProvider({ children }: { children: ReactNode }) {
     setSettings({ ...data.settings, version: data.settings.defaultVersion ?? data.settings.version });
     setConversations(data.conversations);
     setMemories(data.memories);
+    setFolders(data.folders);
     setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (!hydrated) return;
     try {
-      window.localStorage.setItem(KEY, JSON.stringify({ settings, conversations, memories }));
+      window.localStorage.setItem(KEY, JSON.stringify({ settings, conversations, memories, folders }));
     } catch {
       /* storage full or unavailable */
     }
-  }, [hydrated, settings, conversations, memories]);
+  }, [hydrated, settings, conversations, memories, folders]);
 
   // Theme attributes drive the version-specific design tokens in styles.css
   useEffect(() => {
@@ -170,6 +202,26 @@ export function StarProvider({ children }: { children: ReactNode }) {
       cs.map((c) => (c.id === id ? { ...c, messages: [], updatedAt: Date.now() } : c)),
     );
   }, []);
+
+  const moveConversation = useCallback((id: string, folderId: string | null) => {
+    setConversations((cs) => cs.map((c) => (c.id === id ? { ...c, folderId } : c)));
+  }, []);
+
+  const createFolder = useCallback((name: string) => {
+    const n = name.trim();
+    if (!n) return;
+    setFolders((f) => [...f, { id: uid(), name: n, createdAt: Date.now() }]);
+  }, []);
+  const renameFolder = useCallback((id: string, name: string) => {
+    setFolders((f) => f.map((x) => (x.id === id ? { ...x, name: name.trim() || x.name } : x)));
+  }, []);
+  const deleteFolder = useCallback((id: string) => {
+    setFolders((f) => f.filter((x) => x.id !== id));
+    setConversations((cs) => cs.map((c) => (c.folderId === id ? { ...c, folderId: null } : c)));
+  }, []);
+
+  const setMode = useCallback((m: AIMode) => setSettings((s) => ({ ...s, mode: m })), []);
+  const setWebSearch = useCallback((v: boolean) => setSettings((s) => ({ ...s, webSearch: v })), []);
 
   const addMemory = useCallback((text: string) => {
     const t = text.trim();
@@ -233,6 +285,12 @@ export function StarProvider({ children }: { children: ReactNode }) {
           body: JSON.stringify({
             version,
             style: settings.style,
+            mode: settings.mode,
+            webSearch: settings.webSearch,
+            ...(settings.assistantName ? { assistantName: settings.assistantName } : {}),
+            ...(settings.language && settings.language !== "auto"
+              ? { language: settings.language }
+              : {}),
             memories: settings.memoryEnabled ? memories.map((m) => m.text) : [],
             messages: history.map((m) => ({
               role: m.role,
@@ -272,7 +330,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
           buf = lines.pop() ?? "";
           for (const l of lines) {
             if (!l.trim()) continue;
-            let evt: { type: string; value?: string };
+            let evt: { type: string; value?: string; sources?: Source[] };
             try {
               evt = JSON.parse(l);
             } catch {
@@ -281,6 +339,11 @@ export function StarProvider({ children }: { children: ReactNode }) {
             if (evt.type === "text") patch((m) => ({ ...m, content: m.content + (evt.value ?? "") }));
             else if (evt.type === "reasoning")
               patch((m) => ({ ...m, reasoning: (m.reasoning ?? "") + (evt.value ?? "") }));
+            else if (evt.type === "sources")
+              patch((m) => ({ ...m, sources: evt.sources ?? [] }));
+            else if (evt.type === "notice") patch((m) => ({ ...m, notice: evt.value ?? "" }));
+            else if (evt.type === "status")
+              setStream((s) => ({ ...s, status: evt.value ?? "" }));
             else if (evt.type === "error") patch((m) => ({ ...m, error: evt.value ?? "Something went wrong. Please try again." }));
           }
         }
@@ -298,7 +361,15 @@ export function StarProvider({ children }: { children: ReactNode }) {
         setStream({ conversationId: null, busy: false });
       }
     },
-    [memories, settings.memoryEnabled, settings.style],
+    [
+      memories,
+      settings.memoryEnabled,
+      settings.style,
+      settings.mode,
+      settings.webSearch,
+      settings.assistantName,
+      settings.language,
+    ],
   );
 
   const sendMessage = useCallback(
@@ -322,8 +393,11 @@ export function StarProvider({ children }: { children: ReactNode }) {
         conversationId = uid();
         const convo: Conversation = {
           id: conversationId,
-          title: trimmed.slice(0, 48) || attachments?.[0]?.name || "New chat",
+          title: autoTitle(trimmed, attachments?.[0]?.name ?? "New chat"),
           version,
+          mode: settings.version === "3.0" ? settings.mode : settings.mode,
+          folderId: null,
+          autoTitled: true,
           pinned: false,
           createdAt: Date.now(),
           updatedAt: Date.now(),
@@ -346,7 +420,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
 
       await run(conversationId, history, version);
     },
-    [activeId, conversations, run, settings.version],
+    [activeId, conversations, run, settings.version, settings.mode],
   );
 
   const regenerate = useCallback(async () => {
@@ -383,6 +457,15 @@ export function StarProvider({ children }: { children: ReactNode }) {
     setVersion,
     switching,
     conversations,
+    folders,
+    createFolder,
+    renameFolder,
+    deleteFolder,
+    moveConversation,
+    mode: settings.mode,
+    setMode,
+    webSearch: settings.webSearch,
+    setWebSearch,
     activeId,
     active,
     setActiveId,
