@@ -171,3 +171,116 @@ export const VERSIONS: Record<StarVersion, VersionMeta> = {
 };
 
 export const VERSION_LIST: VersionMeta[] = [VERSIONS["2.0"], VERSIONS["3.0"]];
+
+/* ------------------------------------------------------------------ *
+ * Version catalog — the SINGLE source of truth for which Star-AI
+ * versions exist and which ones are unlocked.
+ *
+ * To unlock a version in a future phase: flip `enabled` to true here
+ * (and add its runtime config on the server). The whole UI follows.
+ * ------------------------------------------------------------------ */
+
+export type StarVersionId =
+  | "2.0"
+  | "3.0"
+  | "4.0"
+  | "5.0"
+  | "programming"
+  | "5.5"
+  | "5.6";
+
+export type VersionCatalogEntry = {
+  id: StarVersionId;
+  /** Always displayed in full. */
+  name: string;
+  emoji: string;
+  subtitle: string;
+  /** Visual identity key -> [data-star-version-theme] tokens in styles.css */
+  theme: string;
+  /** Accent pair used for the selector swatch. */
+  swatch: [string, string];
+  enabled: boolean;
+};
+
+export const VERSION_CATALOG: VersionCatalogEntry[] = [
+  {
+    id: "2.0",
+    name: "Star-AI 2.0",
+    emoji: "⭐",
+    subtitle: "Modern blue technology",
+    theme: "tech-blue",
+    swatch: ["oklch(0.68 0.18 275)", "oklch(0.72 0.16 225)"],
+    enabled: true,
+  },
+  {
+    id: "3.0",
+    name: "Star-AI 3.0",
+    emoji: "⭐",
+    subtitle: "Advanced blue / purple cosmic",
+    theme: "cosmic-violet",
+    swatch: ["oklch(0.79 0.15 330)", "oklch(0.82 0.14 195)"],
+    enabled: true,
+  },
+  {
+    id: "4.0",
+    name: "Star-AI 4.0",
+    emoji: "🚀",
+    subtitle: "Futuristic cyan / blue",
+    theme: "futuristic-cyan",
+    swatch: ["oklch(0.82 0.14 200)", "oklch(0.7 0.16 245)"],
+    enabled: false,
+  },
+  {
+    id: "5.0",
+    name: "Star-AI 5.0",
+    emoji: "🔥",
+    subtitle: "Powerful cosmic energy",
+    theme: "cosmic-energy",
+    swatch: ["oklch(0.75 0.2 35)", "oklch(0.7 0.19 320)"],
+    enabled: false,
+  },
+  {
+    id: "programming",
+    name: "Star-AI Programming",
+    emoji: "💻",
+    subtitle: "Futuristic developer / code",
+    theme: "developer",
+    swatch: ["oklch(0.8 0.19 150)", "oklch(0.72 0.13 205)"],
+    enabled: false,
+  },
+  {
+    id: "5.5",
+    name: "Star-AI 5.5",
+    emoji: "⚡",
+    subtitle: "Premium cosmic",
+    theme: "premium-cosmic",
+    swatch: ["oklch(0.85 0.15 95)", "oklch(0.72 0.17 300)"],
+    enabled: false,
+  },
+  {
+    id: "5.6",
+    name: "Star-AI 5.6",
+    emoji: "🌌",
+    subtitle: "Flagship deep space",
+    theme: "deep-space",
+    swatch: ["oklch(0.62 0.2 285)", "oklch(0.84 0.12 210)"],
+    enabled: false,
+  },
+];
+
+export const UNLOCKED_VERSIONS = VERSION_CATALOG.filter((v) => v.enabled);
+export const LOCKED_VERSIONS = VERSION_CATALOG.filter((v) => !v.enabled);
+
+export function isVersionUnlocked(id: StarVersionId): boolean {
+  return VERSION_CATALOG.some((v) => v.id === id && v.enabled);
+}
+
+/** Only unlocked ids that the chat runtime actually supports today. */
+export function isRuntimeVersion(id: StarVersionId): id is StarVersion {
+  return (id === "2.0" || id === "3.0") && isVersionUnlocked(id);
+}
+
+/** Display label for a version id, e.g. "Star-AI 5.6". */
+export function versionName(id: StarVersionId): string {
+  return VERSION_CATALOG.find((v) => v.id === id)?.name ?? `Star-AI ${id}`;
+}
