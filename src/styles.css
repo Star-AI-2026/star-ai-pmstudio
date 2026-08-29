@@ -157,6 +157,62 @@
   --blur-glass: 26px;
 }
 
+/*
+ * Visual identities for the upcoming (currently locked) versions.
+ * Applied via [data-star-version-theme="..."] once a version is unlocked
+ * in src/lib/ai/versions.ts — no other change is needed here.
+ */
+[data-star-version-theme="futuristic-cyan"] {
+  /* Star-AI 4.0 — futuristic cyan / blue */
+  --background: oklch(0.13 0.04 235);
+  --primary: oklch(0.8 0.14 205);
+  --accent: oklch(0.7 0.16 245);
+  --ring: oklch(0.8 0.14 205);
+  --glow: oklch(0.82 0.14 200);
+  --gradient-brand: linear-gradient(135deg, oklch(0.82 0.14 200), oklch(0.68 0.17 250));
+}
+
+[data-star-version-theme="cosmic-energy"] {
+  /* Star-AI 5.0 — powerful cosmic energy */
+  --background: oklch(0.12 0.045 320);
+  --primary: oklch(0.75 0.2 35);
+  --accent: oklch(0.72 0.19 320);
+  --ring: oklch(0.75 0.2 35);
+  --glow: oklch(0.74 0.2 20);
+  --gradient-brand: linear-gradient(135deg, oklch(0.75 0.2 35), oklch(0.7 0.19 320));
+}
+
+[data-star-version-theme="developer"] {
+  /* Star-AI Programming — futuristic developer / code */
+  --background: oklch(0.14 0.03 175);
+  --primary: oklch(0.8 0.19 150);
+  --accent: oklch(0.72 0.13 205);
+  --ring: oklch(0.8 0.19 150);
+  --glow: oklch(0.8 0.19 155);
+  --gradient-brand: linear-gradient(135deg, oklch(0.8 0.19 150), oklch(0.72 0.13 205));
+}
+
+[data-star-version-theme="premium-cosmic"] {
+  /* Star-AI 5.5 — premium cosmic */
+  --background: oklch(0.12 0.04 300);
+  --primary: oklch(0.85 0.15 95);
+  --accent: oklch(0.72 0.17 300);
+  --ring: oklch(0.85 0.15 95);
+  --glow: oklch(0.84 0.15 100);
+  --gradient-brand: linear-gradient(135deg, oklch(0.85 0.15 95), oklch(0.72 0.17 300));
+}
+
+[data-star-version-theme="deep-space"] {
+  /* Star-AI 5.6 — flagship deep space */
+  --background: oklch(0.09 0.03 285);
+  --primary: oklch(0.66 0.2 285);
+  --accent: oklch(0.84 0.12 210);
+  --ring: oklch(0.66 0.2 285);
+  --glow: oklch(0.7 0.2 288);
+  --gradient-brand: linear-gradient(135deg, oklch(0.62 0.2 285), oklch(0.84 0.12 210));
+}
+
+
 /* Light mode overlays (kept subtle so the cosmic identity survives) */
 .dark {
   color-scheme: dark;
