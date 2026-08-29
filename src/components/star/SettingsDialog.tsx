@@ -2,6 +2,7 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { AI_MODES, type AIMode } from "@/lib/ai/modes";
 import { RESPONSE_STYLES, VERSION_LIST, type ResponseStyle, type StarVersion } from "@/lib/ai/versions";
 import { useStar } from "@/lib/star/store";
 import { cn } from "@/lib/utils";
@@ -105,8 +106,27 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
               <Row label="Send with Enter" hint="Shift + Enter adds a new line">
                 <span className="text-xs text-muted-foreground">Always on</span>
               </Row>
-              <Row label="Language" hint="Star-AI replies in the language you write in">
-                <span className="text-xs text-muted-foreground">Automatic</span>
+              <Row label="Reply language" hint="Automatic follows the language you write in">
+                <select
+                  value={settings.language}
+                  onChange={(e) => updateSettings({ language: e.target.value })}
+                  className="rounded-xl border border-border bg-popover px-3 py-1.5 text-xs"
+                >
+                  {["auto", "English", "Spanish", "French", "German", "Portuguese", "Arabic", "Hindi", "Chinese", "Japanese"].map((l) => (
+                    <option key={l} value={l}>
+                      {l === "auto" ? "Automatic" : l}
+                    </option>
+                  ))}
+                </select>
+              </Row>
+              <Row label="Call me by" hint="What Star-AI should call itself for you">
+                <input
+                  value={settings.assistantName}
+                  onChange={(e) => updateSettings({ assistantName: e.target.value })}
+                  placeholder="Star-AI"
+                  aria-label="Assistant name"
+                  className="w-40 rounded-xl border border-border bg-transparent px-3 py-1.5 text-xs outline-none"
+                />
               </Row>
             </div>
           )}
@@ -177,6 +197,25 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                     </option>
                   ))}
                 </select>
+              </Row>
+              <Row label="Default mode" hint="Task framing applied to new messages">
+                <select
+                  value={settings.mode}
+                  onChange={(e) => updateSettings({ mode: e.target.value as AIMode })}
+                  className="rounded-xl border border-border bg-popover px-3 py-1.5 text-xs"
+                >
+                  {AI_MODES.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.label} — {m.hint}
+                    </option>
+                  ))}
+                </select>
+              </Row>
+              <Row label="Web search" hint="Requires a search provider key on the server">
+                <Toggle on={settings.webSearch} onChange={(v) => updateSettings({ webSearch: v })} />
+              </Row>
+              <Row label="Read answers aloud" hint="Speak each response when it finishes">
+                <Toggle on={settings.autoSpeak} onChange={(v) => updateSettings({ autoSpeak: v })} />
               </Row>
               <Row label="Streaming responses" hint="Show text as it is generated">
                 <Toggle on={settings.streaming} onChange={(v) => updateSettings({ streaming: v })} />
