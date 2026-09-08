@@ -10,7 +10,7 @@ import {
 } from "react";
 
 import type { AIMode } from "@/lib/ai/modes";
-import type { StarVersion } from "@/lib/ai/versions";
+import { VERSION_CATALOG, type StarVersion } from "@/lib/ai/versions";
 import {
   DEFAULT_SETTINGS,
   type Attachment,
@@ -153,6 +153,8 @@ export function StarProvider({ children }: { children: ReactNode }) {
     if (typeof document === "undefined") return;
     const root = document.documentElement;
     root.dataset["starVersion"] = settings.version === "3.0" ? "3" : "2";
+    root.dataset["starVersionTheme"] =
+      VERSION_CATALOG.find((v) => v.id === settings.version)?.theme ?? "tech-blue";
     root.dataset["starAnim"] = settings.animations ? "on" : "off";
     const prefersDark =
       typeof window !== "undefined" &&
