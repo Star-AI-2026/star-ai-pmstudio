@@ -10,7 +10,7 @@ import {
 } from "react";
 
 import type { AIMode } from "@/lib/ai/modes";
-import type { StarVersion } from "@/lib/ai/versions";
+import { VERSION_CATALOG, type StarVersion } from "@/lib/ai/versions";
 import {
   DEFAULT_SETTINGS,
   type Attachment,
