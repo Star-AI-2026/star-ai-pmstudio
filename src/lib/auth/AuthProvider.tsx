@@ -97,9 +97,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    // The session user can be a slim copy; re-read it so signup metadata (name) is present.
+    const { data: fresh } = await supabase.auth.getUser();
+    const full = fresh.user?.id === u.id ? fresh.user : u;
+
     const insert = {
       id: u.id,
-      display_name: nameFromUser(u),
+      display_name: nameFromUser(full),
       email: u.email ?? null,
       provider: providerOf(u),
     };
