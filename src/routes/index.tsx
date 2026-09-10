@@ -1,10 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 import { StarApp } from "@/components/star/StarApp";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 import { StarProvider } from "@/lib/star/store";
 
 export const Route = createFileRoute("/")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Star-AI — Advanced AI assistant with two generations" },
@@ -26,11 +30,32 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+function Gate() {
+  const { loading, session } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !session) void navigate({ to: "/auth", replace: true });
+  }, [loading, session, navigate]);
+
+  if (loading || !session) {
+    return (
+      <div className="flex h-dvh items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return <StarApp />;
+}
+
 function Index() {
   return (
-    <StarProvider>
-      <StarApp />
-      <Toaster position="top-center" />
-    </StarProvider>
+    <AuthProvider>
+      <StarProvider>
+        <Gate />
+        <Toaster position="top-center" />
+      </StarProvider>
+    </AuthProvider>
   );
 }
