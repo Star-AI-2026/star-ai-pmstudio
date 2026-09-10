@@ -40,12 +40,15 @@ const SORTS: { id: SortMode; label: string }[] = [
 export function Sidebar({
   onOpenSettings,
   onOpenHelp,
+  onOpenProfile,
   onClose,
 }: {
   onOpenSettings: () => void;
   onOpenHelp: () => void;
+  onOpenProfile: () => void;
   onClose?: () => void;
 }) {
+  const { displayName, user } = useAuth();
   const {
     conversations,
     activeId,
