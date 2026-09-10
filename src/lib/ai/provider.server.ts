@@ -29,6 +29,7 @@ export type GenerateOptions = {
   style: ResponseStyle;
   mode?: AIMode | undefined;
   assistantName?: string | undefined;
+  userName?: string | undefined;
   language?: string | undefined;
   memories?: string[] | undefined;
   searchContext?: string | undefined;
@@ -134,6 +135,7 @@ export class LovableGatewayProvider implements AIProvider {
         style: opts.style,
         mode: opts.mode,
         assistantName: opts.assistantName,
+        userName: opts.userName,
         language: opts.language,
         memories: opts.memories,
         searchContext: opts.searchContext,
