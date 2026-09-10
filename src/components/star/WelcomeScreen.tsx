@@ -15,6 +15,7 @@ import type { LucideIcon } from "lucide-react";
 
 import { StarLogo } from "./StarLogo";
 import { VERSIONS } from "@/lib/ai/versions";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useStar } from "@/lib/star/store";
 
 const ICONS: Record<string, LucideIcon> = {
@@ -32,15 +33,23 @@ const ICONS: Record<string, LucideIcon> = {
 
 export function WelcomeScreen() {
   const { version, sendMessage } = useStar();
+  const { displayName } = useAuth();
   const meta = VERSIONS[version];
 
   return (
     <div key={version} className="version-morph mx-auto w-full max-w-4xl px-4 py-10 sm:py-16">
       <div className="flex flex-col items-center text-center">
         <StarLogo className="h-14 w-14 text-primary drop-shadow-[0_0_18px_var(--glow)]" />
-        <p className="mt-5 text-sm font-medium uppercase tracking-[0.3em] text-muted-foreground">
-          Welcome to Star-AI
-        </p>
+        {displayName ? (
+          <div dir="rtl" className="mt-5">
+            <p className="text-lg font-semibold sm:text-xl">سلام {displayName} 👋</p>
+            <p className="mt-1 text-sm text-muted-foreground">امروز چطور می‌تونم کمکت کنم؟</p>
+          </div>
+        ) : (
+          <p className="mt-5 text-sm font-medium uppercase tracking-[0.3em] text-muted-foreground">
+            Welcome to Star-AI
+          </p>
+        )}
         <h1 className="mt-2 text-4xl font-semibold sm:text-5xl">
           <span className="text-brand-gradient">{meta.name}</span>
         </h1>
