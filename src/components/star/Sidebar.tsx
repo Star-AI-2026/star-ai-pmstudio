@@ -321,15 +321,18 @@ export function Sidebar({
         >
           <CircleHelp className="h-3.5 w-3.5" /> Help
         </button>
-        <div className="mt-1 flex items-center gap-2 rounded-xl px-3 py-2">
+        <button
+          onClick={onOpenProfile}
+          className="mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2 transition-colors hover:bg-sidebar-accent"
+        >
           <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-gradient text-[11px] font-semibold text-primary-foreground">
-            <User className="h-3.5 w-3.5" />
+            {displayName ? displayName.charAt(0).toUpperCase() : <User className="h-3.5 w-3.5" />}
           </span>
-          <div className="leading-tight">
-            <p className="text-xs font-medium">Guest</p>
-            <p className="text-[10px] text-muted-foreground">Local workspace</p>
+          <div className="min-w-0 text-left leading-tight">
+            <p className="truncate text-xs font-medium">{displayName || "Star-AI"}</p>
+            <p className="truncate text-[10px] text-muted-foreground">{user?.email ?? ""}</p>
           </div>
-        </div>
+        </button>
       </div>
     </aside>
   );
