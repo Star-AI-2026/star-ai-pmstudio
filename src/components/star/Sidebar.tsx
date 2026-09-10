@@ -19,6 +19,7 @@ import { useMemo, useState } from "react";
 
 import { StarLogo } from "./StarLogo";
 import { VersionSwitcher } from "./VersionSwitcher";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { useStar } from "@/lib/star/store";
 import type { Conversation, SortMode } from "@/lib/star/types";
 import { cn } from "@/lib/utils";
