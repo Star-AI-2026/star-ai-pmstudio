@@ -86,6 +86,7 @@ export function buildSystemPrompt(opts: {
   style: ResponseStyle;
   mode?: AIMode | undefined;
   assistantName?: string | undefined;
+  userName?: string | undefined;
   language?: string | undefined;
   memories?: string[] | undefined;
   searchContext?: string | undefined;
@@ -98,6 +99,12 @@ export function buildSystemPrompt(opts: {
   if (opts.assistantName && opts.assistantName.trim()) {
     parts.push(
       `The user prefers to call you "${opts.assistantName.trim()}". Use that name, but you are still Star-AI ${opts.version} and must not claim to be a different product or model.`,
+    );
+  }
+
+  if (opts.userName && opts.userName.trim()) {
+    parts.push(
+      `The signed-in user's display name is "${opts.userName.trim()}". Address them naturally by this name when it fits — for example in a greeting or an occasional acknowledgement. Do not use their name in every sentence, and never ask them what their name is.`,
     );
   }
 

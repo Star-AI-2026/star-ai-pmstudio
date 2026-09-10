@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { ChatView } from "./ChatView";
 import { HelpDialog } from "./HelpDialog";
+import { ProfileDialog } from "./ProfileDialog";
 import { SettingsDialog } from "./SettingsDialog";
 import { Sidebar } from "./Sidebar";
 import { VersionBackground } from "./VersionBackground";
@@ -13,6 +14,7 @@ export function StarApp() {
   const [drawer, setDrawer] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -33,7 +35,11 @@ export function StarApp() {
 
       <div className="hidden md:block">
         {hydrated && (
-          <Sidebar onOpenSettings={() => setSettingsOpen(true)} onOpenHelp={() => setHelpOpen(true)} />
+          <Sidebar
+            onOpenSettings={() => setSettingsOpen(true)}
+            onOpenHelp={() => setHelpOpen(true)}
+            onOpenProfile={() => setProfileOpen(true)}
+          />
         )}
       </div>
 
@@ -68,6 +74,10 @@ export function StarApp() {
                 setDrawer(false);
                 setHelpOpen(true);
               }}
+              onOpenProfile={() => {
+                setDrawer(false);
+                setProfileOpen(true);
+              }}
             />
           )}
         </div>
@@ -79,6 +89,7 @@ export function StarApp() {
 
       <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
+      <ProfileDialog open={profileOpen} onClose={() => setProfileOpen(false)} />
     </div>
   );
 }

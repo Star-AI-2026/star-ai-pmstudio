@@ -36,6 +36,7 @@ const BodySchema = z.object({
     .enum(["general", "coding", "writing", "research", "math", "data", "creative", "study"])
     .default("general"),
   assistantName: z.string().max(40).optional(),
+  userName: z.string().max(80).optional(),
   language: z.string().max(40).optional(),
   webSearch: z.boolean().default(false),
   memories: z.array(z.string().max(1000)).max(50).optional(),
@@ -145,6 +146,7 @@ export const Route = createFileRoute("/api/chat")({
                 style: parsed.style,
                 mode: parsed.mode,
                 assistantName: parsed.assistantName,
+                userName: parsed.userName,
                 language: parsed.language,
                 memories: parsed.memories,
                 searchContext,

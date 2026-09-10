@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import type { AIMode } from "@/lib/ai/modes";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { VERSION_CATALOG, type StarVersion } from "@/lib/ai/versions";
 import {
   DEFAULT_SETTINGS,
@@ -120,6 +121,7 @@ export function useStar() {
 }
 
 export function StarProvider({ children }: { children: ReactNode }) {
+  const { displayName } = useAuth();
   const [hydrated, setHydrated] = useState(false);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -290,6 +292,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
             mode: settings.mode,
             webSearch: settings.webSearch,
             ...(settings.assistantName ? { assistantName: settings.assistantName } : {}),
+            ...(displayName ? { userName: displayName } : {}),
             ...(settings.language && settings.language !== "auto"
               ? { language: settings.language }
               : {}),
@@ -364,6 +367,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
       }
     },
     [
+      displayName,
       memories,
       settings.memoryEnabled,
       settings.style,
