@@ -51,7 +51,12 @@ export function ProfileDialog({ open, onClose }: { open: boolean; onClose: () =>
         <div className="mt-5 space-y-3">
           <div>
             <label className="mb-1 block text-xs text-muted-foreground">نام نمایشی</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} className={field} />
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              aria-label="نام نمایشی"
+              className={field}
+            />
           </div>
           <div>
             <label className="mb-1 block text-xs text-muted-foreground">ایمیل</label>
