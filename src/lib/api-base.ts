@@ -4,7 +4,7 @@
  * VITE_STAR_AI_API_BASE holds that origin. Empty = same-origin (default).
  * No secrets here: the endpoint is public, all keys stay server-side.
  */
-const apiBase = (import.meta.env["VITE_STAR_AI_API_BASE"] ?? "").replace(/\/+$/, "");
+const apiBase = (import.meta.env.VITE_STAR_AI_API_BASE ?? "").replace(/\/+$/, "");
 
 export const CHAT_ENDPOINT = `${apiBase}/api/public/chat`;
 
