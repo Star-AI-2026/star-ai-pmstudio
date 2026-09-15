@@ -10,20 +10,23 @@ import { join } from "node:path";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import type { Plugin } from "vite";
 
-// GitHub Project Pages serve the app from /star-ai-pmstudio/. Set
-// STAR_AI_BASE (or pass --base=) to change it; Lovable hosting uses "/".
-const base = process.env["STAR_AI_BASE"] ?? "/";
+// Static hosting (GitHub Project Pages) build:
+//   STAR_AI_BASE=/star-ai-pmstudio/ npm run build
+// Without STAR_AI_BASE the build is the normal Lovable server build.
+const staticBase = process.env["STAR_AI_BASE"];
+const isStaticBuild = Boolean(staticBase);
 
 /**
  * GitHub Pages has no SPA rewrite rule and runs Jekyll by default.
- * Copy the static entry page to 404.html so client-side routing works on
- * deep links, and drop a .nojekyll file so /_ prefixed assets are served.
+ * Copy the static entry page to 404.html so deep links keep working with
+ * client-side routing, and add .nojekyll so `_`-prefixed assets are served.
  */
 function githubPagesStaticPlugin(): Plugin {
   return {
     name: "star-ai-github-pages",
     apply: "build",
     closeBundle() {
+      if (!isStaticBuild) return;
       for (const dir of ["dist/client", ".output/public"]) {
         const index = join(process.cwd(), dir, "index.html");
         if (!existsSync(index)) continue;
@@ -35,18 +38,18 @@ function githubPagesStaticPlugin(): Plugin {
 }
 
 export default defineConfig({
-  tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
-    server: { entry: "server" },
-    // Static/SPA output: every route is served from one prerendered index.html
-    // shell and rendered on the client.
-    spa: { enabled: true },
-    prerender: { enabled: true, outputPath: "/index.html" },
-    pages: [{ path: "/", prerender: { enabled: true, outputPath: "/index.html" } }],
-  },
+  // No server runtime on a static host, so skip the nitro/worker bundle there.
+  ...(isStaticBuild ? { nitro: false as const } : {}),
+  tanstackStart: isStaticBuild
+    ? // Static/SPA output: one prerendered index.html shell, routing on the client.
+      { spa: { enabled: true, prerender: { outputPath: "/index.html" } } }
+    : {
+        // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
+        // nitro/vite builds from this
+        server: { entry: "server" },
+      },
   vite: {
-    base,
+    ...(staticBase ? { base: staticBase } : {}),
     plugins: [githubPagesStaticPlugin()],
   },
 });
