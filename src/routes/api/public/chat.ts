@@ -77,9 +77,18 @@ function validateAttachments(messages: z.infer<typeof BodySchema>["messages"]): 
   return null;
 }
 
+/** Static hosts (GitHub Pages) call this endpoint cross-origin. */
+const CORS: Record<string, string> = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Max-Age": "86400",
+};
+
 export const Route = createFileRoute("/api/public/chat")({
   server: {
     handlers: {
+      OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
       POST: async ({ request }) => {
         const limit = rateLimit(`chat:${clientKey(request)}`, 30, 60_000);
         if (!limit.allowed) {
