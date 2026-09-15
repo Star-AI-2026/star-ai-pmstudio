@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import type { AIMode } from "@/lib/ai/modes";
+import { CHAT_ENDPOINT } from "@/lib/api-base";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { VERSION_CATALOG, type StarVersion } from "@/lib/ai/versions";
 import {
@@ -282,7 +283,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
         );
 
       try {
-        const res = await fetch("/api/chat", {
+        const res = await fetch(CHAT_ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,

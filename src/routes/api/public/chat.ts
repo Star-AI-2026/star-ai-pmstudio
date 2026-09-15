@@ -77,15 +77,24 @@ function validateAttachments(messages: z.infer<typeof BodySchema>["messages"]): 
   return null;
 }
 
-export const Route = createFileRoute("/api/chat")({
+/** Static hosts (GitHub Pages) call this endpoint cross-origin. */
+const CORS: Record<string, string> = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Max-Age": "86400",
+};
+
+export const Route = createFileRoute("/api/public/chat")({
   server: {
     handlers: {
+      OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
       POST: async ({ request }) => {
         const limit = rateLimit(`chat:${clientKey(request)}`, 30, 60_000);
         if (!limit.allowed) {
           return new Response(
             JSON.stringify({ error: "You're sending messages very quickly. Please slow down." }),
-            { status: 429, headers: { "Retry-After": String(limit.retryAfter) } },
+            { status: 429, headers: { ...CORS, "Retry-After": String(limit.retryAfter) } },
           );
         }
 
@@ -95,12 +104,13 @@ export const Route = createFileRoute("/api/chat")({
         } catch {
           return new Response(JSON.stringify({ error: "Your message could not be processed." }), {
             status: 400,
+            headers: CORS,
           });
         }
 
         const attachmentError = validateAttachments(parsed.messages);
         if (attachmentError) {
-          return new Response(JSON.stringify({ error: attachmentError }), { status: 413 });
+          return new Response(JSON.stringify({ error: attachmentError }), { status: 413, headers: CORS });
         }
 
         let provider;
@@ -111,7 +121,7 @@ export const Route = createFileRoute("/api/chat")({
             JSON.stringify({
               error: "Star-AI is not connected to an AI provider yet. Add the API key on the server.",
             }),
-            { status: 503 },
+            { status: 503, headers: CORS },
           );
         }
 
@@ -169,6 +179,7 @@ export const Route = createFileRoute("/api/chat")({
 
         return new Response(stream, {
           headers: {
+            ...CORS,
             "Content-Type": "application/x-ndjson; charset=utf-8",
             "Cache-Control": "no-cache, no-transform",
           },
