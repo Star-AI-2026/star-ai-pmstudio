@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { StarLogo } from "@/components/star/StarLogo";
 import { Toaster } from "@/components/ui/sonner";
 import { lovable } from "@/integrations/lovable/index";
+import { appUrl } from "@/lib/api-base";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 
@@ -131,7 +132,7 @@ function AuthScreen() {
       email: email.trim(),
       password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: appUrl(),
         data: { display_name: cleanName, full_name: cleanName },
       },
     });
@@ -161,7 +162,7 @@ function AuthScreen() {
     }
     setBusy(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: appUrl("reset-password"),
     });
     setBusy(false);
     if (error) {
@@ -175,7 +176,7 @@ function AuthScreen() {
   const google = async () => {
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: appUrl(),
     });
     if (result.error) {
       setBusy(false);
@@ -192,7 +193,7 @@ function AuthScreen() {
     const { error } = await supabase.auth.resend({
       type: "signup",
       email: pendingEmail,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: appUrl() },
     });
     setBusy(false);
     if (error) {
