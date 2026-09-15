@@ -94,7 +94,7 @@ export const Route = createFileRoute("/api/public/chat")({
         if (!limit.allowed) {
           return new Response(
             JSON.stringify({ error: "You're sending messages very quickly. Please slow down." }),
-            { status: 429, headers: { "Retry-After": String(limit.retryAfter) } },
+            { status: 429, headers: { ...CORS, "Retry-After": String(limit.retryAfter) } },
           );
         }
 
@@ -104,12 +104,13 @@ export const Route = createFileRoute("/api/public/chat")({
         } catch {
           return new Response(JSON.stringify({ error: "Your message could not be processed." }), {
             status: 400,
+            headers: CORS,
           });
         }
 
         const attachmentError = validateAttachments(parsed.messages);
         if (attachmentError) {
-          return new Response(JSON.stringify({ error: attachmentError }), { status: 413 });
+          return new Response(JSON.stringify({ error: attachmentError }), { status: 413, headers: CORS });
         }
 
         let provider;
@@ -120,7 +121,7 @@ export const Route = createFileRoute("/api/public/chat")({
             JSON.stringify({
               error: "Star-AI is not connected to an AI provider yet. Add the API key on the server.",
             }),
-            { status: 503 },
+            { status: 503, headers: CORS },
           );
         }
 
@@ -178,6 +179,7 @@ export const Route = createFileRoute("/api/public/chat")({
 
         return new Response(stream, {
           headers: {
+            ...CORS,
             "Content-Type": "application/x-ndjson; charset=utf-8",
             "Cache-Control": "no-cache, no-transform",
           },
