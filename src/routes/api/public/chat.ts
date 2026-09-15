@@ -77,7 +77,7 @@ function validateAttachments(messages: z.infer<typeof BodySchema>["messages"]): 
   return null;
 }
 
-export const Route = createFileRoute("/api/chat")({
+export const Route = createFileRoute("/api/public/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
