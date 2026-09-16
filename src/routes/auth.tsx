@@ -5,8 +5,8 @@ import { toast } from "sonner";
 
 import { StarLogo } from "@/components/star/StarLogo";
 import { Toaster } from "@/components/ui/sonner";
-import { lovable } from "@/integrations/lovable/index";
 import { appUrl } from "@/lib/api-base";
+import { signInWithGoogle } from "@/lib/auth/google";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 
