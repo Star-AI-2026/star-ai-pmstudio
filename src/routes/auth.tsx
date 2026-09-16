@@ -93,14 +93,7 @@ function AuthScreen() {
     });
     setBusy(false);
     if (error) {
-      const msg = /confirm/i.test(error.message)
-        ? "ایمیل شما هنوز تأیید نشده است. لطفاً ایمیل تأیید را باز کنید."
-        : "ایمیل یا رمز عبور اشتباه است.";
-      if (/confirm/i.test(error.message)) {
-        setPendingEmail(email.trim());
-        setView("verify");
-      }
-      toast.error(msg);
+      toast.error("ایمیل یا رمز عبور اشتباه است.");
       return;
     }
     toast.success("خوش آمدید!");
