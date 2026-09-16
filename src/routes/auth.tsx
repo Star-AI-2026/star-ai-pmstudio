@@ -175,9 +175,7 @@ function AuthScreen() {
 
   const google = async () => {
     setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: appUrl(),
-    });
+    const result = await signInWithGoogle();
     if (result.error) {
       setBusy(false);
       toast.error("ورود با Google انجام نشد. دوباره تلاش کنید.");
