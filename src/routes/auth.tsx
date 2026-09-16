@@ -75,7 +75,6 @@ function AuthScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [pendingEmail, setPendingEmail] = useState("");
 
   useEffect(() => {
     if (!loading && session) void navigate({ to: "/", replace: true });
