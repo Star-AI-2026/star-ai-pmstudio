@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Loader2, Mail, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 
@@ -40,7 +40,7 @@ function AuthRoute() {
   );
 }
 
-type View = "signin" | "signup" | "forgot" | "verify";
+type View = "signin" | "signup" | "forgot";
 
 const field =
   "w-full rounded-xl border border-input bg-background/60 px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary";
@@ -75,7 +75,6 @@ function AuthScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [pendingEmail, setPendingEmail] = useState("");
 
   useEffect(() => {
     if (!loading && session) void navigate({ to: "/", replace: true });
@@ -94,14 +93,7 @@ function AuthScreen() {
     });
     setBusy(false);
     if (error) {
-      const msg = /confirm/i.test(error.message)
-        ? "ایمیل شما هنوز تأیید نشده است. لطفاً ایمیل تأیید را باز کنید."
-        : "ایمیل یا رمز عبور اشتباه است.";
-      if (/confirm/i.test(error.message)) {
-        setPendingEmail(email.trim());
-        setView("verify");
-      }
-      toast.error(msg);
+      toast.error("ایمیل یا رمز عبور اشتباه است.");
       return;
     }
     toast.success("خوش آمدید!");
