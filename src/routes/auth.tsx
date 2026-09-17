@@ -137,13 +137,20 @@ function AuthScreen() {
       );
       return;
     }
-    setPendingEmail(email.trim());
-    if (data.session) {
-      toast.success("حساب شما ساخته شد.");
-      void navigate({ to: "/", replace: true });
-      return;
+    if (!data.session) {
+      // Email confirmation is disabled, so sign the new account in directly.
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (signInError) {
+        toast.error("ورود خودکار انجام نشد. لطفاً وارد شوید.");
+        setView("signin");
+        return;
+      }
     }
-    setView("verify");
+    toast.success("حساب شما ساخته شد.");
+    void navigate({ to: "/", replace: true });
   };
 
   const forgot = async (e: FormEvent) => {
