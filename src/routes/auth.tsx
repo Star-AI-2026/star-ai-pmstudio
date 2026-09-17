@@ -137,13 +137,20 @@ function AuthScreen() {
       );
       return;
     }
-    setPendingEmail(email.trim());
-    if (data.session) {
-      toast.success("حساب شما ساخته شد.");
-      void navigate({ to: "/", replace: true });
-      return;
+    if (!data.session) {
+      // Email confirmation is disabled, so sign the new account in directly.
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (signInError) {
+        toast.error("ورود خودکار انجام نشد. لطفاً وارد شوید.");
+        setView("signin");
+        return;
+      }
     }
-    setView("verify");
+    toast.success("حساب شما ساخته شد.");
+    void navigate({ to: "/", replace: true });
   };
 
   const forgot = async (e: FormEvent) => {
@@ -177,34 +184,6 @@ function AuthScreen() {
     void navigate({ to: "/", replace: true });
   };
 
-  const resend = async () => {
-    if (!pendingEmail) return;
-    setBusy(true);
-    const { error } = await supabase.auth.resend({
-      type: "signup",
-      email: pendingEmail,
-      options: { emailRedirectTo: appUrl() },
-    });
-    setBusy(false);
-    if (error) {
-      toast.error("ارسال دوباره ایمیل انجام نشد. کمی بعد تلاش کنید.");
-      return;
-    }
-    toast.success("ایمیل تأیید دوباره ارسال شد.");
-  };
-
-  const checkVerified = async () => {
-    setBusy(true);
-    const { data } = await supabase.auth.getUser();
-    setBusy(false);
-    if (data.user?.email_confirmed_at) {
-      toast.success("ایمیل شما تأیید شد.");
-      void navigate({ to: "/", replace: true });
-    } else {
-      toast.info("هنوز تأیید نشده است. ایمیل خود را باز کنید و روی لینک تأیید بزنید.");
-    }
-  };
-
   return (
     <div dir="rtl" className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-10">
       <div className="pointer-events-none absolute inset-0 bg-brand-gradient opacity-[0.12]" />
@@ -217,40 +196,7 @@ function AuthScreen() {
           </p>
         </div>
 
-        {view === "verify" ? (
-          <div className="mt-7 text-center">
-            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-gradient text-primary-foreground">
-              <Mail className="h-5 w-5" />
-            </span>
-            <h2 className="mt-4 text-lg font-semibold">ایمیل خود را تأیید کنید</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              یک ایمیل تأیید به <span className="font-medium text-foreground">{pendingEmail}</span>{" "}
-              ارسال کردیم.
-            </p>
-            <div className="mt-6 space-y-2">
-              <button
-                onClick={() => void resend()}
-                disabled={busy}
-                className="w-full rounded-xl bg-brand-gradient px-4 py-3 text-sm font-semibold text-primary-foreground shadow-glow disabled:opacity-60"
-              >
-                ارسال دوباره ایمیل
-              </button>
-              <button
-                onClick={() => void checkVerified()}
-                disabled={busy}
-                className="w-full rounded-xl border border-input px-4 py-3 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-60"
-              >
-                بررسی وضعیت تأیید
-              </button>
-              <button
-                onClick={() => setView("signin")}
-                className="w-full px-4 py-2 text-xs text-muted-foreground hover:text-foreground"
-              >
-                بازگشت به ورود
-              </button>
-            </div>
-          </div>
-        ) : view === "forgot" ? (
+        {view === "forgot" ? (
           <form onSubmit={forgot} className="mt-7 space-y-3">
             <h2 className="text-center text-lg font-semibold">فراموشی رمز عبور</h2>
             <p className="text-center text-xs text-muted-foreground">
