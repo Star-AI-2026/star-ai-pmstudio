@@ -177,34 +177,6 @@ function AuthScreen() {
     void navigate({ to: "/", replace: true });
   };
 
-  const resend = async () => {
-    if (!pendingEmail) return;
-    setBusy(true);
-    const { error } = await supabase.auth.resend({
-      type: "signup",
-      email: pendingEmail,
-      options: { emailRedirectTo: appUrl() },
-    });
-    setBusy(false);
-    if (error) {
-      toast.error("ارسال دوباره ایمیل انجام نشد. کمی بعد تلاش کنید.");
-      return;
-    }
-    toast.success("ایمیل تأیید دوباره ارسال شد.");
-  };
-
-  const checkVerified = async () => {
-    setBusy(true);
-    const { data } = await supabase.auth.getUser();
-    setBusy(false);
-    if (data.user?.email_confirmed_at) {
-      toast.success("ایمیل شما تأیید شد.");
-      void navigate({ to: "/", replace: true });
-    } else {
-      toast.info("هنوز تأیید نشده است. ایمیل خود را باز کنید و روی لینک تأیید بزنید.");
-    }
-  };
-
   return (
     <div dir="rtl" className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-10">
       <div className="pointer-events-none absolute inset-0 bg-brand-gradient opacity-[0.12]" />
