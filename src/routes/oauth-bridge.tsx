@@ -12,7 +12,7 @@ import { StarLogo } from "@/components/star/StarLogo";
  * that deployment. Only the origins below are accepted, so this cannot be used
  * as an open redirect. No secrets are involved.
  */
-const ALLOWED_RETURN_ORIGINS = ["https://parhamm058-rgb.github.io"];
+const ALLOWED_RETURN_ORIGINS = ["https://star-ai-2026.github.io"];
 
 export const Route = createFileRoute("/oauth-bridge")({
   head: () => ({
