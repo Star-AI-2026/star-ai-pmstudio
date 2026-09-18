@@ -3,9 +3,10 @@ import { Loader2, ArrowRight } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 
+import { Recaptcha } from "@/components/star/Recaptcha";
 import { StarLogo } from "@/components/star/StarLogo";
 import { Toaster } from "@/components/ui/sonner";
-import { appUrl } from "@/lib/api-base";
+import { appUrl, SIGNUP_ENDPOINT } from "@/lib/api-base";
 import { signInWithGoogle } from "@/lib/auth/google";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
