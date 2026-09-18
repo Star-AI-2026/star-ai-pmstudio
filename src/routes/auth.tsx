@@ -122,35 +122,47 @@ function AuthScreen() {
       toast.error("رمز عبور و تکرار آن یکسان نیستند.");
       return;
     }
+    if (!captchaToken) {
+      toast.error("لطفاً ابتدا تیک «I'm not a robot» را بزنید و CAPTCHA را کامل کنید.");
+      return;
+    }
     setBusy(true);
-    const { data, error } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        emailRedirectTo: appUrl(),
-        data: { display_name: cleanName, full_name: cleanName },
-      },
-    });
-    setBusy(false);
-    if (error) {
+    // The captcha is verified on the server before the account is created.
+    let payload: { ok?: boolean; error?: string } = {};
+    try {
+      const res = await fetch(SIGNUP_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: cleanName,
+          email: email.trim(),
+          password,
+          captchaToken,
+        }),
+      });
+      payload = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+      if (!res.ok || !payload.ok) throw new Error(payload.error ?? "signup failed");
+    } catch (err) {
+      setBusy(false);
+      setCaptchaToken(null);
+      setCaptchaReset((n) => n + 1);
       toast.error(
-        /already|registered|exists/i.test(error.message)
-          ? "این ایمیل قبلاً ثبت شده است. وارد شوید یا رمز عبور را بازیابی کنید."
-          : "ثبت نام انجام نشد. دوباره تلاش کنید.",
+        payload.error ?? (err instanceof Error && err.message !== "signup failed"
+          ? "ثبت نام انجام نشد. دوباره تلاش کنید."
+          : "ثبت نام انجام نشد. دوباره تلاش کنید."),
       );
       return;
     }
-    if (!data.session) {
-      // Email confirmation is disabled, so sign the new account in directly.
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
-      if (signInError) {
-        toast.error("ورود خودکار انجام نشد. لطفاً وارد شوید.");
-        setView("signin");
-        return;
-      }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+    setBusy(false);
+    if (signInError) {
+      toast.error("ورود خودکار انجام نشد. لطفاً وارد شوید.");
+      setView("signin");
+      return;
     }
     toast.success("حساب شما ساخته شد.");
     void navigate({ to: "/", replace: true });
