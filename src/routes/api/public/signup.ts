@@ -53,8 +53,8 @@ export const Route = createFileRoute("/api/public/signup")({
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
       POST: async ({ request }) => {
-        const limit = rateLimit(clientKey(request), { limit: 10, windowMs: 60_000 });
-        if (!limit.ok) {
+        const limit = rateLimit(`signup:${clientKey(request)}`, 10, 60_000);
+        if (!limit.allowed) {
           return json({ error: "تعداد درخواست‌ها زیاد است. کمی بعد دوباره تلاش کنید." }, 429);
         }
 
