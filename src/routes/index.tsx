@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 import { StarApp } from "@/components/star/StarApp";
 import { Toaster } from "@/components/ui/sonner";
+import { UpdateGate } from "@/components/star/UpdateGate";
 import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 import { StarProvider } from "@/lib/star/store";
 
@@ -51,11 +52,13 @@ function Gate() {
 
 function Index() {
   return (
-    <AuthProvider>
-      <StarProvider>
-        <Gate />
-        <Toaster position="top-center" />
-      </StarProvider>
-    </AuthProvider>
+    <UpdateGate>
+      <AuthProvider>
+        <StarProvider>
+          <Gate />
+          <Toaster position="top-center" />
+        </StarProvider>
+      </AuthProvider>
+    </UpdateGate>
   );
 }
