@@ -63,7 +63,16 @@ export function Recaptcha({
 
   useEffect(() => {
     let cancelled = false;
+    // grecaptcha.render can appear a tick after the script's load event.
+    const ready = async () => {
+      for (let i = 0; i < 60; i += 1) {
+        if (window.grecaptcha?.render) return;
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      throw new Error("recaptcha-timeout");
+    };
     void loadScript()
+      .then(ready)
       .then(() => {
         if (cancelled || !box.current || widget.current !== null) return;
         const g = window.grecaptcha;
