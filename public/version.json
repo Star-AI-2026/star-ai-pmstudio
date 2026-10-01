@@ -1,0 +1,23 @@
+{
+  "latestVersion": "1.0.1",
+  "minimumVersion": "1.0.1",
+  "channel": "stable",
+
+  "betaVersion": "",
+  "betaReleaseNotes": [],
+
+  "releaseNotes": [
+    "Initial Star-AI release"
+  ],
+
+  "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/latest",
+
+  "setupFileName": "Star-AI-Setup-1.0.1-Beta.exe",
+  "setupDownloadUrl": "",
+
+  "featureRequirements": {
+    "newAIInterface": "1.0.2",
+    "advancedTools": "1.1.0",
+    "futureFeature": "2.0.0"
+  }
+}
