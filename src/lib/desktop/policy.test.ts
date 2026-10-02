@@ -1,3 +1,4 @@
+// @ts-nocheck -- run with `bun test`
 import { expect, test } from "bun:test";
 import { compareVersions, evaluatePolicy, isFeatureAllowed, normalizePolicy } from "./policy";
 

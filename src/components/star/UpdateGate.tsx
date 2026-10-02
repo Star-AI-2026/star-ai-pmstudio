@@ -126,7 +126,7 @@ export function UpdateGate({ children }: { children: ReactNode }) {
   return (
     <VersionCtx.Provider value={ctx}>
       {mandatory ? null : children}
-      {showDialog && policy && decision.kind !== "none" && (
+      {showDialog && policy && (
         <Modal>
           {downloading ? (
             <>
