@@ -22,7 +22,7 @@ const ALLOWED_HOSTS = new Set(["github.com", "objects.githubusercontent.com", "r
 function get(url, redirects = 0) {
   return new Promise((resolve, reject) => {
     const u = new URL(url);
-    if (u.protocol !== "https:" || !ALLOWED_HOSTS.has(u.hostname) && redirects > 0 && !u.hostname.endsWith(".githubusercontent.com")) {
+    if (u.protocol !== "https:" || !(ALLOWED_HOSTS.has(u.hostname) || u.hostname.endsWith(".githubusercontent.com"))) {
       return reject(new Error("Blocked host " + u.hostname));
     }
     https.get(u, { headers: { "User-Agent": "Star-AI-Updater" } }, (res) => {
