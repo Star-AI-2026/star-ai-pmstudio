@@ -44,7 +44,7 @@ const list = (v: unknown) =>
 /** Validate raw JSON. Throws when the required fields are missing/invalid. */
 export function normalizePolicy(raw: unknown): VersionPolicy {
   if (!raw || typeof raw !== "object") throw new Error("version.json is not an object");
-  const r = raw as Record<string, unknown>;
+  const r = raw as Partial<Record<keyof VersionPolicy, unknown>>;
   const latestVersion = str(r.latestVersion);
   const minimumVersion = str(r.minimumVersion);
   if (!parseVersion(latestVersion) || !parseVersion(minimumVersion)) {
