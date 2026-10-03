@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useHydrated,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -131,11 +132,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  // The static (GitHub Pages / Electron) shell is prerendered without any page
+  // content. Render pages only after hydration so the first client render
+  // matches that shell exactly (prevents React error #418).
+  const hydrated = useHydrated();
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      {hydrated ? <Outlet /> : null}
     </QueryClientProvider>
   );
 }
