@@ -52,10 +52,10 @@ function Gate() {
 function Index() {
   return (
     <AuthProvider>
-        <StarProvider>
-          <Gate />
-          <Toaster position="top-center" />
-        </StarProvider>
+      <StarProvider>
+        <Gate />
+        <Toaster position="top-center" />
+      </StarProvider>
     </AuthProvider>
   );
 }
