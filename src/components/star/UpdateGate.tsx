@@ -142,7 +142,7 @@ export function UpdateGate({ children }: { children: ReactNode }) {
                   style={{ width: `${progress?.percent ?? 0}%` }}
                 />
               </div>
-              <p className="mt-2 text-xs text-muted-foreground" dir="ltr">
+              <p className="mt-2 text-xs text-muted-foreground">
                 {progress && progress.total > 0 ? `در حال دانلود: ${progress.percent}%` : "در حال دانلود..."}
                 {progress && progress.total > 0
                   ? ` · ${mb(progress.received)} MB / ${mb(progress.total)} MB`
