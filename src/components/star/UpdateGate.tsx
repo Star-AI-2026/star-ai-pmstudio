@@ -125,7 +125,8 @@ export function UpdateGate({ children }: { children: ReactNode }) {
 
   return (
     <VersionCtx.Provider value={ctx}>
-      {mandatory ? null : children}
+      {/* While any update screen is active the app (incl. Sign in) is not rendered. */}
+      {showDialog ? null : children}
       {showDialog && policy && (
         <Modal>
           {downloading ? (

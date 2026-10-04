@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { UpdateGate } from "@/components/star/UpdateGate";
 
 function NotFoundComponent() {
   return (
@@ -140,7 +141,12 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      {hydrated ? <Outlet /> : null}
+      {hydrated ? (
+        // Mounted once above all pages so navigation (e.g. / -> /auth) never resets it.
+        <UpdateGate>
+          <Outlet />
+        </UpdateGate>
+      ) : null}
     </QueryClientProvider>
   );
 }
