@@ -68,7 +68,7 @@ export function UpdateGate({ children }: { children: ReactNode }) {
 
   const startUpdate = async (policy: VersionPolicy, target: string) => {
     const bridge = getDesktopBridge();
-    if (!bridge) return;
+    if (!bridge || downloading) return;
     if (!policy.setupDownloadUrl || !policy.setupFileName) {
       setDlError(true);
       return;
@@ -142,8 +142,8 @@ export function UpdateGate({ children }: { children: ReactNode }) {
                   style={{ width: `${progress?.percent ?? 0}%` }}
                 />
               </div>
-              <p className="mt-2 text-xs text-muted-foreground" dir="ltr">
-                {progress?.percent ?? 0}%
+              <p className="mt-2 text-xs text-muted-foreground">
+                {progress && progress.total > 0 ? `در حال دانلود: ${progress.percent}%` : "در حال دانلود..."}
                 {progress && progress.total > 0
                   ? ` · ${mb(progress.received)} MB / ${mb(progress.total)} MB`
                   : ""}
@@ -200,21 +200,12 @@ export function UpdateGate({ children }: { children: ReactNode }) {
                 </div>
               )}
               <div className="mt-6 flex gap-2">
-                {decision.kind === "beta" ? (
-                  <Primary
-                    onClick={() => {
-                      const b = getDesktopBridge();
-                      if (b?.openExternal) void b.openExternal(policy.downloadUrl);
-                      else window.open(policy.downloadUrl, "_blank", "noopener");
-                    }}
-                  >
-                    مشاهده بروزرسانی
-                  </Primary>
-                ) : (
-                  <Primary onClick={() => void startUpdate(policy, decision.target)}>
-                    {mandatory ? "آپدیت Star-AI" : "آپدیت"}
-                  </Primary>
-                )}
+                <Primary
+                  disabled={downloading}
+                  onClick={() => void startUpdate(policy, decision.target)}
+                >
+                  {mandatory ? "آپدیت Star-AI" : decision.kind === "beta" ? "بروزرسانی" : "آپدیت"}
+                </Primary>
                 {!mandatory && <Secondary onClick={() => setDismissed(true)}>بعداً</Secondary>}
               </div>
             </>
@@ -237,11 +228,12 @@ function Modal({ children }: { children: ReactNode }) {
     </div>
   );
 }
-function Primary(p: { onClick: () => void; children: ReactNode }) {
+function Primary(p: { onClick: () => void; children: ReactNode; disabled?: boolean }) {
   return (
     <button
       onClick={p.onClick}
-      className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-brand-gradient py-2.5 text-sm font-semibold text-primary-foreground shadow-glow"
+      disabled={p.disabled}
+      className="disabled:opacity-60 flex flex-1 items-center justify-center gap-2 rounded-2xl bg-brand-gradient py-2.5 text-sm font-semibold text-primary-foreground shadow-glow"
     >
       {p.children}
     </button>
