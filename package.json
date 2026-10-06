@@ -7,6 +7,7 @@
     "dev": "vite dev",
     "build": "vite build && node scripts/gh-pages-finalize.mjs",
     "build:dev": "vite build --mode development",
+    "build:desktop": "node scripts/build-desktop-web.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write ."
@@ -81,7 +82,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
-    "@lovable.dev/vite-tanstack-config": "2.23.1",
+    "@lovable.dev/vite-tanstack-config": "2.25.2",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
