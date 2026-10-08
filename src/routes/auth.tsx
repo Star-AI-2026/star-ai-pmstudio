@@ -14,7 +14,7 @@ import { AuthProvider, useAuth } from "@/lib/auth/AuthProvider";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "ورود و ثبت نام — Star-AI" },
+      { title: "Log In / Sign Up — Star-AI" },
       {
         name: "description",
         content:
@@ -46,25 +46,6 @@ type View = "signin" | "signup" | "forgot";
 const field =
   "w-full rounded-xl border border-input bg-background/60 px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary";
 
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-      <path
-        fill="#4285F4"
-        d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.7v3h3.9c2.3-2.1 3.5-5.2 3.5-8.9Z"
-      />
-      <path
-        fill="#34A853"
-        d="M12 24c3.2 0 5.9-1.1 7.9-2.9l-3.9-3c-1.1.7-2.4 1.2-4 1.2-3.1 0-5.7-2.1-6.6-4.9H1.4v3.1A12 12 0 0 0 12 24Z"
-      />
-      <path fill="#FBBC05" d="M5.4 14.4a7.2 7.2 0 0 1 0-4.6V6.7H1.4a12 12 0 0 0 0 10.6l4-2.9Z" />
-      <path
-        fill="#EA4335"
-        d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4C17.9 1.2 15.2 0 12 0A12 12 0 0 0 1.4 6.7l4 3.1C6.3 6.9 8.9 4.8 12 4.8Z"
-      />
-    </svg>
-  );
-}
 
 function AuthScreen() {
   const navigate = useNavigate();
@@ -187,17 +168,7 @@ function AuthScreen() {
     setView("signin");
   };
 
-  const google = async () => {
-    setBusy(true);
-    const result = await signInWithGoogle();
-    if (result.error) {
-      setBusy(false);
-      toast.error("ورود با Google انجام نشد. دوباره تلاش کنید.");
-      return;
-    }
-    if (result.redirected) return;
-    void navigate({ to: "/", replace: true });
-  };
+  
 
   return (
     <div dir="rtl" className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-10">
@@ -335,17 +306,7 @@ function AuthScreen() {
               </button>
             )}
 
-            <div className="my-5 flex items-center gap-3 text-[11px] text-muted-foreground">
-              <span className="h-px flex-1 bg-border" /> یا <span className="h-px flex-1 bg-border" />
-            </div>
-
-            <button
-              onClick={() => void google()}
-              disabled={busy}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-input bg-background/60 px-4 py-3 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-60"
-            >
-              <GoogleIcon /> ادامه با Google
-            </button>
+            
           </>
         )}
       </div>
