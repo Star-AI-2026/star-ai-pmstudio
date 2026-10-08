@@ -2,26 +2,26 @@
  * Star-AI frozen web build — serves the web app bundled INSIDE this Electron
  * release instead of the live GitHub Pages site.
  *
- * How: the window still opens https://star-ai-2026.github.io/star-ai-pmstudio/,
- * but every request under that path is answered from the local `web/` folder
- * shipped with the app. The address stays identical, so Google sign-in,
- * email/password sign-in, reCAPTCHA (domain-bound) and saved sessions keep
- * working unchanged. Only `version.json` (the update policy) is fetched live.
- * Everything else (Lovable Cloud, AI API, Google) goes to the network normally.
+ * The window opens https://star-ai-2026.github.io/star-ai-pmstudio/ and every
+ * GET/HEAD under that path is answered from the local `web/` folder. Every
+ * other request (Lovable Cloud, AI API, Google, reCAPTCHA, version.json) is
+ * passed to the network unchanged via net.fetch(..., bypassCustomProtocolHandlers).
  *
  *   const { registerLocalApp, APP_URL } = require("./local-app.cjs");
  *   app.whenReady().then(() => { registerLocalApp(); ...; win.loadURL(APP_URL); });
  *
- * Requires Electron 25+ (protocol.handle / net.fetch).
+ * Requires Electron >= 25 (protocol.handle, net.fetch with
+ * bypassCustomProtocolHandlers). Intercepting the built-in "https" scheme with
+ * protocol.handle is documented by Electron; it applies to ONE session — pass
+ * the session you load the window in if it isn't session.defaultSession.
  */
-const { app, net, protocol } = require("electron");
 const fs = require("fs");
 const path = require("path");
 
 const HOST = "star-ai-2026.github.io";
 const PREFIX = "/star-ai-pmstudio/";
 const APP_URL = `https://${HOST}${PREFIX}`;
-// Always live — this is the update policy, never frozen.
+// Always live from GitHub Pages — the update policy is never frozen.
 const LIVE_PATHS = new Set([`${PREFIX}version.json`]);
 
 const TYPES = {
@@ -32,44 +32,68 @@ const TYPES = {
   ".txt": "text/plain", ".map": "application/json", ".wasm": "application/wasm",
 };
 
-function webRoot() {
-  // Packaged: resources/web (extraResource). Dev: <project>/web.
+/**
+ * Pure routing decision (no Electron) — unit-tested.
+ * Returns {action:"network"} | {action:"redirect", location} |
+ *         {action:"file", file} | {action:"status", status}
+ */
+function resolveRequest(rawUrl, method, root) {
+  let url;
+  try { url = new URL(rawUrl); } catch { return { action: "network" }; }
+  if (url.protocol !== "https:" || url.hostname !== HOST) return { action: "network" };
+  if (url.pathname === PREFIX.slice(0, -1)) {
+    return { action: "redirect", location: APP_URL + url.search + url.hash };
+  }
+  if (!url.pathname.startsWith(PREFIX) || LIVE_PATHS.has(url.pathname)) return { action: "network" };
+  if (method !== "GET" && method !== "HEAD") return { action: "status", status: 405 };
+
+  // url.pathname never contains ?query or #hash.
+  let rel;
+  try { rel = decodeURIComponent(url.pathname.slice(PREFIX.length)); } catch { return { action: "status", status: 400 }; }
+  if (rel.includes("\0")) return { action: "status", status: 400 };
+  // Decoded version.json (e.g. version%2Ejson) must also stay live.
+  if (LIVE_PATHS.has(PREFIX + rel)) return { action: "network" };
+
+  const base = path.resolve(root);
+  const file = path.resolve(base, rel);
+  const relToRoot = path.relative(base, file);
+  if (relToRoot.startsWith("..") || path.isAbsolute(relToRoot)) return { action: "status", status: 403 };
+
+  const index = path.join(base, "index.html");
+  if (relToRoot === "") return { action: "file", file: index };
+  let stat = null;
+  try { stat = fs.statSync(file); } catch { /* missing */ }
+  if (stat && stat.isFile()) return { action: "file", file };
+  // Missing asset (has an extension) → real 404; otherwise SPA route → shell.
+  if (path.extname(rel)) return { action: "status", status: 404 };
+  return { action: "file", file: index };
+}
+
+function webRoot(app) {
+  // Packaged: <resources>/web (extraResource). Dev: <project>/web.
   const packaged = path.join(process.resourcesPath || "", "web");
   if (app.isPackaged && fs.existsSync(packaged)) return packaged;
   return path.join(app.getAppPath(), "web");
 }
 
-function fileResponse(file) {
-  const type = TYPES[path.extname(file).toLowerCase()] || "application/octet-stream";
-  return new Response(fs.readFileSync(file), {
-    status: 200,
-    headers: { "content-type": type, "cache-control": "no-store" },
-  });
-}
-
 function registerLocalApp(ses) {
-  const root = webRoot();
+  const { app, net, protocol } = require("electron");
+  const root = webRoot(app);
   const index = path.join(root, "index.html");
   if (!fs.existsSync(index)) {
-    throw new Error(`Bundled Star-AI web build missing: ${index}. Run the release build.`);
+    throw new Error(`Bundled Star-AI web build missing: ${index}. Run "node release.cjs".`);
   }
   const target = ses ? ses.protocol : protocol;
 
   target.handle("https", async (request) => {
-    const url = new URL(request.url);
-    const local = url.hostname === HOST && url.pathname.startsWith(PREFIX) && !LIVE_PATHS.has(url.pathname);
-    if (!local || request.method !== "GET") {
-      return net.fetch(request, { bypassCustomProtocolHandlers: true });
-    }
-    const rel = decodeURIComponent(url.pathname.slice(PREFIX.length));
-    const file = path.normalize(path.join(root, rel));
-    // Block path traversal outside the bundled folder.
-    if (!file.startsWith(root)) return new Response("Forbidden", { status: 403 });
-    if (rel && fs.existsSync(file) && fs.statSync(file).isFile()) return fileResponse(file);
-    // Missing file with an extension = real 404; otherwise a client route → app shell.
-    if (path.extname(rel)) return new Response("Not found", { status: 404 });
-    return fileResponse(index);
+    const r = resolveRequest(request.url, request.method, root);
+    if (r.action === "network") return net.fetch(request, { bypassCustomProtocolHandlers: true });
+    if (r.action === "redirect") return new Response(null, { status: 301, headers: { location: r.location } });
+    if (r.action === "status") return new Response(String(r.status), { status: r.status });
+    const type = TYPES[path.extname(r.file).toLowerCase()] || "application/octet-stream";
+    const body = request.method === "HEAD" ? null : fs.readFileSync(r.file);
+    return new Response(body, { status: 200, headers: { "content-type": type, "cache-control": "no-store" } });
   });
 }
 
-module.exports = { registerLocalApp, APP_URL };
+module.exports = { registerLocalApp, resolveRequest, APP_URL, HOST, PREFIX };
