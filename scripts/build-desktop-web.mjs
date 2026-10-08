@@ -6,7 +6,7 @@
 // Uses the exact same static build as GitHub Pages (base /star-ai-pmstudio/,
 // API on the Lovable deployment), so behaviour matches the website.
 import { execSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const [, , outArg, version = ""] = process.argv;
@@ -26,8 +26,14 @@ execSync("npm run build", {
   },
 });
 
+// Verified output of the static (STAR_AI_BASE) build in vite.config.ts.
 const src = join(process.cwd(), "dist", "client");
-if (!existsSync(join(src, "index.html"))) throw new Error("dist/client/index.html missing after build");
+const indexFile = join(src, "index.html");
+if (!existsSync(indexFile)) throw new Error("dist/client/index.html missing after build");
+const html = readFileSync(indexFile, "utf8");
+if (!html.includes('"/star-ai-pmstudio/assets/')) {
+  throw new Error("index.html does not reference /star-ai-pmstudio/assets/ — wrong base path");
+}
 
 rmSync(webDir, { recursive: true, force: true });
 mkdirSync(webDir, { recursive: true });
