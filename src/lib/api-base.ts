@@ -15,7 +15,7 @@ const apiBase = (typeof __STAR_AI_API_BASE__ === "string" ? __STAR_AI_API_BASE__
 export const CHAT_ENDPOINT = `${apiBase}/api/public/chat`;
 
 /** Captcha-protected sign-up endpoint (verification happens server-side). */
-export const SIGNUP_ENDPOINT = `${apiBase}/api/public/signup`;
+export const SIGNUP_ENDPOINT = `https://star-ai-pmstudio.lovable.app/api/public/signup`;
 
 /**
  * Origin of the Lovable-hosted deployment ("" when the app is served from it).
