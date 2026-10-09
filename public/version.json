@@ -1,6 +1,6 @@
 {
-  "latestVersion": "1.0.1",
-  "minimumVersion": "1.0.1",
+  "latestVersion": "1.4.0",
+  "minimumVersion": "1.4.0",
   "channel": "stable",
 
   "betaVersion": "1.0.3 Beta",
@@ -12,17 +12,21 @@
 ],
 
   "releaseNotes": [
-    "Initial Star-AI release"
+    "What's New in Star-AI 1.4.0",
+    
+  "Fixed a bug where the (Continue with Google) option remained visible on the login page.",
+
+  "Improved the login experience."
   ],
 
   "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/latest",
 
-  "setupFileName": "Star-AI-Setup-1.0.3-Beta.exe",
-  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v1.0.3-beta/Star-AI-Setup-1.0.3-Beta.exe",
+  "setupFileName": "Star-AI-Setup-1.4.0.exe",
+  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v1.4.0/Star-AI-Setup-1.4.0.exe",
 
   "featureRequirements": {
-    "newAIInterface": "1.0.2",
-    "advancedTools": "1.1.0",
+    "newAIInterface": "1.4.0",
+    "advancedTools": "1.4.0",
     "futureFeature": "2.0.0"
   }
 }
