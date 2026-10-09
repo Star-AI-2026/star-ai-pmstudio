@@ -44,7 +44,7 @@ export function getVersionConfig(version: StarVersion): VersionRuntimeConfig {
   if (version === "4.0") {
     return {
       model: process.env["STAR_AI_4_MODEL"] || DEFAULT_MODEL,
-      reasoningEffort: "high",
+      reasoningEffort: "medium",
       reasoningSummary: "auto",
       systemPrompt: [
         ...baseIdentity("4.0"),
