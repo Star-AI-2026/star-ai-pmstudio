@@ -228,7 +228,7 @@ export const VERSION_CATALOG: VersionCatalogEntry[] = [
     subtitle: "Futuristic cyan / blue",
     theme: "futuristic-cyan",
     swatch: ["oklch(0.82 0.14 200)", "oklch(0.7 0.16 245)"],
-    enabled: false,
+    enabled: true,
   },
   {
     id: "5.0",
