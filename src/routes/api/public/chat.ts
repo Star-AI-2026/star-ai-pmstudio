@@ -28,7 +28,7 @@ const AttachmentSchema = z.object({
 
 const BodySchema = z.object({
   // The client picks a VERSION, never a model name. The server maps it.
-  version: z.enum(["2.0", "3.0"]),
+  version: z.enum(["2.0", "3.0", "4.0"]),
   style: z
     .enum(["balanced", "creative", "precise", "friendly", "professional", "short", "detailed"])
     .default("balanced"),
@@ -136,7 +136,7 @@ export const Route = createFileRoute("/api/public/chat")({
                 if (!search) {
                   controller.enqueue(line({ type: "notice", value: "Web Search is not configured yet." }));
                 } else if (query.trim()) {
-                  controller.enqueue(line({ type: "status", value: "Searching the web…" }));
+                  controller.enqueue(line({ type: "status", value: "Searching the webâ€¦" }));
                   try {
                     const results = await search.search(query, request.signal);
                     if (results.length) {
@@ -188,3 +188,4 @@ export const Route = createFileRoute("/api/public/chat")({
     },
   },
 });
+
