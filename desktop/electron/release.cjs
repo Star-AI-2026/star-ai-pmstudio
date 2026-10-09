@@ -14,7 +14,7 @@ const path = require("path");
 const fs = require("fs");
 
 const electronDir = __dirname;
-const webProject = path.resolve(electronDir, process.env.STAR_AI_WEB_DIR || "../star-ai-pmstudio");
+const webProject = path.resolve(electronDir, process.env.STAR_AI_WEB_DIR || "../..");
 const exeScript = process.env.STAR_AI_EXE_SCRIPT || "dist";
 const { version } = require(path.join(electronDir, "package.json"));
 const isWin = process.platform === "win32";
