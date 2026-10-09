@@ -6,6 +6,7 @@
  *
  *   STAR_AI_2_MODEL   -> model used by Star-AI 2.0
  *   STAR_AI_3_MODEL   -> model used by Star-AI 3.0
+ *   STAR_AI_4_MODEL   -> model used by Star-AI 4.0
  *   LOVABLE_API_KEY   -> credential for the AI provider (server-side only)
  */
 
@@ -40,6 +41,19 @@ function baseIdentity(version: StarVersion) {
 }
 
 export function getVersionConfig(version: StarVersion): VersionRuntimeConfig {
+  if (version === "4.0") {
+    return {
+      model: process.env["STAR_AI_4_MODEL"] || DEFAULT_MODEL,
+      reasoningEffort: "high",
+      reasoningSummary: "auto",
+      systemPrompt: [
+        ...baseIdentity("4.0"),
+        "You are the next-generation assistant: handle complex reasoning, coding, analysis and multi-step tasks carefully.",
+        "Prioritize accuracy, useful structure and clear explanations. Do not claim capabilities you do not have.",
+      ].join(" "),
+    };
+  }
+
   if (version === "3.0") {
     return {
       model: process.env["STAR_AI_3_MODEL"] || DEFAULT_MODEL,
@@ -69,7 +83,7 @@ export function getVersionConfig(version: StarVersion): VersionRuntimeConfig {
 export const MODE_INSTRUCTIONS: Record<AIMode, string> = {
   general: "Task mode: General assistance. Answer directly and helpfully.",
   coding:
-    "Task mode: Code Assistant. Produce correct, runnable code in fenced blocks with a language tag. Explain trade-offs briefly, point out bugs and edge cases, and offer refactors when useful. Never claim to have executed code — you cannot run it.",
+    "Task mode: Code Assistant. Produce correct, runnable code in fenced blocks with a language tag. Explain trade-offs briefly, point out bugs and edge cases, and offer refactors when useful. Never claim to have executed code â€” you cannot run it.",
   writing:
     "Task mode: Writing. Focus on structure, clarity, tone and flow. Offer an improved draft rather than only feedback.",
   research:
@@ -104,7 +118,7 @@ export function buildSystemPrompt(opts: {
 
   if (opts.userName && opts.userName.trim()) {
     parts.push(
-      `The signed-in user's display name is "${opts.userName.trim()}". Address them naturally by this name when it fits — for example in a greeting or an occasional acknowledgement. Do not use their name in every sentence, and never ask them what their name is.`,
+      `The signed-in user's display name is "${opts.userName.trim()}". Address them naturally by this name when it fits â€” for example in a greeting or an occasional acknowledgement. Do not use their name in every sentence, and never ask them what their name is.`,
     );
   }
 
@@ -127,4 +141,5 @@ export function buildSystemPrompt(opts: {
 
   return parts.join("\n\n");
 }
+
 
