@@ -3,11 +3,12 @@
   "minimumVersion": "1.0.1",
   "channel": "stable",
 
-  "betaVersion": "1.0.2 Beta",
+  "betaVersion": "1.0.3 Beta",
 "betaReleaseNotes": [
-  "Improved desktop updater",
-  "Improved update detection",
-  "Bug fixes and stability improvements"
+  "What's New",
+
+"Fixed some bugs.",
+"Removed “Continue with Google” sign-in option."
 ],
 
   "releaseNotes": [
@@ -16,8 +17,8 @@
 
   "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/latest",
 
-  "setupFileName": "Star-AI-Setup-1.0.2-Beta.exe",
-  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v1.0.2-beta/Star-AI-Setup-1.0.2-Beta.exe",
+  "setupFileName": "Star-AI-Setup-1.0.3-Beta.exe",
+  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v1.0.3-beta/Star-AI-Setup-1.0.3-Beta.exe",
 
   "featureRequirements": {
     "newAIInterface": "1.0.2",
