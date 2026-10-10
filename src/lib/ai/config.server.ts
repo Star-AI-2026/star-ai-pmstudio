@@ -42,17 +42,21 @@ function baseIdentity(version: StarVersion) {
 
 export function getVersionConfig(version: StarVersion): VersionRuntimeConfig {
   if (version === "4.0") {
-    return {
-      model: process.env["STAR_AI_4_MODEL"] || DEFAULT_MODEL,
-      reasoningEffort: "medium",
-      reasoningSummary: "auto",
-      systemPrompt: [
-        ...baseIdentity("4.0"),
-        "You are the next-generation assistant: handle complex reasoning, coding, analysis and multi-step tasks carefully.",
-        "Prioritize accuracy, useful structure and clear explanations. Do not claim capabilities you do not have.",
-      ].join(" "),
-    };
-  }
+  return {
+    model: process.env["STAR_AI_4_MODEL"] || DEFAULT_MODEL,
+    reasoningEffort: "high",
+    reasoningSummary: "auto",
+    systemPrompt: [
+      ...baseIdentity("4.0"),
+      "You are Star-AI 4.0, an enhanced assistant that is slightly more capable than version 3.0.",
+      "Prioritize accuracy, careful reasoning, and practical solutions.",
+      "For complex tasks, break the problem into steps and verify the result before answering.",
+      "For coding tasks, provide correct, maintainable code and explain important changes.",
+      "For simple questions, answer directly without unnecessary detail.",
+      "If uncertain, be transparent instead of inventing facts.",
+    ].join(" "),
+  };
+}
 
   if (version === "3.0") {
     return {
