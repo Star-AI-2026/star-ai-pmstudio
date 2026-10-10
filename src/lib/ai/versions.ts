@@ -259,7 +259,7 @@ export const VERSION_CATALOG: VersionCatalogEntry[] = [
   {
     id: "2.0",
     name: "Star-AI 2.0",
-    emoji: "â­",
+    emoji: "⭐",
     subtitle: "Modern blue technology",
     theme: "tech-blue",
     swatch: ["oklch(0.68 0.18 275)", "oklch(0.72 0.16 225)"],
@@ -268,7 +268,7 @@ export const VERSION_CATALOG: VersionCatalogEntry[] = [
   {
     id: "3.0",
     name: "Star-AI 3.0",
-    emoji: "â­",
+    emoji: "⭐",
     subtitle: "Advanced blue / purple cosmic",
     theme: "cosmic-violet",
     swatch: ["oklch(0.79 0.15 330)", "oklch(0.82 0.14 195)"],
@@ -277,7 +277,7 @@ export const VERSION_CATALOG: VersionCatalogEntry[] = [
   {
     id: "4.0",
     name: "Star-AI 4.0",
-    emoji: "ðŸš€",
+    emoji: "🚀",
     subtitle: "Futuristic cyan / blue",
     theme: "futuristic-cyan",
     swatch: ["oklch(0.82 0.14 200)", "oklch(0.7 0.16 245)"],
@@ -286,7 +286,7 @@ export const VERSION_CATALOG: VersionCatalogEntry[] = [
   {
     id: "5.0",
     name: "Star-AI 5.0",
-    emoji: "ðŸ”¥",
+    emoji: "🔥",
     subtitle: "Powerful cosmic energy",
     theme: "cosmic-energy",
     swatch: ["oklch(0.75 0.2 35)", "oklch(0.7 0.19 320)"],
@@ -295,7 +295,7 @@ export const VERSION_CATALOG: VersionCatalogEntry[] = [
   {
     id: "programming",
     name: "Star-AI Programming",
-    emoji: "ðŸ’»",
+    emoji: "💻",
     subtitle: "Futuristic developer / code",
     theme: "developer",
     swatch: ["oklch(0.8 0.19 150)", "oklch(0.72 0.13 205)"],
@@ -304,7 +304,7 @@ export const VERSION_CATALOG: VersionCatalogEntry[] = [
   {
     id: "5.5",
     name: "Star-AI 5.5",
-    emoji: "âš¡",
+    emoji: "⚡",
     subtitle: "Premium cosmic",
     theme: "premium-cosmic",
     swatch: ["oklch(0.85 0.15 95)", "oklch(0.72 0.17 300)"],
@@ -313,7 +313,7 @@ export const VERSION_CATALOG: VersionCatalogEntry[] = [
   {
     id: "5.6",
     name: "Star-AI 5.6",
-    emoji: "ðŸŒŒ",
+    emoji: "🌌",
     subtitle: "Flagship deep space",
     theme: "deep-space",
     swatch: ["oklch(0.62 0.2 285)", "oklch(0.84 0.12 210)"],
