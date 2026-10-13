@@ -3,12 +3,11 @@
   "minimumVersion": "1.4.0",
   "channel": "stable",
 
-  "betaVersion": "1.0.3 Beta",
+  "betaVersion": "2.0.1 Beta",
 "betaReleaseNotes": [
   "What's New",
 
-"Fixed some bugs.",
-"Removed “Continue with Google” sign-in option."
+"- Added Star-AI 4.0 to the desktop app."
 ],
 
   "releaseNotes": [
@@ -21,12 +20,12 @@
 
   "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/latest",
 
-  "setupFileName": "Star-AI-Setup-1.4.0.exe",
-  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v1.4.0/Star-AI-Setup-1.4.0.exe",
+  "setupFileName": "Star-AI-Setup-2.0.1-‌Beta.exe",
+  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v2.0.1-Beta/Star-AI-Setup-2.0.1-.Beta.exe",
 
   "featureRequirements": {
-    "newAIInterface": "1.4.0",
-    "advancedTools": "1.4.0",
-    "futureFeature": "2.0.0"
+    "newAIInterface": "2.0.1",
+    "advancedTools": "2.0.1",
+    "futureFeature": "2.0.1"
   }
 }
