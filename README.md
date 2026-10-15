@@ -778,15 +778,14 @@ The two versions must have noticeably different themes, backgrounds, animations,
 
 Make Star-AI 3.0 feel like a major upgrade over Star-AI 2.0.
 
-This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://star-ai-pmstudio.lovable.app
 
-## Build with Lovable
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/539ce172-cd90-4170-8d6d-77af404a9515).
+## Build with PM studio
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
+
+
+- **Ship faster**: describe what you want to build and pmstudio handles the code.
 - **Stay in sync**: every change made in Lovable is committed straight to this repository.
 - **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
