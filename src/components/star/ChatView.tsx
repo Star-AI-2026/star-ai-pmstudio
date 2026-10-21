@@ -1,6 +1,7 @@
 import { Download, Eraser, Menu, Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { AdBanner } from "./AdBanner";
 import { Composer } from "./Composer";
 import { MessageItem } from "./MessageItem";
 import { StarLogo } from "./StarLogo";
@@ -115,6 +116,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
         )}
       </div>
 
+            <AdBanner className="shrink-0" />
       <Composer />
     </div>
   );
