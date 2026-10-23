@@ -98,15 +98,24 @@ export const Route = createFileRoute("/api/public/chat")({
           );
         }
 
-        let parsed;
-        try {
-          parsed = BodySchema.parse(await request.json());
-        } catch {
-          return new Response(JSON.stringify({ error: "Your message could not be processed." }), {
-            status: 400,
-            headers: CORS,
-          });
-        }
+        
+let parsed;
+try {
+  parsed = BodySchema.parse(await request.json());
+} catch (error) {
+  console.error(
+    "[public/chat] Validation error:",
+    error instanceof Error ? error.message : String(error)
+  );
+
+  return new Response(
+    JSON.stringify({ error: "Your message could not be processed." }),
+    {
+      status: 400,
+      headers: CORS,
+    }
+  );
+}
 
         const attachmentError = validateAttachments(parsed.messages);
         if (attachmentError) {
