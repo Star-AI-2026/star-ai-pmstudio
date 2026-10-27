@@ -3,13 +3,12 @@
   "minimumVersion": "1.4.0",
   "channel": "stable",
 
-  "betaVersion": "2.0.2 Beta",
+  "betaVersion": "2.0.5 Beta",
 "betaReleaseNotes": [
   "What's New",
 
-" Added a direct advertising banner to the AI chat interface.",
-" Improved the display and layout of the advertising banner.",
-" Minor UI improvements and bug fixes."
+
+"  Star-AI 4.0 has been temporarily locked due to a bug"
 
 ],
 
@@ -23,8 +22,8 @@
 
   "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/latest",
 
-  "setupFileName": "Star-AI-Setup-2.0.2-‌Beta.exe",
-  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v2.0.2-Beta/Star-AI-Setup-2.0.2-Beta.exe",
+  "setupFileName": "Star-AI-Setup-2.0.5-‌Beta.exe",
+  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v2.0.5-Beta/Star-AI-Setup-2.0.5-Beta.exe",
 
   "featureRequirements": {
     "newAIInterface": "2.0.2",
