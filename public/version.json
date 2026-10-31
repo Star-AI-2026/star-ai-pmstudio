@@ -1,5 +1,5 @@
 {
-  "latestVersion": "2.100.0",
+  "latestVersion": "2.200.0",
   "minimumVersion": "1.4.0",
   "channel": "stable",
   "betaVersion": "2.0.5-Beta",
@@ -8,19 +8,27 @@
     "Star-AI 4.0 has been temporarily locked due to a bug."
   ],
   "releaseNotes": [
-    "What's New in Star-AI 2.100.0 (2.1)",
-    "Added real-time web search capabilities.",
-    "Improved access to up-to-date online information.",
-    "Added relevant sources and links to search results.",
-    "Improved performance and stability.",
-    "Fixed minor bugs and made internal optimizations."
+    "What's New in Star-AI 2.200.0 (2.2)",
+    "Added modern Liquid Glass visual effects.",
+    "Added Blur and Liquid Glass customization options.",
+    "Added global animation controls to enable or disable animations.",
+    "Improved button interactions, menus, pop-ups, and window transitions.",
+    "Added smooth animations for interface elements.",
+    "Redesigned the AI version selector with a compact dropdown menu.",
+    "Added visual indicators for locked and available AI versions.",
+    "Improved Persian language support across the application.",
+    "Added Persian translations to the Help section.",
+    "Improved language consistency throughout the interface.",
+    "Fixed version selector positioning and dropdown behavior.",
+    "Improved interface layout and spacing.",
+    "Improved overall UI stability and user experience."
   ],
   "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/latest",
-  "setupFileName": "Star-AI-Setup-2.100.0.exe",
-  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v2.100.0/Star-AI-Setup-2.100.0.exe",
+  "setupFileName": "Star-AI-Setup-2.200.0.exe",
+  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v2.200.0/Star-AI-Setup-2.200.0.exe",
   "featureRequirements": {
-    "newAIInterface": "2.100.0",
-    "advancedTools": "2.100.0",
-    "futureFeature": "2.100.0"
+    "newAIInterface": "2.200.0",
+    "advancedTools": "2.200.0",
+    "futureFeature": "2.200.0"
   }
 }
