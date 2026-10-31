@@ -5,10 +5,12 @@ import { toast } from "sonner";
 import { AI_MODES, type AIMode } from "@/lib/ai/modes";
 import { RESPONSE_STYLES, VERSION_LIST, type ResponseStyle, type StarVersion } from "@/lib/ai/versions";
 import { useStar } from "@/lib/star/store";
+import { useI18n } from "@/lib/star/i18n";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
   "General",
+  "Language",
   "Appearance",
   "AI",
   "Memory",
@@ -65,48 +67,49 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
     useStar();
   const [section, setSection] = useState<Section>("General");
   const [memoryDraft, setMemoryDraft] = useState("");
+  const { t, dir } = useI18n();
 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 backdrop-blur-sm">
+    <div dir={dir} className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 backdrop-blur-sm">
       <div className="glass flex h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl shadow-glow md:flex-row">
         <nav className="scrollbar-thin flex shrink-0 gap-1 overflow-x-auto border-b border-border p-3 md:w-48 md:flex-col md:overflow-y-auto md:border-b-0 md:border-r">
-          <p className="hidden px-2 pb-2 font-display text-sm font-semibold md:block">Settings</p>
+          <p className="hidden px-2 pb-2 font-display text-sm font-semibold md:block">{t("Settings")}</p>
           {SECTIONS.map((s) => (
             <button
               key={s}
               onClick={() => setSection(s)}
               className={cn(
-                "whitespace-nowrap rounded-xl px-3 py-2 text-left text-xs font-medium transition-colors",
+                "whitespace-nowrap rounded-xl px-3 py-2 text-start text-xs font-medium transition-colors",
                 section === s ? "bg-brand-gradient text-primary-foreground" : "hover:bg-secondary",
               )}
             >
-              {s}
+              {t(s)}
             </button>
           ))}
         </nav>
 
         <div className="scrollbar-thin flex-1 overflow-y-auto p-5">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold">{section}</h2>
+            <h2 className="font-display text-lg font-semibold">{t(section)}</h2>
             <button
               onClick={onClose}
               className="rounded-xl border border-border px-3 py-1.5 text-xs hover:bg-secondary"
             >
-              Done
+              {t("Done")}
             </button>
           </div>
 
           {section === "General" && (
             <div>
-              <Row label="Conversations stored" hint="Saved on this device">
+              <Row label={t("conversationsStored")} hint={t("savedOnDevice")}>
                 <span className="text-sm tabular-nums">{conversations.length}</span>
               </Row>
-              <Row label="Send with Enter" hint="Shift + Enter adds a new line">
-                <span className="text-xs text-muted-foreground">Always on</span>
+              <Row label={t("Send with Enter")} hint={t("Shift + Enter adds a new line")}>
+                <span className="text-xs text-muted-foreground">{t("Always on")}</span>
               </Row>
-              <Row label="Reply language" hint="Automatic follows the language you write in">
+              <Row label={t("replyLanguage")} hint={t("Automatic follows the language you write in")}>
                 <select
                   value={settings.language}
                   onChange={(e) => updateSettings({ language: e.target.value })}
@@ -114,26 +117,45 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                 >
                   {["auto", "English", "Spanish", "French", "German", "Portuguese", "Arabic", "Hindi", "Chinese", "Japanese"].map((l) => (
                     <option key={l} value={l}>
-                      {l === "auto" ? "Automatic" : l}
+                      {l === "auto" ? t("Automatic") : t(l)}
                     </option>
                   ))}
                 </select>
               </Row>
-              <Row label="Call me by" hint="What Star-AI should call itself for you">
+              <Row label={t("Call me by")} hint={t("What Star-AI should call itself for you")}>
                 <input
                   value={settings.assistantName}
                   onChange={(e) => updateSettings({ assistantName: e.target.value })}
-                  placeholder="Star-AI"
-                  aria-label="Assistant name"
+                  placeholder={t("Star-AI")}
+                  aria-label={t("Assistant name")}
                   className="w-40 rounded-xl border border-border bg-transparent px-3 py-1.5 text-xs outline-none"
                 />
               </Row>
             </div>
           )}
 
+          {section === "Language" && (
+            <div>
+              <Row
+                label={t("uiLanguage")}
+                hint={t("Choose the language used throughout the app")}
+              >
+                <select
+                  value={settings.uiLanguage ?? "en"}
+                  onChange={(e) => updateSettings({ uiLanguage: e.target.value as "fa" | "en" })}
+                  className="min-w-32 rounded-xl border border-border bg-popover px-3 py-2 text-xs"
+                  aria-label={t("uiLanguage")}
+                >
+                  <option value="en">English</option>
+                  <option value="fa">فارسی</option>
+                </select>
+              </Row>
+            </div>
+          )}
+
           {section === "Appearance" && (
             <div>
-              <Row label="Color mode">
+              <Row label={t("Color mode")}>
                 <div className="flex gap-1 rounded-xl border border-border p-1">
                   {(["dark", "light", "system"] as const).map((m) => (
                     <button
@@ -149,7 +171,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                   ))}
                 </div>
               </Row>
-              <Row label="Background intensity">
+              <Row label={t("Background intensity")}>
                 <input
                   type="range"
                   min={0}
@@ -159,10 +181,16 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                   className="w-40 accent-[var(--primary)]"
                 />
               </Row>
-              <Row label="Animations">
+              <Row label={t("Animations")}>
                 <Toggle on={settings.animations} onChange={(v) => updateSettings({ animations: v })} />
               </Row>
-              <Row label="Particle effects">
+              <Row label={t("Blur")} hint={t("Enable background blur effects")}>
+                <Toggle on={settings.blur} onChange={(v) => updateSettings({ blur: v })} />
+              </Row>
+              <Row label={t("Liquid Glass")} hint={t("Enable translucent liquid glass surfaces")}>
+                <Toggle on={settings.liquidGlass} onChange={(v) => updateSettings({ liquidGlass: v })} />
+              </Row>
+              <Row label={t("Particle effects")}>
                 <Toggle on={settings.particles} onChange={(v) => updateSettings({ particles: v })} />
               </Row>
             </div>
@@ -170,7 +198,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
 
           {section === "AI" && (
             <div>
-              <Row label="Default version" hint="Used when Star-AI starts">
+              <Row label={t("Default version")} hint={t("Used when Star-AI starts")}>
                 <select
                   value={settings.defaultVersion}
                   onChange={(e) =>
@@ -185,7 +213,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                   ))}
                 </select>
               </Row>
-              <Row label="Response style" hint="Applied to the AI system configuration">
+              <Row label={t("Response style")} hint={t("Applied to the AI system configuration")}>
                 <select
                   value={settings.style}
                   onChange={(e) => updateSettings({ style: e.target.value as ResponseStyle })}
@@ -193,12 +221,12 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                 >
                   {RESPONSE_STYLES.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {s.label} — {s.hint}
+                      {t(s.label)} — {t(s.hint)}
                     </option>
                   ))}
                 </select>
               </Row>
-              <Row label="Default mode" hint="Task framing applied to new messages">
+              <Row label={t("Default mode")} hint={t("Task framing applied to new messages")}>
                 <select
                   value={settings.mode}
                   onChange={(e) => updateSettings({ mode: e.target.value as AIMode })}
@@ -206,21 +234,21 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                 >
                   {AI_MODES.map((m) => (
                     <option key={m.id} value={m.id}>
-                      {m.label} — {m.hint}
+                      {t(m.label)} — {t(m.hint)}
                     </option>
                   ))}
                 </select>
               </Row>
-              <Row label="Web search" hint="Requires a search provider key on the server">
+              <Row label={t("Web search")} hint={t("Requires a search provider key on the server")}>
                 <Toggle on={settings.webSearch} onChange={(v) => updateSettings({ webSearch: v })} />
               </Row>
-              <Row label="Read answers aloud" hint="Speak each response when it finishes">
+              <Row label={t("Read answers aloud")} hint={t("Speak each response when it finishes")}>
                 <Toggle on={settings.autoSpeak} onChange={(v) => updateSettings({ autoSpeak: v })} />
               </Row>
-              <Row label="Streaming responses" hint="Show text as it is generated">
+              <Row label={t("Streaming responses")} hint={t("Show text as it is generated")}>
                 <Toggle on={settings.streaming} onChange={(v) => updateSettings({ streaming: v })} />
               </Row>
-              <Row label="Model configuration" hint="Chosen on the server per version">
+              <Row label={t("Model configuration")} hint={t("Chosen on the server per version")}>
                 <span className="text-xs text-muted-foreground">STAR_AI_2_MODEL / STAR_AI_3_MODEL</span>
               </Row>
             </div>
@@ -228,7 +256,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
 
           {section === "Memory" && (
             <div>
-              <Row label="Enable memory" hint="Let Star-AI remember useful details">
+              <Row label={t("Enable memory")} hint={t("Let Star-AI remember useful details")}>
                 <Toggle
                   on={settings.memoryEnabled}
                   onChange={(v) => updateSettings({ memoryEnabled: v })}
@@ -238,7 +266,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                 <input
                   value={memoryDraft}
                   onChange={(e) => setMemoryDraft(e.target.value)}
-                  placeholder="Remember that…"
+                  placeholder={t("Remember that…")}
                   className="flex-1 rounded-xl border border-border bg-transparent px-3 py-2 text-xs outline-none"
                 />
                 <button
@@ -253,7 +281,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
               </div>
               <div className="mt-3 space-y-2">
                 {memories.length === 0 && (
-                  <p className="text-xs text-muted-foreground">No saved memories yet.</p>
+                  <p className="text-xs text-muted-foreground">{t("No saved memories yet.")}</p>
                 )}
                 {memories.map((m) => (
                   <div
@@ -264,7 +292,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                     <button
                       onClick={() => deleteMemory(m.id)}
                       className="text-muted-foreground hover:text-destructive"
-                      aria-label="Delete memory"
+                      aria-label={t("Delete")}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -290,11 +318,11 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
 
           {section === "Privacy" && (
             <div>
-              <Row label="Data location" hint="Conversations stay in this browser">
-                <span className="text-xs text-muted-foreground">Local device</span>
+              <Row label={t("Data location")} hint={t("Conversations stay in this browser")}>
+                <span className="text-xs text-muted-foreground">{t("Local device")}</span>
               </Row>
-              <Row label="API keys" hint="Never exposed to the browser">
-                <span className="text-xs text-muted-foreground">Server-side only</span>
+              <Row label={t("API keys")} hint={t("Never exposed to the browser")}>
+                <span className="text-xs text-muted-foreground">{t("Server-side only")}</span>
               </Row>
               <button
                 onClick={() => {
@@ -310,7 +338,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
 
           {section === "Notifications" && (
             <div>
-              <Row label="Completion alerts" hint="Notify when a long response finishes">
+              <Row label={t("Completion alerts")} hint={t("Notify when a long response finishes")}>
                 <Toggle
                   on={settings.notifications}
                   onChange={(v) => updateSettings({ notifications: v })}
@@ -340,7 +368,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
 
           {section === "About" && (
             <div className="space-y-3 text-sm">
-              <p className="font-display text-xl font-semibold text-brand-gradient">Star-AI</p>
+              <p className="font-display text-xl font-semibold text-brand-gradient">{t("Star-AI")}</p>
               <p className="text-xs text-muted-foreground">
                 Two generations of the same assistant. Star-AI 2.0 is tuned for fast everyday work;
                 Star-AI 3.0 adds deeper reasoning, file and image understanding, and long-form work.

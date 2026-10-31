@@ -6,15 +6,18 @@ import { Composer } from "./Composer";
 import { MessageItem } from "./MessageItem";
 import { StarLogo } from "./StarLogo";
 import { WelcomeScreen } from "./WelcomeScreen";
+import { VersionMenu } from "./VersionMenu";
 import { MODE_MAP } from "@/lib/ai/modes";
 import { VERSIONS } from "@/lib/ai/versions";
 import { exportConversation } from "@/lib/star/export";
 import { useStar } from "@/lib/star/store";
+import { useI18n } from "@/lib/star/i18n";
 
 export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
   const { active, version, stream, settings, regenerate, editMessage, clearConversation } =
     useStar();
   const meta = VERSIONS[version];
+  const { t, dir } = useI18n();
   const bottomRef = useRef<HTMLDivElement>(null);
   const [exportOpen, setExportOpen] = useState(false);
 
@@ -23,29 +26,30 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
   }, [active?.messages.length, active?.messages[active.messages.length - 1]?.content]);
 
   return (
-    <div className="flex h-full min-w-0 flex-1 flex-col">
+    <div dir={dir} className="flex h-full min-w-0 flex-1 flex-col">
       <header className="flex items-center gap-2 px-3 py-3 sm:px-5">
         <button
           onClick={onOpenSidebar}
           className="glass rounded-xl p-2 md:hidden"
-          aria-label="Open menu"
+          aria-label={t("Open menu")}
         >
           <Menu className="h-4 w-4" />
         </button>
+        <VersionMenu />
         <StarLogo className="hidden h-6 w-6 text-primary md:block" animated={false} />
         <div className="min-w-0">
           <h1 className="truncate font-display text-sm font-semibold">
             {active?.title ?? meta.name}
           </h1>
           <p className="truncate text-[11px] text-muted-foreground">
-            {stream.busy && stream.status ? stream.status : meta.subtitle}
+            {stream.busy && stream.status ? stream.status : t(meta.subtitle)}
             {" · "}
-            {MODE_MAP[settings.mode].label} mode
+            {t(MODE_MAP[settings.mode].label)} {t("mode")}
           </p>
         </div>
         {meta.advanced && (
           <span className="ml-2 hidden items-center gap-1 rounded-full bg-brand-gradient px-2.5 py-1 text-[11px] font-semibold text-primary-foreground sm:flex">
-            <Zap className="h-3 w-3" /> Advanced Mode
+            <Zap className="h-3 w-3" /> {t("Advanced Mode")}
           </span>
         )}
 
@@ -57,7 +61,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
               aria-expanded={exportOpen}
               className="flex items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
-              <Download className="h-3 w-3" /> Export
+              <Download className="h-3 w-3" /> {t("Export")}
             </button>
             {exportOpen && (
               <div
@@ -73,7 +77,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
                       exportConversation(active, f);
                       setExportOpen(false);
                     }}
-                    className="block w-full rounded-xl px-3 py-2 text-left hover:bg-secondary"
+                    className="block w-full rounded-xl px-3 py-2 text-start hover:bg-secondary"
                   >
                     {f === "md"
                       ? "Markdown (.md)"
@@ -90,7 +94,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
               onClick={() => clearConversation(active.id)}
               className="flex items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
-              <Eraser className="h-3 w-3" /> Clear
+              <Eraser className="h-3 w-3" /> {t("Clear")}
             </button>
           </div>
         )}

@@ -1,6 +1,7 @@
 import { Lock } from "lucide-react";
 
 import type { VersionCatalogEntry } from "@/lib/ai/versions";
+import { useI18n } from "@/lib/star/i18n";
 
 /**
  * Locked-version screen. Purely presentational — it never activates a
@@ -13,13 +14,15 @@ export function LockedVersionDialog({
   version: VersionCatalogEntry | null;
   onClose: () => void;
 }) {
+  const { t, dir } = useI18n();
   if (!version) return null;
 
   return (
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={`${version.name} locked`}
+      dir={dir}
+      aria-label={`${t(version.name)} ${t("locked")} `}
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black/65 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
@@ -41,11 +44,11 @@ export function LockedVersionDialog({
         </p>
 
         <h2 dir="rtl" className="mt-2 font-display text-lg font-semibold">
-          این نسخه قفل است
+          {t("This version is locked")}
         </h2>
 
         <p dir="rtl" className="mt-3 text-sm leading-7 text-muted-foreground">
-          {version.name} در حال حاضر قفل است و در آپدیت‌های جدید Star-AI در دسترس قرار خواهد گرفت.
+          {t(version.name)} {t("is currently locked and will become available in future Star-AI updates.")}
         </p>
 
         <button
@@ -53,7 +56,7 @@ export function LockedVersionDialog({
           autoFocus
           className="mt-6 w-full rounded-2xl bg-brand-gradient py-2.5 text-sm font-semibold text-primary-foreground shadow-glow"
         >
-          خروج
+          {t("Close")}
         </button>
       </div>
     </div>

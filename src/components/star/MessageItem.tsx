@@ -21,6 +21,7 @@ import { ThinkingIndicator } from "./ThinkingIndicator";
 import { tts } from "@/lib/star/speech";
 import type { Attachment, Message } from "@/lib/star/types";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/star/i18n";
 
 function time(ts: number) {
   return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -46,6 +47,7 @@ export function MessageItem({
   onEdit: (text: string) => void;
   autoSpeak?: boolean;
 }) {
+  const { t, dir } = useI18n();
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(false);
   const [speaking, setSpeaking] = useState(false);
@@ -77,7 +79,7 @@ export function MessageItem({
 
   if (isUser) {
     return (
-      <div className="group flex flex-col items-end gap-1.5">
+      <div dir={dir} className="group flex flex-col items-end gap-1.5">
         {!!message.attachments?.length && (
           <div className="flex flex-wrap justify-end gap-2">
             {message.attachments.map((a) => (
@@ -103,7 +105,7 @@ export function MessageItem({
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
               rows={3}
-              aria-label="Edit your message"
+              aria-label={t("Edit your message")}
               className="w-full resize-none bg-transparent text-sm outline-none"
             />
             <div className="mt-2 flex justify-end gap-2 text-xs">
@@ -135,13 +137,13 @@ export function MessageItem({
 
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
           <span>{time(message.createdAt)}</span>
-          <button onClick={copy} className="hover:text-foreground" aria-label="Copy message">
+          <button onClick={copy} className="hover:text-foreground" aria-label={t("Copy message")}>
             {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
           </button>
           <button
             onClick={() => setEditing((e) => !e)}
             className="hover:text-foreground"
-            aria-label="Edit message"
+            aria-label={t("Edit message")}
           >
             {editing ? <X className="h-3.5 w-3.5" /> : <Pencil className="h-3.5 w-3.5" />}
           </button>
@@ -153,10 +155,10 @@ export function MessageItem({
   const empty = !message.content.trim();
 
   return (
-    <div className="group flex flex-col gap-2">
+    <div dir={dir} className="group flex flex-col gap-2">
       {message.reasoning && (
         <details className="glass rounded-xl px-3 py-2 text-xs text-muted-foreground">
-          <summary className="cursor-pointer select-none font-medium">Thought process</summary>
+          <summary className="cursor-pointer select-none font-medium">{t("Thought process")}</summary>
           <p className="mt-2 whitespace-pre-wrap">{message.reasoning}</p>
         </details>
       )}
@@ -223,13 +225,13 @@ export function MessageItem({
           <span className={cn("rounded-full border border-border px-1.5 py-0.5")}>
             Star-AI {message.version}
           </span>
-          <button onClick={copy} className="hover:text-foreground" aria-label="Copy response">
+          <button onClick={copy} className="hover:text-foreground" aria-label={t("Copy response")}>
             {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
           </button>
           <button
             onClick={onRegenerate}
             className="hover:text-foreground"
-            aria-label="Regenerate response"
+            aria-label={t("Regenerate response")}
           >
             <RefreshCw className="h-3.5 w-3.5" />
           </button>
@@ -237,7 +239,7 @@ export function MessageItem({
             <button
               onClick={toggleSpeak}
               className="hover:text-foreground"
-              aria-label={speaking ? "Stop reading aloud" : "Read response aloud"}
+              aria-label={speaking ? t("Stop reading aloud") : t("Read response aloud")}
             >
               {speaking ? (
                 <Square className="h-3.5 w-3.5 fill-current" />

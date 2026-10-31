@@ -2,7 +2,6 @@ import { ArrowUp, FileText, Globe, ImageIcon, Mic, Paperclip, Sheet, Square, X }
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { ModeSelector } from "./ModeSelector";
 import { VERSIONS } from "@/lib/ai/versions";
 import {
   ACCEPTED,
@@ -15,6 +14,7 @@ import { useDictation } from "@/lib/star/speech";
 import { useStar } from "@/lib/star/store";
 import type { Attachment } from "@/lib/star/types";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/star/i18n";
 
 const MAX_CHARS = 24000;
 const MAX_FILES = 6;
@@ -25,6 +25,7 @@ export function Composer() {
   const { version, settings, stream, sendMessage, stopGenerating, webSearch, setWebSearch } =
     useStar();
   const meta = VERSIONS[version];
+  const { t, dir } = useI18n();
   const [text, setText] = useState("");
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [uploads, setUploads] = useState<Uploading[]>([]);
@@ -53,7 +54,7 @@ export function Composer() {
     if (stream.busy) return;
     if (!text.trim() && attachments.length === 0) return;
     if (text.length > MAX_CHARS) {
-      toast.error("Your message is too long. Please shorten it.");
+      toast.error(t("Your message is too long. Please shorten it."));
       return;
     }
     if (dictation.listening) dictation.stop();
@@ -100,11 +101,12 @@ export function Composer() {
       return;
     }
     baseText.current = text.trim();
-    if (!dictation.start()) toast.info("Voice input isn't supported in this browser.");
+    if (!dictation.start()) toast.info(t("Voice input isn't supported in this browser."));
   };
 
   return (
     <div
+      dir={dir}
       className="mx-auto w-full max-w-3xl px-3 pb-4 sm:px-4 sm:pb-6"
       onDragOver={(e) => {
         e.preventDefault();
@@ -193,9 +195,9 @@ export function Composer() {
               submit();
             }
           }}
-          aria-label="Message Star-AI"
+          aria-label={t("Message Star-AI")}
           placeholder={
-            dictation.listening ? "Listening…" : `Message Star-AI ${version}…`
+            dictation.listening ? t("Listening…") : `${t("Message Star-AI")} ${version}…`
           }
           className="max-h-60 w-full resize-none bg-transparent px-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground"
         />
@@ -215,7 +217,7 @@ export function Composer() {
           <button
             onClick={() => fileRef.current?.click()}
             className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-            aria-label="Attach file"
+            aria-label={t("Attach file")}
           >
             <Paperclip className="h-4 w-4" />
           </button>
@@ -225,13 +227,11 @@ export function Composer() {
               "rounded-full p-2 transition-colors hover:bg-secondary hover:text-foreground",
               dictation.listening ? "bg-accent/20 text-accent" : "text-muted-foreground",
             )}
-            aria-label={dictation.listening ? "Stop voice input" : "Start voice input"}
+            aria-label={dictation.listening ? t("Stop voice input") : t("Start voice input")}
             aria-pressed={dictation.listening}
           >
             <Mic className={cn("h-4 w-4", dictation.listening && "animate-pulse")} />
           </button>
-
-          <ModeSelector />
 
           <button
             onClick={() => setWebSearch(!webSearch)}
@@ -244,7 +244,7 @@ export function Composer() {
             )}
           >
             <Globe className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Web</span>
+            <span className="hidden sm:inline">{t("Web")}</span>
           </button>
 
           <span className="ml-1 hidden truncate rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground lg:inline">
@@ -265,7 +265,7 @@ export function Composer() {
             <button
               onClick={stopGenerating}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-foreground transition-transform hover:scale-105"
-              aria-label="Stop generating"
+              aria-label={t("Stop generating")}
             >
               <Square className="h-3.5 w-3.5 fill-current" />
             </button>
@@ -274,7 +274,7 @@ export function Composer() {
               onClick={submit}
               disabled={!text.trim() && attachments.length === 0}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gradient text-primary-foreground shadow-soft transition-transform hover:scale-105 disabled:opacity-40 disabled:hover:scale-100"
-              aria-label="Send message"
+              aria-label={t("Send message")}
             >
               <ArrowUp className="h-4 w-4" />
             </button>

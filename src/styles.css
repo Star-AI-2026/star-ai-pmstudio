@@ -481,3 +481,128 @@ html:not(.dark) {
 .scrollbar-thin::-webkit-scrollbar-track {
   background: transparent;
 }
+
+
+/* User-controlled appearance effects (persisted in Star-AI settings). */
+:root[data-star-animations="off"] *,
+:root[data-star-animations="off"] *::before,
+:root[data-star-animations="off"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+:root[data-star-blur="off"] *,
+:root[data-star-blur="off"] *::before,
+:root[data-star-blur="off"] *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+:root[data-star-liquid-glass="off"] [class*="glass"],
+:root[data-star-liquid-glass="off"] [data-liquid-glass="true"] {
+  background-image: none !important;
+  box-shadow: none;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* HyperOS-inspired interaction layer: shared by Star-AI 2.x, 3.x and 4.x. */
+:root[data-star-animations="on"] button,
+:root[data-star-animations="on"] [role="button"],
+:root[data-star-animations="on"] a,
+:root[data-star-animations="on"] input,
+:root[data-star-animations="on"] select,
+:root[data-star-animations="on"] textarea {
+  transition: transform 180ms cubic-bezier(.2,.8,.2,1), background-color 220ms ease,
+    border-color 220ms ease, box-shadow 220ms ease, opacity 180ms ease, color 180ms ease;
+}
+
+:root[data-star-animations="on"] button:hover:not(:disabled),
+:root[data-star-animations="on"] [role="button"]:hover {
+  filter: brightness(1.08);
+}
+:root[data-star-animations="on"] button:active:not(:disabled),
+:root[data-star-animations="on"] [role="button"]:active {
+  transform: scale(.96);
+}
+:root[data-star-animations="on"] .glass {
+  transition: background-color 260ms ease, border-color 260ms ease, box-shadow 260ms ease,
+    backdrop-filter 260ms ease, transform 260ms cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes hyperos-panel-in {
+  from { opacity: 0; transform: translateY(14px) scale(.975); filter: blur(8px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes hyperos-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hyperos-menu-in {
+  from { opacity: 0; transform: translateY(7px) scale(.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+:root[data-star-animations="on"] [role="dialog"],
+:root[data-star-animations="on"] .fixed.inset-0.z-50 > .glass,
+:root[data-star-animations="on"] .fixed.inset-0.z-50 > div.glass {
+  animation: hyperos-panel-in 320ms cubic-bezier(.2,.85,.25,1) both;
+  transform-origin: center;
+}
+:root[data-star-animations="on"] [data-radix-popper-content-wrapper],
+:root[data-star-animations="on"] [role="menu"],
+:root[data-star-animations="on"] [role="listbox"],
+:root[data-star-animations="on"] .glass.absolute {
+  animation: hyperos-menu-in 190ms cubic-bezier(.2,.8,.2,1) both;
+  transform-origin: top center;
+}
+
+/* Liquid Glass surfaces: translucent layers, fine highlights and depth. */
+:root[data-star-liquid-glass="on"] .glass,
+:root[data-star-liquid-glass="on"] [data-liquid-glass="true"] {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(145deg, color-mix(in oklab, var(--surface) 86%, white 14%),
+    color-mix(in oklab, var(--surface) 94%, transparent)) !important;
+  border: 1px solid color-mix(in oklab, var(--foreground) 18%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, white 22%, transparent),
+    0 12px 36px color-mix(in oklab, black 18%, transparent), var(--shadow-soft);
+  overflow: hidden;
+}
+:root[data-star-liquid-glass="on"] .glass::before,
+:root[data-star-liquid-glass="on"] [data-liquid-glass="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(125deg, color-mix(in oklab, white 13%, transparent), transparent 38%,
+    color-mix(in oklab, var(--glow) 8%, transparent));
+  opacity: .8;
+}
+:root[data-star-blur="off"] .glass,
+:root[data-star-blur="off"] [data-liquid-glass="true"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+:root[data-star-liquid-glass="off"] .glass,
+:root[data-star-liquid-glass="off"] [data-liquid-glass="true"] {
+  background-image: none !important;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-star-animations="on"] *,
+  :root[data-star-animations="on"] *::before,
+  :root[data-star-animations="on"] *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+
+/* Keep floating glass popovers out of document flow.
+   The Liquid Glass surface rule must not override Tailwind's absolute positioning. */
+:root[data-star-liquid-glass="on"] .glass.absolute {
+  position: absolute !important;
+  z-index: 50;
+  isolation: isolate;
+}

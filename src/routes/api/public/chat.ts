@@ -38,6 +38,7 @@ const BodySchema = z.object({
   assistantName: z.string().max(40).optional(),
   userName: z.string().max(80).optional(),
   language: z.string().max(40).optional(),
+  uiLanguage: z.enum(["fa", "en"]).optional(),
   webSearch: z.boolean().default(false),
   memories: z.array(z.string().max(1000)).max(50).optional(),
   messages: z
@@ -167,6 +168,7 @@ try {
                 assistantName: parsed.assistantName,
                 userName: parsed.userName,
                 language: parsed.language,
+                uiLanguage: parsed.uiLanguage,
                 memories: parsed.memories,
                 searchContext,
                 messages: parsed.messages,

@@ -21,7 +21,7 @@ jobs:
 
     env:
       # GitHub Project Pages base path
-      STAR_AI_BASE: /star-ai-pmstudio/
+      STAR_AI_BASE: /Star-AI-Beta/
       # Static hosting has no server runtime: the AI endpoint stays on the
       # Lovable deployment. No secrets are exposed — this is a public URL.
             # Gemini API through Cloudflare Worker

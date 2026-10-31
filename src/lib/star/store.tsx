@@ -159,13 +159,19 @@ export function StarProvider({ children }: { children: ReactNode }) {
     root.dataset["starVersionTheme"] =
       VERSION_CATALOG.find((v) => v.id === settings.version)?.theme ?? "tech-blue";
     root.dataset["starAnim"] = settings.animations ? "on" : "off";
+    root.dataset["starAnimations"] = settings.animations ? "on" : "off";
+    root.dataset["starBlur"] = settings.blur ? "on" : "off";
+    root.dataset["starLiquidGlass"] = settings.liquidGlass ? "on" : "off";
+    root.lang = settings.uiLanguage ?? "fa";
+    root.dir = (settings.uiLanguage ?? "fa") === "fa" ? "rtl" : "ltr";
+    root.dataset["uiLanguage"] = settings.uiLanguage ?? "fa";
     const prefersDark =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-color-scheme: dark)").matches;
     const dark = settings.colorMode === "dark" || (settings.colorMode === "system" && prefersDark);
     root.classList.toggle("dark", dark);
     root.style.setProperty("--bg-intensity", String(settings.backgroundIntensity / 100));
-  }, [settings.version, settings.colorMode, settings.animations, settings.backgroundIntensity]);
+  }, [settings.version, settings.colorMode, settings.animations, settings.blur, settings.liquidGlass, settings.backgroundIntensity, settings.uiLanguage]);
 
   const updateSettings = useCallback((patch: Partial<Settings>) => {
     setSettings((s) => ({ ...s, ...patch }));
@@ -297,6 +303,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
             ...(settings.language && settings.language !== "auto"
               ? { language: settings.language }
               : {}),
+            uiLanguage: settings.uiLanguage,
             memories: settings.memoryEnabled ? memories.map((m) => m.text) : [],
             messages: history.map((m) => ({
               role: m.role,

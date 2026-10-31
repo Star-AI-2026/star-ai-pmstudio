@@ -31,6 +31,7 @@ export type GenerateOptions = {
   assistantName?: string | undefined;
   userName?: string | undefined;
   language?: string | undefined;
+  uiLanguage?: "fa" | "en" | undefined;
   memories?: string[] | undefined;
   searchContext?: string | undefined;
   messages: ChatMessage[];
@@ -137,6 +138,7 @@ export class LovableGatewayProvider implements AIProvider {
         assistantName: opts.assistantName,
         userName: opts.userName,
         language: opts.language,
+        uiLanguage: opts.uiLanguage,
         memories: opts.memories,
         searchContext: opts.searchContext,
       }),

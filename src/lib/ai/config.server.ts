@@ -106,6 +106,7 @@ export function buildSystemPrompt(opts: {
   assistantName?: string | undefined;
   userName?: string | undefined;
   language?: string | undefined;
+  uiLanguage?: "fa" | "en" | undefined;
   memories?: string[] | undefined;
   searchContext?: string | undefined;
 }): string {
@@ -127,7 +128,16 @@ export function buildSystemPrompt(opts: {
   }
 
   if (opts.language && opts.language !== "auto") {
-    parts.push(`Reply in ${opts.language} unless the user writes in another language.`);
+    parts.push(`The user explicitly selected ${opts.language} as the reply language. Reply in ${opts.language}, unless they clearly request a different language.`);
+  } else {
+    parts.push(
+      "In automatic reply-language mode, reply in the same natural language as the user's latest message. Detect Persian (Farsi) and Arabic as two distinct languages; never treat Persian as Arabic merely because both use an Arabic-derived script. If the user writes Persian, answer in fluent Persian (Farsi), using Persian vocabulary and phrasing, not Arabic. If the user writes Arabic, answer in Arabic. For a very short or ambiguous message that is common to both languages (for example, سلام), use the app interface language as the tie-breaker.",
+    );
+    if (opts.uiLanguage === "fa") {
+      parts.push("The current app interface language is Persian (Farsi). For short or language-ambiguous greetings, respond in Persian (Farsi), not Arabic.");
+    } else if (opts.uiLanguage === "en") {
+      parts.push("The current app interface language is English. For short or language-ambiguous greetings, respond in English.");
+    }
   }
 
   if (opts.memories?.length) {

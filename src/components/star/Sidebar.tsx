@@ -18,11 +18,11 @@ import {
 import { useMemo, useState } from "react";
 
 import { StarLogo } from "./StarLogo";
-import { VersionSwitcher } from "./VersionSwitcher";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useStar } from "@/lib/star/store";
 import type { Conversation, SortMode } from "@/lib/star/types";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/star/i18n";
 
 function relative(ts: number) {
   const d = Date.now() - ts;
@@ -50,6 +50,7 @@ export function Sidebar({
   onClose?: () => void;
 }) {
   const { displayName, user } = useAuth();
+  const { t, dir } = useI18n();
   const {
     conversations,
     activeId,
@@ -112,7 +113,7 @@ export function Sidebar({
           autoFocus
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          aria-label="Rename conversation"
+          aria-label={t("Rename conversation")}
           onBlur={() => {
             renameConversation(c.id, draft);
             setRenaming(null);
@@ -132,7 +133,7 @@ export function Sidebar({
             setActiveId(c.id);
             onClose?.();
           }}
-          className="block w-full text-left"
+          className="block w-full text-start"
         >
           <span className="flex items-center gap-1.5">
             {c.pinned && <Pin className="h-3 w-3 shrink-0 text-primary" />}
@@ -158,14 +159,14 @@ export function Sidebar({
             setDraft(c.title);
           }}
           className="rounded p-1 text-muted-foreground hover:text-foreground"
-          aria-label="Rename"
+          aria-label={t("Rename")}
         >
           <Pencil className="h-3 w-3" />
         </button>
         <button
           onClick={() => deleteConversation(c.id)}
           className="rounded p-1 text-muted-foreground hover:text-destructive"
-          aria-label="Delete"
+          aria-label={t("Delete")}
         >
           <Trash2 className="h-3 w-3" />
         </button>
@@ -173,10 +174,10 @@ export function Sidebar({
           <select
             value={c.folderId ?? ""}
             onChange={(e) => moveConversation(c.id, e.target.value || null)}
-            aria-label="Move to folder"
+            aria-label={t("Move to folder")}
             className="ml-auto max-w-24 truncate rounded bg-transparent text-[10px] text-muted-foreground outline-none"
           >
-            <option value="">No folder</option>
+            <option value="">{t("No folder")}</option>
             {folders.map((f) => (
               <option key={f.id} value={f.id}>
                 {f.name}
@@ -189,22 +190,18 @@ export function Sidebar({
   );
 
   return (
-    <aside className="glass flex h-full w-72 flex-col rounded-none border-y-0 border-l-0 bg-sidebar text-sidebar-foreground md:rounded-r-3xl">
+    <aside dir={dir} className="glass flex h-full w-72 flex-col rounded-none border-y-0 border-l-0 bg-sidebar text-sidebar-foreground md:rounded-r-3xl">
       <div className="flex items-center gap-2 px-4 pt-4">
         <StarLogo className="h-8 w-8 text-primary" />
         <div className="leading-tight">
           <p className="font-display text-base font-semibold">Star-AI</p>
-          <p className="text-[11px] text-muted-foreground">AI platform</p>
+          <p className="text-[11px] text-muted-foreground">{t("AI platform")}</p>
         </div>
         {onClose && (
           <button onClick={onClose} className="ml-auto p-1 text-muted-foreground md:hidden" aria-label="Close menu">
             <X className="h-5 w-5" />
           </button>
         )}
-      </div>
-
-      <div className="px-3 pt-4">
-        <VersionSwitcher />
       </div>
 
       <div className="px-3 pt-3">
@@ -215,7 +212,7 @@ export function Sidebar({
           }}
           className="flex w-full items-center gap-2 rounded-2xl bg-brand-gradient px-3 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]"
         >
-          <MessageSquarePlus className="h-4 w-4" /> New chat
+          <MessageSquarePlus className="h-4 w-4" /> {t("New chat")}
         </button>
       </div>
 
@@ -225,8 +222,8 @@ export function Sidebar({
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search conversations"
-            aria-label="Search conversations"
+            placeholder={t("Search conversations")}
+            aria-label={t("Search conversations")}
             className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
           />
         </div>
@@ -237,7 +234,7 @@ export function Sidebar({
         <select
           value={settings.sort}
           onChange={(e) => updateSettings({ sort: e.target.value as SortMode })}
-          aria-label="Sort conversations"
+          aria-label={t("Sort conversations")}
           className="flex-1 bg-transparent text-[11px] text-muted-foreground outline-none"
         >
           {SORTS.map((s) => (
@@ -248,11 +245,11 @@ export function Sidebar({
         </select>
         <button
           onClick={() => {
-            const name = window.prompt("Folder name");
+            const name = window.prompt(t("Folder name"));
             if (name) createFolder(name);
           }}
           className="rounded p-1 text-muted-foreground hover:text-foreground"
-          aria-label="New folder"
+          aria-label={t("New folder")}
         >
           <FolderPlus className="h-3.5 w-3.5" />
         </button>
@@ -261,7 +258,7 @@ export function Sidebar({
       <div className="scrollbar-thin mt-2 flex-1 overflow-y-auto px-2 pb-2">
         {list.length === 0 ? (
           <p className="px-3 py-6 text-center text-xs text-muted-foreground">
-            {query ? "No conversations match your search." : "No conversations yet."}
+            {query ? t("No conversations match your search.") : t("No conversations yet.")}
           </p>
         ) : (
           <>
@@ -273,7 +270,7 @@ export function Sidebar({
                   <div className="flex items-center gap-1 px-1.5 py-1">
                     <button
                       onClick={() => setCollapsed((c) => ({ ...c, [f.id]: !c[f.id] }))}
-                      className="flex flex-1 items-center gap-1.5 text-left text-[11px] font-semibold text-muted-foreground hover:text-foreground"
+                      className="flex flex-1 items-center gap-1.5 text-start text-[11px] font-semibold text-muted-foreground hover:text-foreground"
                       aria-expanded={!isCollapsed}
                     >
                       {isCollapsed ? (
@@ -297,7 +294,7 @@ export function Sidebar({
                     (items.length ? (
                       items.map(row)
                     ) : (
-                      <p className="px-3 py-1 text-[10px] text-muted-foreground">Empty folder</p>
+                      <p className="px-3 py-1 text-[10px] text-muted-foreground">{t("Empty folder")}</p>
                     ))}
                 </div>
               );
@@ -313,13 +310,13 @@ export function Sidebar({
           onClick={onOpenSettings}
           className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
         >
-          <Settings className="h-3.5 w-3.5" /> Settings
+          <Settings className="h-3.5 w-3.5" /> {t("Settings")}
         </button>
         <button
           onClick={onOpenHelp}
           className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
         >
-          <CircleHelp className="h-3.5 w-3.5" /> Help
+          <CircleHelp className="h-3.5 w-3.5" /> {t("Help")}
         </button>
         <button
           onClick={onOpenProfile}
@@ -328,7 +325,7 @@ export function Sidebar({
           <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-gradient text-[11px] font-semibold text-primary-foreground">
             {displayName ? displayName.charAt(0).toUpperCase() : <User className="h-3.5 w-3.5" />}
           </span>
-          <div className="min-w-0 text-left leading-tight">
+          <div className="min-w-0 text-start leading-tight">
             <p className="truncate text-xs font-medium">{displayName || "Star-AI"}</p>
             <p className="truncate text-[10px] text-muted-foreground">{user?.email ?? ""}</p>
           </div>

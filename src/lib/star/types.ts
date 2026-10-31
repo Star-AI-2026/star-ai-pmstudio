@@ -63,9 +63,12 @@ export type Settings = {
   mode: AIMode;
   assistantName: string;
   language: string;
+  uiLanguage: "fa" | "en";
   webSearch: boolean;
   colorMode: "dark" | "light" | "system";
   animations: boolean;
+  blur: boolean;
+  liquidGlass: boolean;
   particles: boolean;
   backgroundIntensity: number;
   streaming: boolean;
@@ -82,9 +85,12 @@ export const DEFAULT_SETTINGS: Settings = {
   mode: "general",
   assistantName: "",
   language: "auto",
+  uiLanguage: "en",
   webSearch: false,
   colorMode: "dark",
   animations: true,
+  blur: true,
+  liquidGlass: true,
   particles: true,
   backgroundIntensity: 70,
   streaming: true,
