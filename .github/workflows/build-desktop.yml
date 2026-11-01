@@ -1,0 +1,89 @@
+name: Build and publish Star-AI Desktop
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build (example: 2.202.0)"
+        required: true
+        default: "2.202.0"
+        type: string
+      channel:
+        description: "Release channel"
+        required: true
+        default: "stable"
+        type: choice
+        options:
+          - stable
+          - beta
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Validate version and set project version
+        shell: pwsh
+        run: |
+          $version = "${{ inputs.version }}"
+          if ($version -notmatch '^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$') {
+            throw "Invalid version: $version. Use a format such as 2.202.0"
+          }
+          $pkg = Get-Content package.json -Raw | ConvertFrom-Json
+          $pkg.version = $version
+          $pkg.description = "Star-AI Windows desktop - $version"
+          $pkg | ConvertTo-Json -Depth 100 | Set-Content package.json -Encoding utf8
+          npm version $version --no-git-tag-version --allow-same-version
+          $iss = Get-Content Star-AI-Setup.iss -Raw
+          $iss = $iss -replace '(?m)(#define MyAppVersion ")[^"]+(")', "`${1}$version`${2}"
+          $iss = $iss -replace 'OutputBaseFilename=Star-AI-Setup-[^\r\n]+', "OutputBaseFilename=Star-AI-Setup-$version"
+          $iss = $iss -replace 'Star-AI-\d+\.\d+\.\d+-x64\.exe', "Star-AI-$version-x64.exe"
+          $iss = $iss -replace 'Star-AI-\d+\.\d+\.\d+-ia32\.exe', "Star-AI-$version-ia32.exe"
+          Set-Content Star-AI-Setup.iss $iss -Encoding utf8
+          "RELEASE_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "RELEASE_CHANNEL=${{ inputs.channel }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build x64 and x86 portable applications
+        run: npm run dist
+
+      - name: Install Inno Setup 6
+        run: choco install innosetup --yes --no-progress
+
+      - name: Compile installer with Inno Setup
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path Installer | Out-Null
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "Star-AI-Setup.iss"
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed with exit code $LASTEXITCODE" }
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tag = "v$env:RELEASE_VERSION"
+          $title = "Star-AI $env:RELEASE_VERSION ($env:RELEASE_CHANNEL)"
+          $args = @(
+            $tag,
+            "Installer/Star-AI-Setup-$env:RELEASE_VERSION.exe",
+            "release/x64/Star-AI-$env:RELEASE_VERSION-x64.exe",
+            "release/x86/Star-AI-$env:RELEASE_VERSION-ia32.exe",
+            "--title", $title,
+            "--notes", "Automated $env:RELEASE_CHANNEL release of Star-AI $env:RELEASE_VERSION."
+          )
+          if ($env:RELEASE_CHANNEL -eq "stable") { $args += "--latest" }
+          gh release create @args
