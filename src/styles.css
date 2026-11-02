@@ -606,3 +606,54 @@ html:not(.dark) {
   z-index: 50;
   isolation: isolate;
 }
+
+
+/* Settings dialog enter/exit motion. Exit remains mounted until the transition completes. */
+@keyframes settings-dialog-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes settings-dialog-backdrop-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes settings-dialog-panel-in {
+  from { opacity: 0; transform: translateY(12px) scale(.975); filter: blur(7px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes settings-dialog-panel-out {
+  from { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  to { opacity: 0; transform: translateY(8px) scale(.985); filter: blur(5px); }
+}
+:root[data-star-animations="on"] .settings-dialog-backdrop {
+  animation: settings-dialog-backdrop-in 220ms ease both;
+}
+:root[data-star-animations="on"] .settings-dialog-backdrop-exit {
+  animation: settings-dialog-backdrop-out 220ms ease both;
+  pointer-events: none;
+}
+:root[data-star-animations="on"] .settings-dialog-panel {
+  animation: settings-dialog-panel-in 260ms cubic-bezier(.2,.85,.25,1) both;
+}
+:root[data-star-animations="on"] .settings-dialog-panel-exit {
+  animation: settings-dialog-panel-out 220ms ease both;
+}
+
+/* Blur OFF: opaque black controls on glass surfaces; no translucent button backgrounds. */
+:root[data-star-blur="off"] .glass button,
+:root[data-star-blur="off"] [data-liquid-glass="true"] button {
+  background-color: #080a0f !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Blur ON + Liquid Glass OFF: simple translucent controls, without glass highlights or depth. */
+:root[data-star-blur="on"][data-star-liquid-glass="off"] .glass button,
+:root[data-star-blur="on"][data-star-liquid-glass="off"] [data-liquid-glass="true"] button {
+  background-color: color-mix(in oklab, var(--surface) 72%, transparent) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}

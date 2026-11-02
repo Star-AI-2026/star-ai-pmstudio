@@ -1,5 +1,5 @@
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AI_MODES, type AIMode } from "@/lib/ai/modes";
@@ -41,15 +41,18 @@ function Row({
   );
 }
 
-function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
+function Toggle({ on, onChange, disabled = false }: { on: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {
   return (
     <button
-      onClick={() => onChange(!on)}
+      onClick={() => !disabled && onChange(!on)}
       role="switch"
       aria-checked={on}
+      aria-disabled={disabled}
+      disabled={disabled}
       className={cn(
         "h-6 w-11 rounded-full p-0.5 transition-colors",
         on ? "bg-brand-gradient" : "bg-secondary",
+        disabled && "cursor-not-allowed opacity-40",
       )}
     >
       <span
@@ -67,13 +70,45 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
     useStar();
   const [section, setSection] = useState<Section>("General");
   const [memoryDraft, setMemoryDraft] = useState("");
+  const [mounted, setMounted] = useState(open);
+  const [closing, setClosing] = useState(false);
   const { t, dir } = useI18n();
 
-  if (!open) return null;
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    if (open) {
+      setMounted(true);
+      setClosing(false);
+    } else if (mounted) {
+      setClosing(true);
+      timer = setTimeout(() => {
+        setMounted(false);
+        setClosing(false);
+      }, 240);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [open, mounted]);
+
+  if (!mounted) return null;
 
   return (
-    <div dir={dir} className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 backdrop-blur-sm">
-      <div className="glass flex h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl shadow-glow md:flex-row">
+    <div
+      dir={dir}
+      data-settings-closing={closing ? "true" : "false"}
+      className={cn(
+        "settings-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 backdrop-blur-sm",
+        closing && "settings-dialog-backdrop-exit",
+      )}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className={cn(
+        "glass settings-dialog-panel flex h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl shadow-glow md:flex-row",
+        closing && "settings-dialog-panel-exit",
+      )}>
         <nav className="scrollbar-thin flex shrink-0 gap-1 overflow-x-auto border-b border-border p-3 md:w-48 md:flex-col md:overflow-y-auto md:border-b-0 md:border-r">
           <p className="hidden px-2 pb-2 font-display text-sm font-semibold md:block">{t("Settings")}</p>
           {SECTIONS.map((s) => (
@@ -185,10 +220,10 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                 <Toggle on={settings.animations} onChange={(v) => updateSettings({ animations: v })} />
               </Row>
               <Row label={t("Blur")} hint={t("Enable background blur effects")}>
-                <Toggle on={settings.blur} onChange={(v) => updateSettings({ blur: v })} />
+                <Toggle on={settings.blur} onChange={(v) => updateSettings({ blur: v, ...(v ? {} : { liquidGlass: false }) })} />
               </Row>
               <Row label={t("Liquid Glass")} hint={t("Enable translucent liquid glass surfaces")}>
-                <Toggle on={settings.liquidGlass} onChange={(v) => updateSettings({ liquidGlass: v })} />
+                <Toggle on={settings.blur && settings.liquidGlass} disabled={!settings.blur} onChange={(v) => updateSettings({ liquidGlass: v })} />
               </Row>
               <Row label={t("Particle effects")}>
                 <Toggle on={settings.particles} onChange={(v) => updateSettings({ particles: v })} />

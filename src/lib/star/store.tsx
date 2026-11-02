@@ -135,7 +135,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const data = load();
-    setSettings({ ...data.settings, version: data.settings.defaultVersion ?? data.settings.version });
+    setSettings({ ...data.settings, liquidGlass: data.settings.blur ? data.settings.liquidGlass : false, version: data.settings.defaultVersion ?? data.settings.version });
     setConversations(data.conversations);
     setMemories(data.memories);
     setFolders(data.folders);
@@ -174,7 +174,11 @@ export function StarProvider({ children }: { children: ReactNode }) {
   }, [settings.version, settings.colorMode, settings.animations, settings.blur, settings.liquidGlass, settings.backgroundIntensity, settings.uiLanguage]);
 
   const updateSettings = useCallback((patch: Partial<Settings>) => {
-    setSettings((s) => ({ ...s, ...patch }));
+    setSettings((s) => {
+      const next = { ...s, ...patch };
+      if (!next.blur) next.liquidGlass = false;
+      return next;
+    });
   }, []);
 
   const setVersion = useCallback(
