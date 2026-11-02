@@ -190,11 +190,18 @@ export function UpdateGate({ children }: { children: ReactNode }) {
                 </p>
               </div>
               {decision.notes.length > 0 && (
-                <div className="mt-3 text-right text-sm">
-                  <p className="font-medium">تغییرات:</p>
-                  <ul className="mt-1 space-y-0.5 text-muted-foreground">
+                <div className="mt-3 text-sm">
+                  <p className="font-medium text-right">تغییرات:</p>
+                  <ul
+                    dir="ltr"
+                    lang="en"
+                    className="mt-1 space-y-1 text-left text-muted-foreground font-sans"
+                    style={{ direction: "ltr", textAlign: "left", unicodeBidi: "isolate" }}
+                  >
                     {decision.notes.map((n, i) => (
-                      <li key={i}>• {n}</li>
+                      <li key={i} dir="ltr" lang="en" className="text-left">
+                        {n}
+                      </li>
                     ))}
                   </ul>
                 </div>
