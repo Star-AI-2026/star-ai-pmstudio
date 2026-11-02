@@ -650,21 +650,27 @@ html:not(.dark) {
   -webkit-backdrop-filter: none !important;
 }
 
-:root[data-star-blur="off"] .glass button,
-:root[data-star-blur="off"] [data-liquid-glass="true"] button {
-  background-color: color-mix(in oklab, var(--popover) 88%, var(--foreground) 12%) !important;
-  background-image: none !important;
-  color: inherit !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
 /* Blur ON + Liquid Glass OFF: simple translucent controls, without glass highlights or depth. */
-:root[data-star-blur="on"][data-star-liquid-glass="off"] .glass button,
-:root[data-star-blur="on"][data-star-liquid-glass="off"] [data-liquid-glass="true"] button {
+:root[data-star-blur="on"][data-star-liquid-glass="off"] .glass button:not([role="switch"]),
+:root[data-star-blur="on"][data-star-liquid-glass="off"] [data-liquid-glass="true"] button:not([role="switch"]) {
   background-color: color-mix(in oklab, var(--surface) 72%, transparent) !important;
   background-image: none !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+
+
+/* Preserve Star-AI accent colors on switches in every blur mode. */
+:root[data-star-blur="off"] button[role="switch"],
+:root[data-star-blur="on"] button[role="switch"] {
+  background-image: var(--gradient-brand) !important;
+  color: var(--primary-foreground) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+:root[data-star-blur="off"] button[role="switch"][aria-checked="false"],
+:root[data-star-blur="on"] button[role="switch"][aria-checked="false"] {
+  background-image: none !important;
+  background-color: var(--secondary) !important;
 }
