@@ -122,7 +122,9 @@ export function useStar() {
 }
 
 export function StarProvider({ children }: { children: ReactNode }) {
-  const { displayName } = useAuth();
+  const { displayName, user } = useAuth();
+  const languageStorageKey = `star-ai:ui-language:${user?.id ?? "guest"}`;
+  const languageLoadedForRef = useRef("");
   const [hydrated, setHydrated] = useState(false);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -135,12 +137,37 @@ export function StarProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const data = load();
-    setSettings({ ...data.settings, liquidGlass: data.settings.blur ? data.settings.liquidGlass : false, version: data.settings.defaultVersion ?? data.settings.version });
+    let accountLanguage: "fa" | "en" = "en";
+    try {
+      const savedLanguage = window.localStorage.getItem(languageStorageKey);
+      if (savedLanguage === "fa" || savedLanguage === "en") accountLanguage = savedLanguage;
+    } catch {
+      // Keep English as the first-visit default when storage is unavailable.
+    }
+    setSettings({
+      ...data.settings,
+      uiLanguage: accountLanguage,
+      liquidGlass: data.settings.blur ? data.settings.liquidGlass : false,
+      version: data.settings.defaultVersion ?? data.settings.version,
+    });
     setConversations(data.conversations);
     setMemories(data.memories);
     setFolders(data.folders);
     setHydrated(true);
-  }, []);
+  }, [languageStorageKey]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (languageLoadedForRef.current !== languageStorageKey) {
+      languageLoadedForRef.current = languageStorageKey;
+      return;
+    }
+    try {
+      window.localStorage.setItem(languageStorageKey, settings.uiLanguage ?? "en");
+    } catch {
+      // Language preference remains in memory for this session.
+    }
+  }, [hydrated, languageStorageKey, settings.uiLanguage]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -162,9 +189,9 @@ export function StarProvider({ children }: { children: ReactNode }) {
     root.dataset["starAnimations"] = settings.animations ? "on" : "off";
     root.dataset["starBlur"] = settings.blur ? "on" : "off";
     root.dataset["starLiquidGlass"] = settings.liquidGlass ? "on" : "off";
-    root.lang = settings.uiLanguage ?? "fa";
-    root.dir = (settings.uiLanguage ?? "fa") === "fa" ? "rtl" : "ltr";
-    root.dataset["uiLanguage"] = settings.uiLanguage ?? "fa";
+    root.lang = settings.uiLanguage ?? "en";
+    root.dir = (settings.uiLanguage ?? "en") === "fa" ? "rtl" : "ltr";
+    root.dataset["uiLanguage"] = settings.uiLanguage ?? "en";
     const prefersDark =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-color-scheme: dark)").matches;
