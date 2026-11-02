@@ -639,11 +639,22 @@ html:not(.dark) {
   animation: settings-dialog-panel-out 220ms ease both;
 }
 
-/* Blur OFF: opaque black controls on glass surfaces; no translucent button backgrounds. */
+/* Blur OFF: keep surfaces matte and opaque, while preserving readable text colors. */
+:root[data-star-blur="off"] .glass,
+:root[data-star-blur="off"] [data-liquid-glass="true"] {
+  background-color: var(--popover) !important;
+  background-image: none !important;
+  border-color: var(--border);
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 :root[data-star-blur="off"] .glass button,
 :root[data-star-blur="off"] [data-liquid-glass="true"] button {
-  background-color: #080a0f !important;
+  background-color: color-mix(in oklab, var(--popover) 88%, var(--foreground) 12%) !important;
   background-image: none !important;
+  color: inherit !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
