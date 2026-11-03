@@ -1,6 +1,6 @@
 
 {
-  "latestVersion": "2.215.0",
+  "latestVersion": "2.217.0",
   "minimumVersion": "1.4.0",
   "channel": "stable",
   "betaVersion": "2.0.5-Beta",
@@ -12,11 +12,11 @@
     "Bug fixes and improvements."
   ],
   "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/latest",
-  "setupFileName": "Star-AI-Setup-2.215.0.exe",
-  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v2.215.0/Star-AI-Setup-2.215.0.exe",
+  "setupFileName": "Star-AI-Setup-2.217.0.exe",
+  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v2.217.0/Star-AI-Setup-2.217.0.exe",
   "featureRequirements": {
-    "newAIInterface": "2.215.0",
-    "advancedTools": "2.215.0",
-    "futureFeature": "2.215.0"
+    "newAIInterface": "2.217.0",
+    "advancedTools": "2.217.0",
+    "futureFeature": "2.217.0"
   }
 }
