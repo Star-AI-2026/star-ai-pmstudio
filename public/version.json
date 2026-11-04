@@ -1,37 +1,55 @@
+
 {
-  "latestVersion": "3.6.1",
-  "minimumVersion": "1.4.0",
-  "channel": "stable",
-  "betaVersion": "3.6.2",
-  "betaReleaseNotes": [
-    "🚀 Star-AI 3.6.2 – New Update",
-    "✨ Improvements",
-    "🐛 Bug fixes and performance improvements.",
-    "❤️ Thank you for using Star-AI!"
-  ],
-  "releaseNotes": [
-    "🚀 Star-AI 3.2.0 – New Update",
-    "",
-    "✨ New Features",
-    "🤖 Star-AI 4.0 is now unlocked in the desktop version.",
-    "💻 Improved AI capabilities and availability in the desktop application.",
-    "",
-    "❤️ Thank you for using Star-AI!"
-  ],
-  "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/latest",
-  "setupFileName": "Star-AI-Setup-3.2.0.exe",
-  "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.2.0/Star-AI-Setup-3.2.0.exe",
-  "updateFileName": "",
-  "updateDownloadUrl": "",
-  "featureRequirements": {
-    "newAIInterface": "3.2.0",
-    "advancedTools": "3.2.0",
-    "futureFeature": "3.2.0"
+  "stable": {
+    "version": "3.6.0",
+    "minimumVersion": "1.4.0",
+    "releaseNotes": [
+      "🚀 Star-AI 3.6.0 - Stable Release",
+      "",
+      "✨ Improvements",
+      "🐛 Bug fixes and performance improvements.",
+      "❤️ Thank you for using Star-AI!"
+    ],
+    "setup": {
+      "fileName": "",
+      "downloadUrl": "",
+      "sha256": ""
+    },
+    "delta": {
+      "fileName": "",
+      "downloadUrl": "",
+      "sha256": ""
+    }
   },
-  "betaSetupFileName": "Star-AI-Setup-3.6.2-Beta.exe",
-  "betaSetupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.6.2-beta/Star-AI-Setup-3.6.2-Beta.exe",
-  "betaSetupSha256": "177c4d925191813755e08f6cae26638eafe6d3dcddfd155cf74f2d11bfa82f2c",
-  "betaUpdateFileName": "Star-AI-Update-3.6.2-Beta.exe",
-  "betaUpdateDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.6.2-beta/Star-AI-Update-3.6.2-Beta.exe",
-  "betaUpdateSha256": "30e75fb664e967bb67882d2397cfd53849bbc6b9c91c7b145245a6e03524ed4e"
+  "beta": {
+    "version": "3.6.2",
+    "minimumVersion": "1.4.0",
+    "releaseNotes": [
+      "🚀 Star-AI 3.6.2 - Beta Update",
+      "",
+      "✨ Improvements",
+      "🐛 Bug fixes and performance improvements.",
+      "❤️ Thank you for testing Star-AI Beta!"
+    ],
+    "setup": {
+      "fileName": "",
+      "downloadUrl": "",
+      "sha256": ""
+    },
+    "delta": {
+      "fileName": "",
+      "downloadUrl": "",
+      "sha256": ""
+    }
+  },
+  "policies": {
+    "stableToStable": "mandatory",
+    "stableToBeta": "optional",
+    "betaToBeta": "optional",
+    "betaToStable": "optional"
+  },
+  "featureRequirements": {
+    "newAIInterface": "3.6.0",
+    "advancedTools": "3.6.0"
+  }
 }
