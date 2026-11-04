@@ -1,3 +1,4 @@
+
 {
   "latestVersion": "3.2.0",
   "minimumVersion": "1.4.0",
@@ -19,6 +20,8 @@
   "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/latest",
   "setupFileName": "Star-AI-Setup-3.2.0.exe",
   "setupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.2.0/Star-AI-Setup-3.2.0.exe",
+  "updateFileName": "",
+  "updateDownloadUrl": "",
   "featureRequirements": {
     "newAIInterface": "3.2.0",
     "advancedTools": "3.2.0",
