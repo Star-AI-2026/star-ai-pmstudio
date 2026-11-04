@@ -56,12 +56,22 @@ type State =
       decision: UpdateDecision | null;
     };
 
+type InstallResult = {
+  ok?: boolean;
+  success?: boolean;
+};
+
 const mb = (n: number) => (n / 1048576).toFixed(1);
 
 export function UpdateGate({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<State>({ s: "checking" });
+  const [state, setState] = useState<State>({
+    s: "checking",
+  });
+
   const [dismissed, setDismissed] = useState(false);
-  const [progress, setProgress] = useState<DownloadProgress | null>(null);
+  const [progress, setProgress] =
+    useState<DownloadProgress | null>(null);
+
   const [downloading, setDownloading] = useState(false);
   const [dlError, setDlError] = useState(false);
 
@@ -75,6 +85,7 @@ export function UpdateGate({ children }: { children: ReactNode }) {
         policy: null,
         decision: null,
       });
+
       return;
     }
 
@@ -83,26 +94,36 @@ export function UpdateGate({ children }: { children: ReactNode }) {
     try {
       const [version, response] = await Promise.all([
         bridge.getVersion(),
-        fetch(versionJsonUrl(), { cache: "no-store" }),
+        fetch(versionJsonUrl(), {
+          cache: "no-store",
+        }),
       ]);
 
       if (!response.ok) {
-        throw new Error(`Version check failed: ${response.status}`);
+        throw new Error(
+          `Version check failed: ${response.status}`
+        );
       }
 
       const channel = detectChannel(version);
 
       if (!channel) {
-        throw new Error(`Invalid installed version: ${version}`);
+        throw new Error(
+          `Invalid installed version: ${version}`
+        );
       }
 
-      const policy = normalizePolicy(await response.json());
+      const rawPolicy = await response.json();
+      const policy = normalizePolicy(rawPolicy);
 
       const decision = evaluatePolicy(
         version,
         channel,
         policy
       );
+
+      setDismissed(false);
+      setDlError(false);
 
       setState({
         s: "ready",
@@ -111,7 +132,11 @@ export function UpdateGate({ children }: { children: ReactNode }) {
         decision,
       });
     } catch (error) {
-      console.error("Star-AI update check failed:", error);
+      console.error(
+        "Star-AI update check failed:",
+        error
+      );
+
       setState({ s: "error" });
     }
   }, []);
@@ -120,15 +145,21 @@ export function UpdateGate({ children }: { children: ReactNode }) {
     void check();
   }, [check]);
 
-  const startUpdate = async (decision: UpdateDecision) => {
+  const startUpdate = async (
+    decision: UpdateDecision
+  ) => {
     const bridge = getDesktopBridge();
 
-    if (!bridge || downloading || decision.kind === "none") {
+    if (
+      !bridge ||
+      downloading ||
+      decision.kind === "none"
+    ) {
       return;
     }
 
-    // Prefer Delta. If Delta is unavailable, use the full Setup.
-    // The Delta installer handles verification and Setup fallback itself.
+    // Prefer the universal Delta installer.
+    // If Delta is unavailable, use the full Setup installer.
 
     const asset = isAssetAvailable(decision.delta)
       ? decision.delta
@@ -148,7 +179,11 @@ export function UpdateGate({ children }: { children: ReactNode }) {
       percent: 0,
     });
 
-    const off = bridge.onDownloadProgress(setProgress);
+    const off = bridge.onDownloadProgress(
+      (value) => {
+        setProgress(value);
+      }
+    );
 
     try {
       const result = await bridge.downloadAndInstall({
@@ -158,12 +193,27 @@ export function UpdateGate({ children }: { children: ReactNode }) {
         sha256: asset.sha256,
       });
 
-      if (!result.ok) {
+      // Compatible with both { ok: true } and
+      // { success: true } responses.
+
+      const installResult =
+        result as InstallResult | null;
+
+      const accepted =
+        installResult?.ok ??
+        installResult?.success ??
+        false;
+
+      if (!accepted) {
         setDownloading(false);
         setDlError(true);
       }
     } catch (error) {
-      console.error("Star-AI update installation failed:", error);
+      console.error(
+        "Star-AI update installation failed:",
+        error
+      );
+
       setDownloading(false);
       setDlError(true);
     } finally {
@@ -209,13 +259,22 @@ export function UpdateGate({ children }: { children: ReactNode }) {
     );
   }
 
-  const { version, policy, decision } = state;
+  const {
+    version,
+    policy,
+    decision,
+  } = state;
 
   const ctx: Ctx = {
     desktopVersion: version,
     policy,
+
     featureAllowed: (feature) =>
-      isFeatureAllowed(feature, version, policy),
+      isFeatureAllowed(
+        feature,
+        version,
+        policy
+      ),
   };
 
   const updateDecision =
@@ -234,174 +293,191 @@ export function UpdateGate({ children }: { children: ReactNode }) {
     <VersionCtx.Provider value={ctx}>
       {showDialog ? null : children}
 
-      {showDialog && policy && updateDecision && (
-        <Modal>
-          {downloading ? (
-            <>
-              <Download className="mx-auto h-8 w-8 animate-pulse text-primary" />
+      {showDialog &&
+        policy &&
+        updateDecision && (
+          <Modal>
+            {downloading ? (
+              <>
+                <Download className="mx-auto h-8 w-8 animate-pulse text-primary" />
 
-              <h2 className="mt-3 font-display text-lg font-semibold">
-                Downloading Update...
-              </h2>
+                <h2 className="mt-3 font-display text-lg font-semibold">
+                  Downloading Update...
+                </h2>
 
-              <p
-                className="mt-1 text-sm text-muted-foreground"
-                dir="ltr"
-              >
-                Star-AI {updateDecision.target}
-              </p>
-
-              <div className="mt-5 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
-                <div
-                  className="h-full bg-brand-gradient transition-all"
-                  style={{
-                    width: `${progress?.percent ?? 0}%`,
-                  }}
-                />
-              </div>
-
-              <p className="mt-2 text-xs text-muted-foreground">
-                {progress && progress.total > 0
-                  ? `Downloading: ${progress.percent}%`
-                  : "Downloading..."}
-
-                {progress && progress.total > 0
-                  ? ` · ${mb(progress.received)} MB / ${mb(progress.total)} MB`
-                  : ""}
-              </p>
-            </>
-          ) : dlError ? (
-            <>
-              <TriangleAlert className="mx-auto h-8 w-8 text-destructive" />
-
-              <h2 className="mt-3 font-display text-lg font-semibold">
-                Update Failed
-              </h2>
-
-              <p className="mt-2 text-sm text-muted-foreground">
-                Please check your internet connection and try again.
-              </p>
-
-              <div className="mt-6 flex gap-2">
-                <Primary
-                  onClick={() => void startUpdate(updateDecision)}
+                <p
+                  className="mt-1 text-sm text-muted-foreground"
+                  dir="ltr"
                 >
-                  <RefreshCw className="h-4 w-4" />
-                  Retry
-                </Primary>
+                  Star-AI {updateDecision.target}
+                </p>
 
-                <Secondary
-                  onClick={() => {
-                    if (mandatory) {
-                      setDlError(false);
-                    } else {
-                      setDismissed(true);
-                    }
-                  }}
-                >
-                  {mandatory ? "Close" : "Later"}
-                </Secondary>
-              </div>
-            </>
-          ) : (
-            <>
-              <Sparkles className="mx-auto h-8 w-8 text-primary" />
+                <div className="mt-5 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
+                  <div
+                    className="h-full bg-brand-gradient transition-all"
+                    style={{
+                      width: `${progress?.percent ?? 0}%`,
+                    }}
+                  />
+                </div>
 
-              <h2 className="mt-3 font-display text-lg font-semibold">
-                {mandatory
-                  ? "Mandatory Update"
-                  : updateDecision.targetChannel === "beta"
-                    ? "New Beta Update"
-                    : "Update Available"}
-              </h2>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {progress && progress.total > 0
+                    ? `Downloading: ${progress.percent}%`
+                    : "Downloading..."}
 
-              {mandatory && (
+                  {progress && progress.total > 0
+                    ? ` · ${mb(progress.received)} MB / ${mb(progress.total)} MB`
+                    : ""}
+                </p>
+              </>
+            ) : dlError ? (
+              <>
+                <TriangleAlert className="mx-auto h-8 w-8 text-destructive" />
+
+                <h2 className="mt-3 font-display text-lg font-semibold">
+                  Update Failed
+                </h2>
+
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Please update Star-AI to continue using the application.
-                </p>
-              )}
-
-              <div className="mt-4 space-y-2 rounded-2xl border border-border p-3 text-left text-sm">
-                <p>
-                  Current Version:{" "}
-                  <span dir="ltr" className="font-semibold">
-                    {updateDecision.current}
-                  </span>
+                  Please check your internet connection and try again.
                 </p>
 
-                <p>
-                  New Version:{" "}
-                  <span dir="ltr" className="font-semibold">
-                    {updateDecision.target}
-                  </span>
-                </p>
+                <div className="mt-6 flex gap-2">
+                  <Primary
+                    onClick={() =>
+                      void startUpdate(updateDecision)
+                    }
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Retry
+                  </Primary>
 
-                <p>
-                  Release Channel:{" "}
-                  <span className="font-semibold">
-                    {updateDecision.targetChannel === "beta"
-                      ? "Beta"
-                      : "Stable"}
-                  </span>
-                </p>
-              </div>
+                  {!mandatory && (
+                    <Secondary
+                      onClick={() => {
+                        setDlError(false);
+                        setDismissed(true);
+                      }}
+                    >
+                      Later
+                    </Secondary>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <Sparkles className="mx-auto h-8 w-8 text-primary" />
 
-              {updateDecision.notes.length > 0 && (
-                <div className="mt-3 text-left text-sm">
-                  <p className="font-medium">
-                    What's New:
+                <h2 className="mt-3 font-display text-lg font-semibold">
+                  {mandatory
+                    ? "Mandatory Update"
+                    : updateDecision.targetChannel === "beta"
+                      ? "New Beta Update"
+                      : "Update Available"}
+                </h2>
+
+                {mandatory && (
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Please update Star-AI to continue using the application.
+                  </p>
+                )}
+
+                <div className="mt-4 space-y-2 rounded-2xl border border-border p-3 text-left text-sm">
+                  <p>
+                    Current Version:{" "}
+                    <span
+                      dir="ltr"
+                      className="font-semibold"
+                    >
+                      {updateDecision.current}
+                    </span>
                   </p>
 
-                  <ul
-                    dir="ltr"
-                    lang="en"
-                    className="mt-1 space-y-1 text-left text-muted-foreground font-sans"
-                    style={{
-                      direction: "ltr",
-                      textAlign: "left",
-                      unicodeBidi: "isolate",
-                    }}
-                  >
-                    {updateDecision.notes.map((note, index) => (
-                      <li
-                        key={index}
-                        dir="ltr"
-                        lang="en"
-                        className="text-left"
-                      >
-                        {note}
-                      </li>
-                    ))}
-                  </ul>
+                  <p>
+                    New Version:{" "}
+                    <span
+                      dir="ltr"
+                      className="font-semibold"
+                    >
+                      {updateDecision.target}
+                    </span>
+                  </p>
+
+                  <p>
+                    Release Channel:{" "}
+                    <span className="font-semibold">
+                      {updateDecision.targetChannel === "beta"
+                        ? "Beta"
+                        : "Stable"}
+                    </span>
+                  </p>
                 </div>
-              )}
 
-              <div className="mt-6 flex gap-2">
-                <Primary
-                  disabled={downloading}
-                  onClick={() => void startUpdate(updateDecision)}
-                >
-                  <Download className="h-4 w-4" />
-                  Download & Install
-                </Primary>
+                {updateDecision.notes.length > 0 && (
+                  <div className="mt-3 text-left text-sm">
+                    <p className="font-medium">
+                      What's New:
+                    </p>
 
-                {!mandatory && (
-                  <Secondary
-                    onClick={() => setDismissed(true)}
-                  >
-                    Later
-                  </Secondary>
+                    <ul
+                      dir="ltr"
+                      lang="en"
+                      className="mt-1 space-y-1 text-left text-muted-foreground font-sans"
+                      style={{
+                        direction: "ltr",
+                        textAlign: "left",
+                        unicodeBidi: "isolate",
+                      }}
+                    >
+                      {updateDecision.notes.map(
+                        (note, index) => (
+                          <li
+                            key={index}
+                            dir="ltr"
+                            lang="en"
+                            className="text-left"
+                          >
+                            {note}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
                 )}
-              </div>
-            </>
-          )}
-        </Modal>
-      )}
+
+                <div className="mt-6 flex gap-2">
+                  <Primary
+                    disabled={downloading}
+                    onClick={() =>
+                      void startUpdate(updateDecision)
+                    }
+                  >
+                    <Download className="h-4 w-4" />
+                    Download & Install
+                  </Primary>
+
+                  {!mandatory && (
+                    <Secondary
+                      onClick={() => setDismissed(true)}
+                    >
+                      Later
+                    </Secondary>
+                  )}
+                </div>
+              </>
+            )}
+          </Modal>
+        )}
     </VersionCtx.Provider>
   );
 }
 
-function Modal({ children }: { children: ReactNode }) {
+function Modal({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <div
       role="dialog"
