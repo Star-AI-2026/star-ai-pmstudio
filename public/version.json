@@ -1,12 +1,13 @@
-
 {
   "latestVersion": "3.6.1",
   "minimumVersion": "1.4.0",
   "channel": "stable",
-  "betaVersion": "2.0.5-Beta",
+  "betaVersion": "3.6.2",
   "betaReleaseNotes": [
-    "What's New",
-    "Star-AI 4.0 has been temporarily locked due to a bug."
+    "🚀 Star-AI 3.6.2 – New Update",
+    "✨ Improvements",
+    "🐛 Bug fixes and performance improvements.",
+    "❤️ Thank you for using Star-AI!"
   ],
   "releaseNotes": [
     "🚀 Star-AI 3.2.0 – New Update",
@@ -26,5 +27,11 @@
     "newAIInterface": "3.2.0",
     "advancedTools": "3.2.0",
     "futureFeature": "3.2.0"
-  }
+  },
+  "betaSetupFileName": "Star-AI-Setup-3.6.2-Beta.exe",
+  "betaSetupDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.6.2-beta/Star-AI-Setup-3.6.2-Beta.exe",
+  "betaSetupSha256": "177c4d925191813755e08f6cae26638eafe6d3dcddfd155cf74f2d11bfa82f2c",
+  "betaUpdateFileName": "Star-AI-Update-3.6.2-Beta.exe",
+  "betaUpdateDownloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.6.2-beta/Star-AI-Update-3.6.2-Beta.exe",
+  "betaUpdateSha256": "30e75fb664e967bb67882d2397cfd53849bbc6b9c91c7b145245a6e03524ed4e"
 }
