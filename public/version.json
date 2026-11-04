@@ -1,10 +1,10 @@
 
 {
   "stable": {
-    "version": "3.6.0",
+    "version": "3.2.0",
     "minimumVersion": "1.4.0",
     "releaseNotes": [
-      "🚀 Star-AI 3.6.0 - Stable Release",
+      "🚀 Star-AI 3.2.0 - Stable Release",
       "",
       "✨ Improvements",
       "🐛 Bug fixes and performance improvements.",
