@@ -1,22 +1,42 @@
+
 /**
- * Contract with the Electron preload script (see desktop/electron/).
- * The website never trusts a user-entered version: it only reads what the
- * Electron main process reports from app.getVersion().
+ * Star-AI Desktop Bridge
+ *
+ * Contract between the React application and Electron preload.
+ * The installed version is always provided by Electron.
  */
 
-export type DownloadProgress = { received: number; total: number; percent: number };
+export type DownloadProgress = {
+  received: number;
+  total: number;
+  percent: number;
+};
+
+export type DownloadRequest = {
+  url: string;
+  fileName: string;
+  version: string;
+  sha256: string;
+};
+
+export type DownloadResult =
+  | { ok: true }
+  | { ok: false; error: string }
+  | { success: true };
 
 export type StarDesktopBridge = {
   isDesktop: true;
+
   getVersion: () => Promise<string>;
-  /** Downloads the approved Update installer (or full Setup), verifies SHA-256, then opens it. */
-  downloadAndInstall: (req: {
-    url: string;
-    fileName: string;
-    version: string;
-    sha256: string;
-  }) => Promise<{ ok: true } | { ok: false; error: string }>;
-  onDownloadProgress: (cb: (p: DownloadProgress) => void) => () => void;
+
+  downloadAndInstall: (
+    req: DownloadRequest
+  ) => Promise<DownloadResult>;
+
+  onDownloadProgress: (
+    cb: (progress: DownloadProgress) => void
+  ) => () => void;
+
   openExternal?: (url: string) => Promise<void>;
 };
 
@@ -26,12 +46,34 @@ declare global {
   }
 }
 
+/**
+ * Returns the Electron bridge when running inside Star-AI Desktop.
+ */
 export function getDesktopBridge(): StarDesktopBridge | null {
-  if (typeof window === "undefined") return null;
-  const b = window.starDesktop;
-  return b && b.isDesktop === true && typeof b.getVersion === "function" ? b : null;
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const bridge = window.starDesktop;
+
+  if (
+    !bridge ||
+    bridge.isDesktop !== true ||
+    typeof bridge.getVersion !== "function" ||
+    typeof bridge.downloadAndInstall !== "function" ||
+    typeof bridge.onDownloadProgress !== "function"
+  ) {
+    return null;
+  }
+
+  return bridge;
 }
 
+/**
+ * Public version.json URL.
+ */
 export function versionJsonUrl(): string {
-  return `${import.meta.env.BASE_URL}version.json?t=${Date.now()}`;
+  const base = import.meta.env.BASE_URL || "/";
+
+  return `${base.endsWith("/") ? base : `${base}/`}version.json?t=${Date.now()}`;
 }
