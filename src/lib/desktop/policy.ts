@@ -13,6 +13,16 @@ export type VersionPolicy = {
   downloadUrl: string;
   setupFileName: string;
   setupDownloadUrl: string;
+  setupSha256: string;
+  updateFileName: string;
+  updateDownloadUrl: string;
+  updateSha256: string;
+  betaSetupFileName: string;
+  betaSetupDownloadUrl: string;
+  betaSetupSha256: string;
+  betaUpdateFileName: string;
+  betaUpdateDownloadUrl: string;
+  betaUpdateSha256: string;
   featureRequirements: Record<string, string>;
 };
 
@@ -66,6 +76,16 @@ export function normalizePolicy(raw: unknown): VersionPolicy {
     downloadUrl: str(r.downloadUrl),
     setupFileName: str(r.setupFileName),
     setupDownloadUrl: str(r.setupDownloadUrl),
+    setupSha256: str(r.setupSha256),
+    updateFileName: str(r.updateFileName),
+    updateDownloadUrl: str(r.updateDownloadUrl),
+    updateSha256: str(r.updateSha256),
+    betaSetupFileName: str(r.betaSetupFileName),
+    betaSetupDownloadUrl: str(r.betaSetupDownloadUrl),
+    betaSetupSha256: str(r.betaSetupSha256),
+    betaUpdateFileName: str(r.betaUpdateFileName),
+    betaUpdateDownloadUrl: str(r.betaUpdateDownloadUrl),
+    betaUpdateSha256: str(r.betaUpdateSha256),
     featureRequirements: reqs,
   };
 }

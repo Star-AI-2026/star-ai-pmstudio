@@ -9,11 +9,12 @@ export type DownloadProgress = { received: number; total: number; percent: numbe
 export type StarDesktopBridge = {
   isDesktop: true;
   getVersion: () => Promise<string>;
-  /** Downloads the setup, verifies it, quits the app and opens the installer. */
+  /** Downloads the approved Update installer (or full Setup), verifies SHA-256, then opens it. */
   downloadAndInstall: (req: {
     url: string;
     fileName: string;
     version: string;
+    sha256: string;
   }) => Promise<{ ok: true } | { ok: false; error: string }>;
   onDownloadProgress: (cb: (p: DownloadProgress) => void) => () => void;
   openExternal?: (url: string) => Promise<void>;

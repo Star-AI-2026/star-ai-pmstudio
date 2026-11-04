@@ -84,7 +84,23 @@ export function UpdateGate({ children }: { children: ReactNode }) {
 
     if (!bridge || downloading) return;
 
-    if (!policy.setupDownloadUrl || !policy.setupFileName) {
+    // Prefer the compact universal delta installer. If this release does not
+    // publish one, use the full Setup. The Update installer itself falls back
+    // to Setup when the installed base hash or patch verification fails.
+    const isBeta = Boolean(policy.betaVersion && target === policy.betaVersion);
+    const updateUrl = isBeta ? policy.betaUpdateDownloadUrl : policy.updateDownloadUrl;
+    const updateName = isBeta ? policy.betaUpdateFileName : policy.updateFileName;
+    const updateHash = isBeta ? policy.betaUpdateSha256 : policy.updateSha256;
+    const setupUrl = isBeta ? policy.betaSetupDownloadUrl : policy.setupDownloadUrl;
+    const setupName = isBeta ? policy.betaSetupFileName : policy.setupFileName;
+    const setupHash = isBeta ? policy.betaSetupSha256 : policy.setupSha256;
+
+    const useDelta = Boolean(updateUrl && updateName && updateHash);
+    const asset = useDelta
+      ? { url: updateUrl, fileName: updateName, sha256: updateHash }
+      : { url: setupUrl, fileName: setupName, sha256: setupHash };
+
+    if (!asset.url || !asset.fileName || !asset.sha256) {
       setDlError(true);
       return;
     }
@@ -95,17 +111,23 @@ export function UpdateGate({ children }: { children: ReactNode }) {
 
     const off = bridge.onDownloadProgress(setProgress);
 
-    const r = await bridge.downloadAndInstall({
-      url: policy.setupDownloadUrl,
-      fileName: policy.setupFileName,
-      version: target,
-    });
+    try {
+      const r = await bridge.downloadAndInstall({
+        url: asset.url,
+        fileName: asset.fileName,
+        version: target,
+        sha256: asset.sha256,
+      });
 
-    off();
-
-    if (!r.ok) {
+      if (!r.ok) {
+        setDownloading(false);
+        setDlError(true);
+      }
+    } catch {
       setDownloading(false);
       setDlError(true);
+    } finally {
+      off();
     }
   };
 
