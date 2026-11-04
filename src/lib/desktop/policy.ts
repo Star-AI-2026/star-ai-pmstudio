@@ -1,127 +1,365 @@
+
 /**
- * Star-AI desktop version policy. Pure, client- and server-safe.
- * The policy itself lives in /public/version.json — never hardcode it here.
+ * Star-AI Desktop Update Policy
+ *
+ * Versioning:
+ * - Stable: third version number is always 0
+ * - Beta: third version number is greater than 0
+ *
+ * Examples:
+ * 3.6.0  = Stable
+ * 3.6.1  = Beta
+ * 3.6.2  = Beta
+ * 3.6.10 = Beta
+ * 3.7.0  = Stable
  */
 
-export type VersionPolicy = {
-  latestVersion: string;
-  minimumVersion: string;
-  channel: "stable" | "beta" | string;
-  betaVersion: string;
-  betaReleaseNotes: string[];
-  releaseNotes: string[];
+export type ReleaseChannel = "stable" | "beta";
+
+export type UpdateMode = "mandatory" | "optional" | "disabled";
+
+export type ReleaseAsset = {
+  fileName: string;
   downloadUrl: string;
-  setupFileName: string;
-  setupDownloadUrl: string;
-  setupSha256: string;
-  updateFileName: string;
-  updateDownloadUrl: string;
-  updateSha256: string;
-  betaSetupFileName: string;
-  betaSetupDownloadUrl: string;
-  betaSetupSha256: string;
-  betaUpdateFileName: string;
-  betaUpdateDownloadUrl: string;
-  betaUpdateSha256: string;
+  sha256: string;
+};
+
+export type ChannelRelease = {
+  version: string;
+  minimumVersion: string;
+  releaseNotes: string[];
+  setup: ReleaseAsset;
+  delta: ReleaseAsset;
+};
+
+export type VersionPolicy = {
+  stable: ChannelRelease;
+  beta: ChannelRelease;
+
+  policies: {
+    stableToStable: UpdateMode;
+    stableToBeta: UpdateMode;
+    betaToBeta: UpdateMode;
+    betaToStable: UpdateMode;
+  };
+
   featureRequirements: Record<string, string>;
 };
 
-/** Parse "1.0.2", "v1.0.2", "1.0.2 Beta", "1.0.2-beta.1" into [major, minor, patch]. */
-export function parseVersion(input: string): [number, number, number] | null {
-  const m = String(input ?? "")
-    .trim()
-    .match(/^v?(\d+)(?:\.(\d+))?(?:\.(\d+))?/i);
-  if (!m) return null;
-  return [Number(m[1]), Number(m[2] ?? 0), Number(m[3] ?? 0)];
-}
-
-/** Numeric semantic comparison (never string comparison). Returns -1, 0 or 1. */
-export function compareVersions(a: string, b: string): number {
-  const pa = parseVersion(a);
-  const pb = parseVersion(b);
-  if (!pa || !pb) throw new Error(`Invalid version: "${!pa ? a : b}"`);
-  for (let i = 0; i < 3; i++) {
-    if (pa[i]! > pb[i]!) return 1;
-    if (pa[i]! < pb[i]!) return -1;
-  }
-  return 0;
-}
-
-const str = (v: unknown, fallback = "") => (typeof v === "string" ? v.trim() : fallback);
-const list = (v: unknown) =>
-  Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
-
-/** Validate raw JSON. Throws when the required fields are missing/invalid. */
-export function normalizePolicy(raw: unknown): VersionPolicy {
-  if (!raw || typeof raw !== "object") throw new Error("version.json is not an object");
-  const r = raw as Partial<Record<keyof VersionPolicy, unknown>>;
-  const latestVersion = str(r.latestVersion);
-  const minimumVersion = str(r.minimumVersion);
-  if (!parseVersion(latestVersion) || !parseVersion(minimumVersion)) {
-    throw new Error("version.json: latestVersion/minimumVersion invalid");
-  }
-  const reqs: Record<string, string> = {};
-  if (r.featureRequirements && typeof r.featureRequirements === "object") {
-    for (const [k, v] of Object.entries(r.featureRequirements as Record<string, unknown>)) {
-      if (typeof v === "string" && parseVersion(v)) reqs[k] = v;
-    }
-  }
-  return {
-    latestVersion,
-    minimumVersion,
-    channel: str(r.channel, "stable") || "stable",
-    betaVersion: str(r.betaVersion),
-    betaReleaseNotes: list(r.betaReleaseNotes),
-    releaseNotes: list(r.releaseNotes),
-    downloadUrl: str(r.downloadUrl),
-    setupFileName: str(r.setupFileName),
-    setupDownloadUrl: str(r.setupDownloadUrl),
-    setupSha256: str(r.setupSha256),
-    updateFileName: str(r.updateFileName),
-    updateDownloadUrl: str(r.updateDownloadUrl),
-    updateSha256: str(r.updateSha256),
-    betaSetupFileName: str(r.betaSetupFileName),
-    betaSetupDownloadUrl: str(r.betaSetupDownloadUrl),
-    betaSetupSha256: str(r.betaSetupSha256),
-    betaUpdateFileName: str(r.betaUpdateFileName),
-    betaUpdateDownloadUrl: str(r.betaUpdateDownloadUrl),
-    betaUpdateSha256: str(r.betaUpdateSha256),
-    featureRequirements: reqs,
-  };
-}
-
 export type UpdateDecision =
-  | { kind: "mandatory"; current: string; target: string; notes: string[] }
-  | { kind: "optional"; current: string; target: string; notes: string[] }
-  | { kind: "beta"; current: string; target: string; notes: string[] }
-  | { kind: "none"; current: string };
+  | {
+      kind: "mandatory" | "optional";
+      current: string;
+      currentChannel: ReleaseChannel;
+      target: string;
+      targetChannel: ReleaseChannel;
+      notes: string[];
+      setup: ReleaseAsset;
+      delta: ReleaseAsset;
+    }
+  | {
+      kind: "none";
+      current: string;
+      currentChannel: ReleaseChannel;
+    };
 
-/** Decide what to show. Beta never produces "mandatory". */
-export function evaluatePolicy(current: string, p: VersionPolicy): UpdateDecision {
-  if (compareVersions(current, p.minimumVersion) < 0) {
-    return { kind: "mandatory", current, target: p.latestVersion, notes: p.releaseNotes };
-  }
-  if (compareVersions(current, p.latestVersion) < 0) {
-    return { kind: "optional", current, target: p.latestVersion, notes: p.releaseNotes };
-  }
-  if (p.betaVersion && parseVersion(p.betaVersion) && compareVersions(current, p.betaVersion) < 0) {
-    return { kind: "beta", current, target: p.betaVersion, notes: p.betaReleaseNotes };
-  }
-  return { kind: "none", current };
+const VERSION_PATTERN = /^v?(\d+)\.(\d+)\.(\d+)$/i;
+
+export function parseVersion(
+  input: string
+): [number, number, number] | null {
+  const match = String(input ?? "").trim().match(VERSION_PATTERN);
+
+  if (!match) return null;
+
+  return [
+    Number(match[1]),
+    Number(match[2]),
+    Number(match[3]),
+  ];
 }
 
 /**
- * Feature gate. `current === null` means plain web browser (always latest code) → allowed.
- * Unknown features are allowed; listed features need current >= required.
+ * Detect channel from the third version number.
  */
+export function detectChannel(version: string): ReleaseChannel | null {
+  const parsed = parseVersion(version);
+
+  if (!parsed) return null;
+
+  return parsed[2] === 0 ? "stable" : "beta";
+}
+
+/**
+ * Validates that a version belongs to the specified channel.
+ */
+export function isVersionForChannel(
+  version: string,
+  channel: ReleaseChannel
+): boolean {
+  return detectChannel(version) === channel;
+}
+
+export function compareVersions(a: string, b: string): number {
+  const first = parseVersion(a);
+  const second = parseVersion(b);
+
+  if (!first || !second) {
+    throw new Error(
+      `Invalid version: "${!first ? a : b}"`
+    );
+  }
+
+  for (let i = 0; i < 3; i++) {
+    if (first[i]! > second[i]!) return 1;
+    if (first[i]! < second[i]!) return -1;
+  }
+
+  return 0;
+}
+
+function isValidHash(value: string): boolean {
+  return /^[a-f0-9]{64}$/i.test(value);
+}
+
+function normalizeAsset(raw: unknown): ReleaseAsset {
+  const value =
+    raw && typeof raw === "object"
+      ? raw as Record<string, unknown>
+      : {};
+
+  return {
+    fileName:
+      typeof value.fileName === "string"
+        ? value.fileName.trim()
+        : "",
+
+    downloadUrl:
+      typeof value.downloadUrl === "string"
+        ? value.downloadUrl.trim()
+        : "",
+
+    sha256:
+      typeof value.sha256 === "string"
+        ? value.sha256.trim().toLowerCase()
+        : "",
+  };
+}
+
+function normalizeRelease(
+  raw: unknown,
+  channel: ReleaseChannel
+): ChannelRelease {
+  if (!raw || typeof raw !== "object") {
+    throw new Error(`Invalid ${channel} release configuration`);
+  }
+
+  const value = raw as Record<string, unknown>;
+
+  const version =
+    typeof value.version === "string"
+      ? value.version.trim()
+      : "";
+
+  const minimumVersion =
+    typeof value.minimumVersion === "string"
+      ? value.minimumVersion.trim()
+      : "";
+
+  if (!parseVersion(version)) {
+    throw new Error(`Invalid ${channel} version`);
+  }
+
+  if (!parseVersion(minimumVersion)) {
+    throw new Error(`Invalid ${channel} minimumVersion`);
+  }
+
+  if (!isVersionForChannel(version, channel)) {
+    throw new Error(
+      `${channel} version ${version} violates Star-AI versioning rules`
+    );
+  }
+
+  const notes = Array.isArray(value.releaseNotes)
+    ? value.releaseNotes.filter(
+        (item): item is string => typeof item === "string"
+      )
+    : [];
+
+  return {
+    version,
+    minimumVersion,
+    releaseNotes: notes,
+    setup: normalizeAsset(value.setup),
+    delta: normalizeAsset(value.delta),
+  };
+}
+
+function normalizeMode(value: unknown): UpdateMode {
+  if (
+    value === "mandatory" ||
+    value === "optional" ||
+    value === "disabled"
+  ) {
+    return value;
+  }
+
+  return "disabled";
+}
+
+export function normalizePolicy(raw: unknown): VersionPolicy {
+  if (!raw || typeof raw !== "object") {
+    throw new Error("version.json is not an object");
+  }
+
+  const value = raw as Record<string, unknown>;
+
+  const policies =
+    value.policies && typeof value.policies === "object"
+      ? value.policies as Record<string, unknown>
+      : {};
+
+  const featureRequirements: Record<string, string> = {};
+
+  if (
+    value.featureRequirements &&
+    typeof value.featureRequirements === "object"
+  ) {
+    for (
+      const [key, requirement] of Object.entries(
+        value.featureRequirements as Record<string, unknown>
+      )
+    ) {
+      if (
+        typeof requirement === "string" &&
+        parseVersion(requirement)
+      ) {
+        featureRequirements[key] = requirement;
+      }
+    }
+  }
+
+  return {
+    stable: normalizeRelease(value.stable, "stable"),
+    beta: normalizeRelease(value.beta, "beta"),
+
+    policies: {
+      stableToStable: normalizeMode(policies.stableToStable),
+      stableToBeta: normalizeMode(policies.stableToBeta),
+      betaToBeta: normalizeMode(policies.betaToBeta),
+      betaToStable: normalizeMode(policies.betaToStable),
+    },
+
+    featureRequirements,
+  };
+}
+
+function getPolicyKey(
+  current: ReleaseChannel,
+  target: ReleaseChannel
+): keyof VersionPolicy["policies"] {
+  if (current === "stable" && target === "stable") {
+    return "stableToStable";
+  }
+
+  if (current === "stable" && target === "beta") {
+    return "stableToBeta";
+  }
+
+  if (current === "beta" && target === "beta") {
+    return "betaToBeta";
+  }
+
+  return "betaToStable";
+}
+
+export function evaluatePolicy(
+  current: string,
+  currentChannel: ReleaseChannel,
+  policy: VersionPolicy
+): UpdateDecision {
+  const currentVersion = parseVersion(current);
+
+  if (!currentVersion) {
+    throw new Error(`Invalid installed version: ${current}`);
+  }
+
+  if (!isVersionForChannel(current, currentChannel)) {
+    throw new Error(
+      `Installed version ${current} does not match ${currentChannel} channel`
+    );
+  }
+
+  // Prefer the installed channel first.
+  // Then check the other channel if its policy allows it.
+  const candidates: ReleaseChannel[] =
+    currentChannel === "stable"
+      ? ["stable", "beta"]
+      : ["beta", "stable"];
+
+  for (const targetChannel of candidates) {
+    const release = policy[targetChannel];
+
+    const mode =
+      policy.policies[getPolicyKey(currentChannel, targetChannel)];
+
+    if (mode === "disabled") continue;
+
+    if (!isVersionForChannel(release.version, targetChannel)) {
+      continue;
+    }
+
+    // Never downgrade or reinstall the same version.
+    if (compareVersions(release.version, current) <= 0) {
+      continue;
+    }
+
+    const belowMinimum =
+      compareVersions(current, release.minimumVersion) < 0;
+
+    const kind =
+      mode === "mandatory" || belowMinimum
+        ? "mandatory"
+        : "optional";
+
+    return {
+      kind,
+      current,
+      currentChannel,
+      target: release.version,
+      targetChannel,
+      notes: release.releaseNotes,
+      setup: release.setup,
+      delta: release.delta,
+    };
+  }
+
+  return {
+    kind: "none",
+    current,
+    currentChannel,
+  };
+}
+
 export function isFeatureAllowed(
   feature: string,
   current: string | null,
-  p: VersionPolicy | null,
+  policy: VersionPolicy | null
 ): boolean {
   if (current === null) return true;
-  if (!p) return false; // desktop without a loaded policy: fail closed
-  const req = p.featureRequirements[feature];
-  if (!req) return true;
-  return compareVersions(current, req) >= 0;
+  if (!policy) return false;
+
+  const requirement = policy.featureRequirements[feature];
+
+  if (!requirement) return true;
+
+  return compareVersions(current, requirement) >= 0;
+}
+
+export function isAssetAvailable(asset: ReleaseAsset): boolean {
+  return Boolean(
+    asset.fileName &&
+    asset.downloadUrl &&
+    isValidHash(asset.sha256)
+  );
 }
