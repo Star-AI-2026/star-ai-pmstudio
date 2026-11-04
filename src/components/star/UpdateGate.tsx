@@ -1,10 +1,31 @@
 
-import { Download, Loader2, RefreshCw, Sparkles, TriangleAlert } from "lucide-react";
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-
-import { getDesktopBridge, versionJsonUrl, type DownloadProgress } from "@/lib/desktop/bridge";
 import {
+  Download,
+  Loader2,
+  RefreshCw,
+  Sparkles,
+  TriangleAlert,
+} from "lucide-react";
+
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+
+import {
+  getDesktopBridge,
+  versionJsonUrl,
+  type DownloadProgress,
+} from "@/lib/desktop/bridge";
+
+import {
+  detectChannel,
   evaluatePolicy,
+  isAssetAvailable,
   isFeatureAllowed,
   normalizePolicy,
   type UpdateDecision,
@@ -48,29 +69,49 @@ export function UpdateGate({ children }: { children: ReactNode }) {
     const bridge = getDesktopBridge();
 
     if (!bridge) {
-      setState({ s: "ready", version: null, policy: null, decision: null });
+      setState({
+        s: "ready",
+        version: null,
+        policy: null,
+        decision: null,
+      });
       return;
     }
 
     setState({ s: "checking" });
 
     try {
-      const [version, res] = await Promise.all([
+      const [version, response] = await Promise.all([
         bridge.getVersion(),
         fetch(versionJsonUrl(), { cache: "no-store" }),
       ]);
 
-      if (!res.ok) throw new Error(String(res.status));
+      if (!response.ok) {
+        throw new Error(`Version check failed: ${response.status}`);
+      }
 
-      const policy = normalizePolicy(await res.json());
+      const channel = detectChannel(version);
+
+      if (!channel) {
+        throw new Error(`Invalid installed version: ${version}`);
+      }
+
+      const policy = normalizePolicy(await response.json());
+
+      const decision = evaluatePolicy(
+        version,
+        channel,
+        policy
+      );
 
       setState({
         s: "ready",
         version,
         policy,
-        decision: evaluatePolicy(version, policy),
+        decision,
       });
-    } catch {
+    } catch (error) {
+      console.error("Star-AI update check failed:", error);
       setState({ s: "error" });
     }
   }, []);
@@ -79,51 +120,50 @@ export function UpdateGate({ children }: { children: ReactNode }) {
     void check();
   }, [check]);
 
-  const startUpdate = async (policy: VersionPolicy, target: string) => {
+  const startUpdate = async (decision: UpdateDecision) => {
     const bridge = getDesktopBridge();
 
-    if (!bridge || downloading) return;
+    if (!bridge || downloading || decision.kind === "none") {
+      return;
+    }
 
-    // Prefer the compact universal delta installer. If this release does not
-    // publish one, use the full Setup. The Update installer itself falls back
-    // to Setup when the installed base hash or patch verification fails.
-    const isBeta = Boolean(policy.betaVersion && target === policy.betaVersion);
-    const updateUrl = isBeta ? policy.betaUpdateDownloadUrl : policy.updateDownloadUrl;
-    const updateName = isBeta ? policy.betaUpdateFileName : policy.updateFileName;
-    const updateHash = isBeta ? policy.betaUpdateSha256 : policy.updateSha256;
-    const setupUrl = isBeta ? policy.betaSetupDownloadUrl : policy.setupDownloadUrl;
-    const setupName = isBeta ? policy.betaSetupFileName : policy.setupFileName;
-    const setupHash = isBeta ? policy.betaSetupSha256 : policy.setupSha256;
+    // Prefer Delta. If Delta is unavailable, use the full Setup.
+    // The Delta installer handles verification and Setup fallback itself.
 
-    const useDelta = Boolean(updateUrl && updateName && updateHash);
-    const asset = useDelta
-      ? { url: updateUrl, fileName: updateName, sha256: updateHash }
-      : { url: setupUrl, fileName: setupName, sha256: setupHash };
+    const asset = isAssetAvailable(decision.delta)
+      ? decision.delta
+      : decision.setup;
 
-    if (!asset.url || !asset.fileName || !asset.sha256) {
+    if (!isAssetAvailable(asset)) {
       setDlError(true);
       return;
     }
 
     setDlError(false);
     setDownloading(true);
-    setProgress({ received: 0, total: 0, percent: 0 });
+
+    setProgress({
+      received: 0,
+      total: 0,
+      percent: 0,
+    });
 
     const off = bridge.onDownloadProgress(setProgress);
 
     try {
-      const r = await bridge.downloadAndInstall({
-        url: asset.url,
+      const result = await bridge.downloadAndInstall({
+        url: asset.downloadUrl,
         fileName: asset.fileName,
-        version: target,
+        version: decision.target,
         sha256: asset.sha256,
       });
 
-      if (!r.ok) {
+      if (!result.ok) {
         setDownloading(false);
         setDlError(true);
       }
-    } catch {
+    } catch (error) {
+      console.error("Star-AI update installation failed:", error);
       setDownloading(false);
       setDlError(true);
     } finally {
@@ -133,7 +173,10 @@ export function UpdateGate({ children }: { children: ReactNode }) {
 
   if (state.s === "checking") {
     return (
-      <div dir="ltr" className="flex h-dvh items-center justify-center">
+      <div
+        dir="ltr"
+        className="flex h-dvh items-center justify-center"
+      >
         <Loader2 className="h-6 w-6 animate-spin text-primary" />
       </div>
     );
@@ -171,39 +214,49 @@ export function UpdateGate({ children }: { children: ReactNode }) {
   const ctx: Ctx = {
     desktopVersion: version,
     policy,
-    featureAllowed: (f) => isFeatureAllowed(f, version, policy),
+    featureAllowed: (feature) =>
+      isFeatureAllowed(feature, version, policy),
   };
 
-  const mandatory = decision?.kind === "mandatory";
+  const updateDecision =
+    decision && decision.kind !== "none"
+      ? decision
+      : null;
+
+  const mandatory =
+    updateDecision?.kind === "mandatory";
 
   const showDialog =
-    policy &&
-    decision &&
-    decision.kind !== "none" &&
+    Boolean(policy && updateDecision) &&
     (mandatory || !dismissed);
 
   return (
     <VersionCtx.Provider value={ctx}>
       {showDialog ? null : children}
 
-      {showDialog && policy && (
+      {showDialog && policy && updateDecision && (
         <Modal>
           {downloading ? (
             <>
               <Download className="mx-auto h-8 w-8 animate-pulse text-primary" />
 
               <h2 className="mt-3 font-display text-lg font-semibold">
-                Downloading update...
+                Downloading Update...
               </h2>
 
-              <p className="mt-1 text-sm text-muted-foreground" dir="ltr">
-                Star-AI {decision.target}
+              <p
+                className="mt-1 text-sm text-muted-foreground"
+                dir="ltr"
+              >
+                Star-AI {updateDecision.target}
               </p>
 
               <div className="mt-5 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
                 <div
                   className="h-full bg-brand-gradient transition-all"
-                  style={{ width: `${progress?.percent ?? 0}%` }}
+                  style={{
+                    width: `${progress?.percent ?? 0}%`,
+                  }}
                 />
               </div>
 
@@ -211,6 +264,7 @@ export function UpdateGate({ children }: { children: ReactNode }) {
                 {progress && progress.total > 0
                   ? `Downloading: ${progress.percent}%`
                   : "Downloading..."}
+
                 {progress && progress.total > 0
                   ? ` · ${mb(progress.received)} MB / ${mb(progress.total)} MB`
                   : ""}
@@ -221,7 +275,7 @@ export function UpdateGate({ children }: { children: ReactNode }) {
               <TriangleAlert className="mx-auto h-8 w-8 text-destructive" />
 
               <h2 className="mt-3 font-display text-lg font-semibold">
-                Update download failed.
+                Update Failed
               </h2>
 
               <p className="mt-2 text-sm text-muted-foreground">
@@ -229,16 +283,23 @@ export function UpdateGate({ children }: { children: ReactNode }) {
               </p>
 
               <div className="mt-6 flex gap-2">
-                <Primary onClick={() => void startUpdate(policy, decision.target)}>
+                <Primary
+                  onClick={() => void startUpdate(updateDecision)}
+                >
+                  <RefreshCw className="h-4 w-4" />
                   Retry
                 </Primary>
 
                 <Secondary
-                  onClick={() =>
-                    mandatory ? setDlError(false) : setDismissed(true)
-                  }
+                  onClick={() => {
+                    if (mandatory) {
+                      setDlError(false);
+                    } else {
+                      setDismissed(true);
+                    }
+                  }}
                 >
-                  Close
+                  {mandatory ? "Close" : "Later"}
                 </Secondary>
               </div>
             </>
@@ -247,36 +308,49 @@ export function UpdateGate({ children }: { children: ReactNode }) {
               <Sparkles className="mx-auto h-8 w-8 text-primary" />
 
               <h2 className="mt-3 font-display text-lg font-semibold">
-                {decision.kind === "mandatory"
-                  ? "Star-AI update required"
-                  : decision.kind === "optional"
-                    ? "A new Star-AI version is available."
-                    : "A new Star-AI beta version is available."}
+                {mandatory
+                  ? "Mandatory Update"
+                  : updateDecision.targetChannel === "beta"
+                    ? "New Beta Update"
+                    : "Update Available"}
               </h2>
 
               {mandatory && (
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Please update Star-AI to the latest version to access new features.
+                  Please update Star-AI to continue using the application.
                 </p>
               )}
 
-              <div className="mt-4 space-y-1 rounded-2xl border border-border p-3 text-left text-sm">
+              <div className="mt-4 space-y-2 rounded-2xl border border-border p-3 text-left text-sm">
                 <p>
-                  Current version:{" "}
-                  <span dir="ltr">{decision.current}</span>
+                  Current Version:{" "}
+                  <span dir="ltr" className="font-semibold">
+                    {updateDecision.current}
+                  </span>
                 </p>
 
                 <p>
-                  {decision.kind === "beta" ? "Beta version" : "New version"}:{" "}
+                  New Version:{" "}
                   <span dir="ltr" className="font-semibold">
-                    {decision.target}
+                    {updateDecision.target}
+                  </span>
+                </p>
+
+                <p>
+                  Release Channel:{" "}
+                  <span className="font-semibold">
+                    {updateDecision.targetChannel === "beta"
+                      ? "Beta"
+                      : "Stable"}
                   </span>
                 </p>
               </div>
 
-              {decision.notes.length > 0 && (
-                <div className="mt-3 text-sm text-left">
-                  <p className="font-medium">What's New:</p>
+              {updateDecision.notes.length > 0 && (
+                <div className="mt-3 text-left text-sm">
+                  <p className="font-medium">
+                    What's New:
+                  </p>
 
                   <ul
                     dir="ltr"
@@ -288,9 +362,14 @@ export function UpdateGate({ children }: { children: ReactNode }) {
                       unicodeBidi: "isolate",
                     }}
                   >
-                    {decision.notes.map((n, i) => (
-                      <li key={i} dir="ltr" lang="en" className="text-left">
-                        {n}
+                    {updateDecision.notes.map((note, index) => (
+                      <li
+                        key={index}
+                        dir="ltr"
+                        lang="en"
+                        className="text-left"
+                      >
+                        {note}
                       </li>
                     ))}
                   </ul>
@@ -300,17 +379,16 @@ export function UpdateGate({ children }: { children: ReactNode }) {
               <div className="mt-6 flex gap-2">
                 <Primary
                   disabled={downloading}
-                  onClick={() => void startUpdate(policy, decision.target)}
+                  onClick={() => void startUpdate(updateDecision)}
                 >
-                  {mandatory
-                    ? "Update Star-AI"
-                    : decision.kind === "beta"
-                      ? "Update"
-                      : "Update"}
+                  <Download className="h-4 w-4" />
+                  Download & Install
                 </Primary>
 
                 {!mandatory && (
-                  <Secondary onClick={() => setDismissed(true)}>
+                  <Secondary
+                    onClick={() => setDismissed(true)}
+                  >
                     Later
                   </Secondary>
                 )}
