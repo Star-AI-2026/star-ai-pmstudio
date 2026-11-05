@@ -21,20 +21,20 @@
     }
   },
   "beta": {
-    "version": "3.6.7",
+    "version": "3.6.9",
     "minimumVersion": "1.4.0",
     "releaseNotes": [
-      "Fixed automatic update download and installation."
+      "Bug fixes and improvements."
     ],
     "setup": {
-      "sha256": "bee7d7cce9ab42aa24fb06103bb1780c52bad6fc74501e5359fd4cc412162f0b",
-      "fileName": "Star-AI-Setup-3.6.7-Beta.exe",
-      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.6.7-beta/Star-AI-Setup-3.6.7-Beta.exe"
+      "sha256": "768d7fc5d0010fcc53555f0098fce39553f59b6e353ba88d2bc4243dae71ecbb",
+      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.6.9-beta/Star-AI-Setup-3.6.9-Beta.exe",
+      "fileName": "Star-AI-Setup-3.6.9-Beta.exe"
     },
     "delta": {
-      "sha256": "82b5495f4f355a88e464c6da1370c5b2aab18409c31e7301c5b318b1d3daa22d",
-      "fileName": "Star-AI-Update-3.6.7-Beta.exe",
-      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.6.7-beta/Star-AI-Update-3.6.7-Beta.exe"
+      "sha256": "be9d42e7e5ad985baddf80c0aad117e67432b5c4118cebeb4cc6fc9932bc945b",
+      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.6.9-beta/Star-AI-Update-3.6.9-Beta.exe",
+      "fileName": "Star-AI-Update-3.6.9-Beta.exe"
     }
   },
   "policies": {
