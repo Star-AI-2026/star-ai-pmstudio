@@ -71,9 +71,10 @@ export function getDesktopBridge(): StarDesktopBridge | null {
 
 /**
  * Public version.json URL.
+ *
+ * Always use the canonical GitHub Pages URL.
+ * This prevents incorrect BASE_URL values from causing 404 errors.
  */
 export function versionJsonUrl(): string {
-  const base = import.meta.env.BASE_URL || "/";
-
-  return `${base.endsWith("/") ? base : `${base}/`}version.json?t=${Date.now()}`;
+  return `https://star-ai-2026.github.io/star-ai-pmstudio/version.json?t=${Date.now()}`;
 }
