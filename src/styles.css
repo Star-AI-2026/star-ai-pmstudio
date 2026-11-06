@@ -541,6 +541,11 @@ html:not(.dark) {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+@keyframes version-menu-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(7px) scale(.97); }
+}
+
 :root[data-star-animations="on"] [role="dialog"],
 :root[data-star-animations="on"] .fixed.inset-0.z-50 > .glass,
 :root[data-star-animations="on"] .fixed.inset-0.z-50 > div.glass {
@@ -555,26 +560,24 @@ html:not(.dark) {
   transform-origin: top center;
 }
 
-/* Version menu: explicit state animations override the global listbox entrance effect. */
+/* Version menu: explicit open/close keyframes; close remains mounted until animation ends. */
 .version-menu-panel {
-  transition: opacity 190ms ease-out, transform 190ms cubic-bezier(.2,.8,.2,1) !important;
   will-change: opacity, transform;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   transform-origin: top center;
 }
-.version-menu-panel.version-menu-open {
+.version-menu-panel[data-state="open"] {
   animation: hyperos-menu-in 190ms cubic-bezier(.2,.8,.2,1) both !important;
 }
-.version-menu-panel.version-menu-closed {
-  animation: none !important;
+.version-menu-panel[data-state="closed"] {
+  animation: version-menu-out 190ms cubic-bezier(.2,.8,.2,1) both !important;
 }
-:root[data-star-animations="on"] .version-menu-panel.version-menu-open[role="listbox"] {
+:root[data-star-animations="on"] .version-menu-panel[role="listbox"][data-state="open"] {
   animation: hyperos-menu-in 190ms cubic-bezier(.2,.8,.2,1) both !important;
 }
-:root[data-star-animations="on"] .version-menu-panel.version-menu-closed[role="listbox"] {
-  /* Exact reverse of the opening animation; higher specificity than the global listbox rule. */
-  animation: hyperos-menu-in 190ms cubic-bezier(.2,.8,.2,1) reverse both !important;
+:root[data-star-animations="on"] .version-menu-panel[role="listbox"][data-state="closed"] {
+  animation: version-menu-out 190ms cubic-bezier(.2,.8,.2,1) both !important;
 }
 
 /* Liquid Glass surfaces: translucent layers, fine highlights and depth. */

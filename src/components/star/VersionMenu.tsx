@@ -65,6 +65,7 @@ export function VersionMenu() {
       {menuMounted && (
         <div
           role="listbox"
+          data-state={open ? "open" : "closed"}
           aria-label={t("Star-AI version")}
           className={cn(
             "version-menu-panel glass absolute start-0 top-full z-50 mt-2 max-h-[min(65vh,390px)] w-[min(270px,calc(100vw-32px))] origin-top overflow-y-auto rounded-[1.35rem] border border-white/15 p-1.5 shadow-glow",
