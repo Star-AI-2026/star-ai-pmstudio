@@ -555,21 +555,26 @@ html:not(.dark) {
   transform-origin: top center;
 }
 
-/* Version menu: keep a dedicated entrance animation and a lightweight GPU-friendly exit. */
+/* Version menu: explicit state animations override the global listbox entrance effect. */
 .version-menu-panel {
-  transition: opacity 170ms ease-out, transform 170ms cubic-bezier(.2,.8,.2,1) !important;
+  transition: opacity 190ms ease-out, transform 190ms cubic-bezier(.2,.8,.2,1) !important;
   will-change: opacity, transform;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+  transform-origin: top center;
 }
 .version-menu-panel.version-menu-open {
   animation: hyperos-menu-in 190ms cubic-bezier(.2,.8,.2,1) both !important;
-  transform-origin: top center;
 }
 .version-menu-panel.version-menu-closed {
-  /* Play the exact opening motion backwards when closing. */
+  animation: none !important;
+}
+:root[data-star-animations="on"] .version-menu-panel.version-menu-open[role="listbox"] {
+  animation: hyperos-menu-in 190ms cubic-bezier(.2,.8,.2,1) both !important;
+}
+:root[data-star-animations="on"] .version-menu-panel.version-menu-closed[role="listbox"] {
+  /* Exact reverse of the opening animation; higher specificity than the global listbox rule. */
   animation: hyperos-menu-in 190ms cubic-bezier(.2,.8,.2,1) reverse both !important;
-  transform-origin: top center;
 }
 
 /* Liquid Glass surfaces: translucent layers, fine highlights and depth. */
