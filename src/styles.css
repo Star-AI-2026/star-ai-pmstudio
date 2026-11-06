@@ -567,7 +567,9 @@ html:not(.dark) {
   transform-origin: top center;
 }
 .version-menu-panel.version-menu-closed {
-  animation: none !important;
+  /* Play the exact opening motion backwards when closing. */
+  animation: hyperos-menu-in 190ms cubic-bezier(.2,.8,.2,1) reverse both !important;
+  transform-origin: top center;
 }
 
 /* Liquid Glass surfaces: translucent layers, fine highlights and depth. */
