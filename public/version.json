@@ -46,9 +46,9 @@
   },
   "policies": {
     "stableToStable": "mandatory",
-    "stableToBeta": "optional",
+    "stableToBeta": "disable",
     "betaToBeta": "optional",
-    "betaToStable": "optional"
+    "betaToStable": "mandatory"
   },
   "featureRequirements": {
     "newAIInterface": "3.6.0",
