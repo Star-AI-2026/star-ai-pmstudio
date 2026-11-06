@@ -555,6 +555,18 @@ html:not(.dark) {
   transform-origin: top center;
 }
 
+/* Lightweight version-menu motion: avoid animating backdrop-filter, blur, and shadows.
+   Disable the generic listbox entrance keyframe so the close transition can run. */
+.version-menu-panel {
+  transition: opacity 150ms ease-out, transform 150ms cubic-bezier(.2,.8,.2,1) !important;
+  will-change: opacity, transform;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+:root[data-star-animations="on"] .version-menu-panel {
+  animation: none !important;
+}
+
 /* Liquid Glass surfaces: translucent layers, fine highlights and depth. */
 :root[data-star-liquid-glass="on"] .glass,
 :root[data-star-liquid-glass="on"] [data-liquid-glass="true"] {

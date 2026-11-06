@@ -67,10 +67,10 @@ export function VersionMenu() {
           role="listbox"
           aria-label={t("Star-AI version")}
           className={cn(
-            "glass absolute start-0 top-full z-50 mt-2 max-h-[min(65vh,390px)] w-[min(270px,calc(100vw-32px))] origin-top overflow-y-auto rounded-[1.35rem] border border-white/15 p-1.5 shadow-glow transition-all duration-200 ease-out",
+            "version-menu-panel glass absolute start-0 top-full z-50 mt-2 max-h-[min(65vh,390px)] w-[min(270px,calc(100vw-32px))] origin-top overflow-y-auto rounded-[1.35rem] border border-white/15 p-1.5 shadow-glow",
             open
-              ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
-              : "pointer-events-none -translate-y-2 scale-95 opacity-0",
+              ? "pointer-events-auto translate-y-0 opacity-100"
+              : "pointer-events-none -translate-y-1 opacity-0",
           )}
         >
           <p className="px-2.5 pb-1 pt-1 text-[9px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{t("Available")}</p>
