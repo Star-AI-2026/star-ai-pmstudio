@@ -1,23 +1,30 @@
 {
   "stable": {
-    "version": "3.2.0",
+    "version": "3.9.0",
     "minimumVersion": "1.4.0",
     "releaseNotes": [
-      "🚀 Star-AI 3.2.0 - Stable Release",
+      "🚀 What's New in Star-AI 3.9.0",
       "",
-      "✨ Improvements",
-      "🐛 Bug fixes and performance improvements.",
-      "❤️ Thank you for using Star-AI!"
+      "✨ UI & Animation Improvements",
+      "",
+      "- 🎨 Added smoother opening and closing animations to the version menu.",
+      "- 🐛 Fixed version menu closing animation issues.",
+      "- 📐 Improved version menu positioning and layout.",
+      "- 💫 Improved help section animations.",
+      "- ⚡ Enhanced overall UI responsiveness and performance.",
+      "- 🛠️ Fixed minor bugs and improved application stability.",
+      "",
+      "🌟 Enjoy the new Star-AI 3.9.0!"
     ],
     "setup": {
-      "fileName": "",
-      "downloadUrl": "",
-      "sha256": ""
+      "fileName": "Star-AI-Setup-3.9.0.exe",
+      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.9.0/Star-AI-Setup-3.9.0.exe",
+      "sha256": "05475485eafd2b9aa2732ccb3b065804681b7a9ed1f4c5dae95935dd843b639a"
     },
     "delta": {
-      "fileName": "",
-      "downloadUrl": "",
-      "sha256": ""
+      "fileName": "Star-AI-Update-3.9.0.exe",
+      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.9.0/Star-AI-Update-3.9.0.exe",
+      "sha256": "0d8d7628a930913bf75b45f52921f17718df3ec36cdf491d5c69696dde059946"
     }
   },
   "beta": {
