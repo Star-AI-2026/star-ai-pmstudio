@@ -555,15 +555,18 @@ html:not(.dark) {
   transform-origin: top center;
 }
 
-/* Lightweight version-menu motion: avoid animating backdrop-filter, blur, and shadows.
-   Disable the generic listbox entrance keyframe so the close transition can run. */
+/* Version menu: keep a dedicated entrance animation and a lightweight GPU-friendly exit. */
 .version-menu-panel {
-  transition: opacity 150ms ease-out, transform 150ms cubic-bezier(.2,.8,.2,1) !important;
+  transition: opacity 170ms ease-out, transform 170ms cubic-bezier(.2,.8,.2,1) !important;
   will-change: opacity, transform;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
-:root[data-star-animations="on"] .version-menu-panel {
+.version-menu-panel.version-menu-open {
+  animation: hyperos-menu-in 190ms cubic-bezier(.2,.8,.2,1) both !important;
+  transform-origin: top center;
+}
+.version-menu-panel.version-menu-closed {
   animation: none !important;
 }
 

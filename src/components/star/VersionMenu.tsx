@@ -69,8 +69,8 @@ export function VersionMenu() {
           className={cn(
             "version-menu-panel glass absolute start-0 top-full z-50 mt-2 max-h-[min(65vh,390px)] w-[min(270px,calc(100vw-32px))] origin-top overflow-y-auto rounded-[1.35rem] border border-white/15 p-1.5 shadow-glow",
             open
-              ? "pointer-events-auto translate-y-0 opacity-100"
-              : "pointer-events-none -translate-y-1 opacity-0",
+              ? "version-menu-open pointer-events-auto translate-y-0 opacity-100"
+              : "version-menu-closed pointer-events-none -translate-y-1 opacity-0",
           )}
         >
           <p className="px-2.5 pb-1 pt-1 text-[9px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{t("Available")}</p>
