@@ -15,9 +15,20 @@ export function VersionMenu() {
   const { version, setVersion } = useStar();
   const { t, dir } = useI18n();
   const [open, setOpen] = useState(false);
+  const [menuMounted, setMenuMounted] = useState(false);
   const [locked, setLocked] = useState<VersionCatalogEntry | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const current = VERSION_CATALOG.find((item) => item.id === version) ?? VERSION_CATALOG[0];
+
+  useEffect(() => {
+    if (open) {
+      setMenuMounted(true);
+      return;
+    }
+    if (!menuMounted) return;
+    const timer = window.setTimeout(() => setMenuMounted(false), 180);
+    return () => window.clearTimeout(timer);
+  }, [open, menuMounted]);
 
   useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {
@@ -51,11 +62,16 @@ export function VersionMenu() {
         <ChevronDown className={cn("h-3 w-3 shrink-0 text-muted-foreground transition-transform duration-200", open && "rotate-180")} />
       </button>
 
-      {open && (
+      {menuMounted && (
         <div
           role="listbox"
           aria-label={t("Star-AI version")}
-          className="glass absolute right-0 top-full z-50 mt-2 max-h-[min(65vh,390px)] w-[min(270px,calc(100vw-32px))] overflow-y-auto rounded-[1.35rem] border border-white/15 p-1.5 shadow-glow animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200"
+          className={cn(
+            "glass absolute right-0 top-full z-50 mt-2 max-h-[min(65vh,390px)] w-[min(270px,calc(100vw-32px))] overflow-y-auto rounded-[1.35rem] border border-white/15 p-1.5 shadow-glow",
+            open
+              ? "pointer-events-auto animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200"
+              : "pointer-events-none animate-out fade-out zoom-out-95 slide-out-to-top-2 duration-150",
+          )}
         >
           <p className="px-2.5 pb-1 pt-1 text-[9px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{t("Available")}</p>
           {VERSION_CATALOG.filter((item) => item.enabled).map((item) => {

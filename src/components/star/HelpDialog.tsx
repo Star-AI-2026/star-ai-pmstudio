@@ -1,13 +1,44 @@
+import { useEffect, useState } from "react";
+
 import { VERSION_LIST } from "@/lib/ai/versions";
 import { useI18n } from "@/lib/star/i18n";
 
 export function HelpDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t, dir } = useI18n();
-  if (!open) return null;
+  const [mounted, setMounted] = useState(open);
+
+  useEffect(() => {
+    if (open) {
+      setMounted(true);
+      return;
+    }
+    if (!mounted) return;
+    const timer = window.setTimeout(() => setMounted(false), 220);
+    return () => window.clearTimeout(timer);
+  }, [open, mounted]);
+
+  if (!mounted) return null;
   return (
-    <div dir={dir} className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 backdrop-blur-sm">
-      <div className="glass scrollbar-thin max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-3xl p-6 shadow-glow">
-        <h2 className="font-display text-lg font-semibold">{t("Help")}</h2>
+    <div
+      dir={dir}
+      aria-hidden={!open}
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 backdrop-blur-sm ${
+        open
+          ? "animate-in fade-in duration-200"
+          : "pointer-events-none animate-out fade-out duration-200"
+      }`}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="star-help-title"
+        className={`glass scrollbar-thin max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-3xl p-6 shadow-glow ${
+          open
+            ? "animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-200"
+            : "animate-out fade-out zoom-out-95 slide-out-to-bottom-2 duration-200"
+        }`}
+      >
+        <h2 id="star-help-title" className="font-display text-lg font-semibold">{t("Help")}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           {t("Star-AI ships in two generations. Switch anytime from the sidebar — the theme, animations and AI configuration all change with it.")}
         </p>
