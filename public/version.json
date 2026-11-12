@@ -46,7 +46,7 @@
   },
   "policies": {
     "stableToStable": "mandatory",
-    "stableToBeta": "disable",
+    "stableToBeta": "disabled",
     "betaToBeta": "optional",
     "betaToStable": "mandatory"
   },
