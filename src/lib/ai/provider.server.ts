@@ -8,7 +8,7 @@
 
 import { buildSystemPrompt, getVersionConfig } from "./config.server";
 import type { AIMode } from "./modes";
-import type { ResponseStyle, StarVersion } from "./versions";
+import type { GeneratedFileKind, ResponseStyle, StarVersion } from "./versions";
 
 export type Attachment = {
   name: string;
@@ -34,6 +34,7 @@ export type GenerateOptions = {
   uiLanguage?: "fa" | "en" | undefined;
   memories?: string[] | undefined;
   searchContext?: string | undefined;
+  fileOutputType?: GeneratedFileKind | undefined;
   messages: ChatMessage[];
   signal?: AbortSignal | undefined;
 };
@@ -141,6 +142,7 @@ export class LovableGatewayProvider implements AIProvider {
         uiLanguage: opts.uiLanguage,
         memories: opts.memories,
         searchContext: opts.searchContext,
+        fileOutputType: opts.fileOutputType,
       }),
       input: buildInput(opts.messages),
     };

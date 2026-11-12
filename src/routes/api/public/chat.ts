@@ -2,8 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
 import { getAIProvider } from "@/lib/ai/provider.server";
+import { betaExperimentFailure } from "@/lib/ai/beta-experiment.server";
 import { clientKey, rateLimit } from "@/lib/ai/rate-limit.server";
 import { buildSearchContext, getWebSearchProvider } from "@/lib/ai/search.server";
+import type { GeneratedFileKind } from "@/lib/ai/versions";
 
 /** Server-side upload policy. Client validation is never trusted. */
 const MAX_ATTACHMENT_BYTES = Number(process.env["MAX_UPLOAD_BYTES"] ?? 12 * 1024 * 1024);
@@ -28,7 +30,8 @@ const AttachmentSchema = z.object({
 
 const BodySchema = z.object({
   // The client picks a VERSION, never a model name. The server maps it.
-  version: z.enum(["2.0", "3.0", "4.0"]),
+  version: z.enum(["2.0", "3.0", "4.0", "5.0"]),
+  fileOutputType: z.enum(["docx", "pptx", "pdf", "xlsx", "csv", "txt"]).optional(),
   style: z
     .enum(["balanced", "creative", "precise", "friendly", "professional", "short", "detailed"])
     .default("balanced"),
@@ -118,6 +121,18 @@ try {
   );
 }
 
+        if (parsed.fileOutputType && parsed.version !== "4.0" && parsed.version !== "5.0") {
+          return new Response(
+            JSON.stringify({ error: "Downloadable file creation is available from Star-AI 4.0 onward." }),
+            { status: 403, headers: CORS },
+          );
+        }
+
+        const betaError = betaExperimentFailure(parsed.version, parsed.uiLanguage);
+        if (betaError) {
+          return new Response(JSON.stringify({ error: betaError }), { status: 503, headers: CORS });
+        }
+
         const attachmentError = validateAttachments(parsed.messages);
         if (attachmentError) {
           return new Response(JSON.stringify({ error: attachmentError }), { status: 413, headers: CORS });
@@ -171,6 +186,7 @@ try {
                 uiLanguage: parsed.uiLanguage,
                 memories: parsed.memories,
                 searchContext,
+                fileOutputType: parsed.fileOutputType as GeneratedFileKind | undefined,
                 messages: parsed.messages,
                 signal: request.signal,
               })) {

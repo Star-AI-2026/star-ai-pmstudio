@@ -42,5 +42,40 @@
   "featureRequirements": {
     "newAIInterface": "3.6.0",
     "advancedTools": "3.6.0"
+  },
+  "history": {
+    "stable": {
+      "3.9.0": {
+        "version": "3.9.0",
+        "releaseNotes": [
+          "🚀 What's New in Star-AI 3.9.0",
+          "",
+          "✨ UI & Animation Improvements",
+          "",
+          "- 🎨 Added smoother opening and closing animations to the version menu.",
+          "- 🐛 Fixed version menu closing animation issues.",
+          "- 📐 Improved version menu positioning and layout.",
+          "- 💫 Improved help section animations.",
+          "- ⚡ Enhanced overall UI responsiveness and performance.",
+          "- 🛠️ Fixed minor bugs and improved application stability.",
+          "",
+          "🌟 Enjoy the new Star-AI 3.9.0!"
+        ]
+      },
+      "3.10.0": {
+        "version": "3.10.0",
+        "releaseNotes": [
+          "Bug fixes and improvements."
+        ]
+      }
+    },
+    "beta": {
+      "3.6.16": {
+        "version": "3.6.16",
+        "releaseNotes": [
+          "Bug fixes and improvements."
+        ]
+      }
+    }
   }
 }

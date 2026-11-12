@@ -40,7 +40,7 @@ export function HelpDialog({ open, onClose }: { open: boolean; onClose: () => vo
       >
         <h2 id="star-help-title" className="font-display text-lg font-semibold">{t("Help")}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          {t("Star-AI ships in two generations. Switch anytime from the sidebar — the theme, animations and AI configuration all change with it.")}
+          {t("Star-AI includes multiple generations, including experimental Beta models. Switch anytime from the sidebar — the theme, animations and AI configuration all change with it.")}
         </p>
 
         <div className="mt-5 space-y-4">
@@ -62,7 +62,7 @@ export function HelpDialog({ open, onClose }: { open: boolean; onClose: () => vo
         <div className="mt-5 text-xs text-muted-foreground">
           <p className="font-medium text-foreground">{t("Attachments")}</p>
           <p>
-            {t("Images, PDFs and text-based files (TXT, MD, CSV, JSON) are sent to the AI. Other formats are flagged before sending so nothing fails silently.")}
+            {t("Images, PDFs and text-based files (TXT, MD, CSV, JSON) can be attached for analysis. Image generation is available from Star-AI 3.0, and downloadable DOCX, PPTX, PDF, XLSX, CSV and TXT creation is available from Star-AI 4.0 onward.")}
           </p>
         </div>
 

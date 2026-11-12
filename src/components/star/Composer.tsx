@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { VERSIONS } from "@/lib/ai/versions";
+import { detectFileGenerationRequest, detectImageGenerationPrompt } from "@/lib/star/request-intent";
 import {
   ACCEPTED,
   FileTooLargeError,
@@ -55,6 +56,16 @@ export function Composer() {
     if (!text.trim() && attachments.length === 0) return;
     if (text.length > MAX_CHARS) {
       toast.error(t("Your message is too long. Please shorten it."));
+      return;
+    }
+    const imageRequest = detectImageGenerationPrompt(text);
+    const fileRequest = detectFileGenerationRequest(text);
+    if (imageRequest && !meta.supportsImages) {
+      toast.error("Image generation is available from Star-AI 3.0 onward.");
+      return;
+    }
+    if (fileRequest && !meta.supportsFileCreation) {
+      toast.error("Downloadable file creation is available from Star-AI 4.0 onward.");
       return;
     }
     if (dictation.listening) dictation.stop();

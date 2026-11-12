@@ -32,9 +32,15 @@ export type ChannelRelease = {
   delta: ReleaseAsset;
 };
 
+export type VersionHistoryEntry = {
+  version: string;
+  releaseNotes: string[];
+};
+
 export type VersionPolicy = {
   stable: ChannelRelease;
   beta: ChannelRelease;
+  history?: Partial<Record<ReleaseChannel, Record<string, VersionHistoryEntry>>>;
 
   policies: {
     stableToStable: UpdateMode;
@@ -239,9 +245,30 @@ export function normalizePolicy(raw: unknown): VersionPolicy {
     }
   }
 
+  const history: Partial<Record<ReleaseChannel, Record<string, VersionHistoryEntry>>> = {};
+  if (value.history && typeof value.history === "object") {
+    const rawHistory = value.history as Record<string, unknown>;
+    for (const channel of ["stable", "beta"] as const) {
+      const channelHistory = rawHistory[channel];
+      if (!channelHistory || typeof channelHistory !== "object") continue;
+      const normalized: Record<string, VersionHistoryEntry> = {};
+      for (const [version, entryValue] of Object.entries(channelHistory as Record<string, unknown>)) {
+        if (!parseVersion(version) || !entryValue || typeof entryValue !== "object") continue;
+        const entry = entryValue as Record<string, unknown>;
+        const entryVersion = typeof entry.version === "string" && parseVersion(entry.version) ? entry.version : version;
+        const releaseNotes = Array.isArray(entry.releaseNotes)
+          ? entry.releaseNotes.filter((note): note is string => typeof note === "string")
+          : [];
+        normalized[version] = { version: entryVersion, releaseNotes };
+      }
+      history[channel] = normalized;
+    }
+  }
+
   return {
     stable: normalizeRelease(value.stable, "stable"),
     beta: normalizeRelease(value.beta, "beta"),
+    ...(Object.keys(history).length ? { history } : {}),
 
     policies: {
       stableToStable: normalizeMode(policies.stableToStable),

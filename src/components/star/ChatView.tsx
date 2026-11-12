@@ -1,4 +1,4 @@
-import { Download, Eraser, Menu, Zap } from "lucide-react";
+import { Download, Eraser, Menu, RefreshCw, Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { AdBanner } from "./AdBanner";
@@ -6,6 +6,7 @@ import { Composer } from "./Composer";
 import { MessageItem } from "./MessageItem";
 import { StarLogo } from "./StarLogo";
 import { WelcomeScreen } from "./WelcomeScreen";
+import { UpdateCheckerDialog } from "./UpdateCheckerDialog";
 import { VersionMenu } from "./VersionMenu";
 import { MODE_MAP } from "@/lib/ai/modes";
 import { VERSIONS } from "@/lib/ai/versions";
@@ -20,6 +21,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
   const { t, dir } = useI18n();
   const bottomRef = useRef<HTMLDivElement>(null);
   const [exportOpen, setExportOpen] = useState(false);
+  const [updateCheckerOpen, setUpdateCheckerOpen] = useState(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -53,8 +55,19 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
           </span>
         )}
 
+        <button
+          type="button"
+          onClick={() => setUpdateCheckerOpen(true)}
+          className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:px-3"
+          aria-label="Check for update"
+          title="Check for update"
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Check for update</span>
+          <span className="sm:hidden">Update</span>
+        </button>
         {active && active.messages.length > 0 && (
-          <div className="relative ml-auto flex items-center gap-1.5">
+          <div className="relative flex shrink-0 items-center gap-1.5">
             <button
               onClick={() => setExportOpen((o) => !o)}
               aria-haspopup="menu"
@@ -122,6 +135,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
 
             <AdBanner className="shrink-0" />
       <Composer />
+      <UpdateCheckerDialog open={updateCheckerOpen} onClose={() => setUpdateCheckerOpen(false)} />
     </div>
   );
 }

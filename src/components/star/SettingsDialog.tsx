@@ -284,7 +284,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                 <Toggle on={settings.streaming} onChange={(v) => updateSettings({ streaming: v })} />
               </Row>
               <Row label={t("Model configuration")} hint={t("Chosen on the server per version")}>
-                <span className="text-xs text-muted-foreground">STAR_AI_2_MODEL / STAR_AI_3_MODEL</span>
+                <span className="text-xs text-muted-foreground">STAR_AI_2_MODEL / STAR_AI_3_MODEL / STAR_AI_4_MODEL / STAR_AI_5_MODEL</span>
               </Row>
             </div>
           )}

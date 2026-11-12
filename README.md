@@ -799,3 +799,23 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+---
+
+## New Star-AI capabilities
+
+### Star-AI 5.0 Beta
+
+Star-AI 5.0 Beta is available in the version selector. It is intentionally experimental: by default, only 20% of text and image-generation requests proceed, while the rest return a clearly labelled simulated Beta error. Configure `STAR_AI_5_BETA_SUCCESS_RATE` on the server with a value from `0` to `1` to change this rate. `STAR_AI_5_MODEL` can override the provider model used for 5.0 Beta.
+
+### Image generation (3.0 and newer)
+
+Image-generation requests from Star-AI 3.0, 4.0, and 5.0 Beta are sent to the server-only `/api/public/generate-image` route. The generated image appears in the chat and includes a Save Image download action. To enable it, add `OPENAI_API_KEY` as a **server-side secret** in the hosting environment (for example, the Lovable Cloud secrets/environment settings). Do not add this credential to a `VITE_*` variable or expose it in browser code. The default image model is `gpt-image-2.6-flare`; override it with `STAR_AI_IMAGE_MODEL` if needed.
+
+### Downloadable files (4.0 and newer)
+
+Star-AI 4.0 and 5.0 Beta can package responses as DOCX, PPTX, PDF, XLSX, CSV, or TXT downloads. DOCX and PPTX are generated as Office Open XML packages, XLSX uses the project's `xlsx` dependency, and PDF output is rendered from the generated document content.
+
+### Desktop update checker
+
+The chat header now includes **Check for update**. The dialog displays the installed desktop version and its release notes from `public/version.json` history, checks the existing Stable/Beta policy, and hands downloads/installations to the existing Electron preload bridge. Add release notes for each newly published desktop version to the `history.stable` or `history.beta` map so users can always see the notes for the version currently installed.

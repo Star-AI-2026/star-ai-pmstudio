@@ -10,9 +10,11 @@ import {
 } from "react";
 
 import type { AIMode } from "@/lib/ai/modes";
-import { CHAT_ENDPOINT } from "@/lib/api-base";
+import { CHAT_ENDPOINT, IMAGE_GENERATION_ENDPOINT } from "@/lib/api-base";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { VERSION_CATALOG, type StarVersion } from "@/lib/ai/versions";
+import { createGeneratedFile } from "@/lib/star/generated-files";
+import { detectFileGenerationRequest, detectImageGenerationPrompt } from "@/lib/star/request-intent";
 import {
   DEFAULT_SETTINGS,
   type Attachment,
@@ -182,7 +184,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof document === "undefined") return;
     const root = document.documentElement;
-    root.dataset["starVersion"] = settings.version === "3.0" ? "3" : "2";
+    root.dataset["starVersion"] = settings.version === "5.0" ? "5" : settings.version === "4.0" ? "4" : settings.version === "3.0" ? "3" : "2";
     root.dataset["starVersionTheme"] =
       VERSION_CATALOG.find((v) => v.id === settings.version)?.theme ?? "tech-blue";
     root.dataset["starAnim"] = settings.animations ? "on" : "off";
@@ -310,6 +312,13 @@ export function StarProvider({ children }: { children: ReactNode }) {
         ),
       );
 
+      const lastUserText = [...history].reverse().find((message) => message.role === "user")?.content ?? "";
+      const imagePrompt = detectImageGenerationPrompt(lastUserText);
+      const requestedFile = detectFileGenerationRequest(lastUserText);
+      const canGenerateImage = version !== "2.0";
+      const canCreateFile = version === "4.0" || version === "5.0";
+      const fileOutputType = canCreateFile ? requestedFile : null;
+
       const patch = (fn: (m: Message) => Message) =>
         setConversations((cs) =>
           cs.map((c) =>
@@ -320,12 +329,64 @@ export function StarProvider({ children }: { children: ReactNode }) {
         );
 
       try {
+        if (imagePrompt && !canGenerateImage) {
+          patch((m) => ({ ...m, error: "Image generation is available from Star-AI 3.0 onward. Switch to Star-AI 3.0 or newer and try again." }));
+          return;
+        }
+        if (requestedFile && !canCreateFile) {
+          patch((m) => ({ ...m, error: "Downloadable file creation is available from Star-AI 4.0 onward. Switch to Star-AI 4.0 or 5.0 Beta and try again." }));
+          return;
+        }
+
+        if (imagePrompt) {
+          setStream({ conversationId, busy: true, status: "Generating image…" });
+          const imageResponse = await fetch(IMAGE_GENERATION_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            signal: controller.signal,
+            body: JSON.stringify({ version, prompt: imagePrompt, uiLanguage: settings.uiLanguage }),
+          });
+          if (!imageResponse.ok) {
+            let errorMessage = "Image generation failed. Please try again.";
+            try {
+              const payload = (await imageResponse.json()) as { error?: string };
+              if (payload.error) errorMessage = payload.error;
+            } catch {
+              // Use the safe fallback message.
+            }
+            patch((m) => ({ ...m, error: errorMessage }));
+            return;
+          }
+          const result = (await imageResponse.json()) as {
+            image?: { dataUrl?: string; fileName?: string; mimeType?: string };
+          };
+          if (!result.image?.dataUrl || !result.image.fileName || !result.image.mimeType) {
+            patch((m) => ({ ...m, error: "The image service returned an incomplete result." }));
+            return;
+          }
+          const imageBytes = Math.max(0, Math.floor((result.image.dataUrl.length - result.image.dataUrl.indexOf(",") - 1) * 0.75));
+          patch((m) => ({
+            ...m,
+            generatedImages: [{
+              id: uid(),
+              name: result.image!.fileName!,
+              mimeType: result.image!.mimeType!,
+              size: imageBytes,
+              dataUrl: result.image!.dataUrl!,
+            }],
+          }));
+          return;
+        }
+
+        let accumulatedText = "";
+        let streamError = false;
         const res = await fetch(CHAT_ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,
           body: JSON.stringify({
             version,
+            ...(fileOutputType ? { fileOutputType } : {}),
             style: settings.style,
             mode: settings.mode,
             webSearch: settings.webSearch,
@@ -380,7 +441,10 @@ export function StarProvider({ children }: { children: ReactNode }) {
             } catch {
               continue;
             }
-            if (evt.type === "text") patch((m) => ({ ...m, content: m.content + (evt.value ?? "") }));
+            if (evt.type === "text") {
+              accumulatedText += evt.value ?? "";
+              patch((m) => ({ ...m, content: m.content + (evt.value ?? "") }));
+            }
             else if (evt.type === "reasoning")
               patch((m) => ({ ...m, reasoning: (m.reasoning ?? "") + (evt.value ?? "") }));
             else if (evt.type === "sources")
@@ -388,7 +452,10 @@ export function StarProvider({ children }: { children: ReactNode }) {
             else if (evt.type === "notice") patch((m) => ({ ...m, notice: evt.value ?? "" }));
             else if (evt.type === "status")
               setStream((s) => ({ ...s, status: evt.value ?? "" }));
-            else if (evt.type === "error") patch((m) => ({ ...m, error: evt.value ?? "Something went wrong. Please try again." }));
+            else if (evt.type === "error") {
+              streamError = true;
+              patch((m) => ({ ...m, error: evt.value ?? "Something went wrong. Please try again." }));
+            }
           }
         }
         patch((m) =>
@@ -396,6 +463,25 @@ export function StarProvider({ children }: { children: ReactNode }) {
             ? m
             : { ...m, error: "Star-AI didn't return a response. Please try again." },
         );
+
+        if (fileOutputType && accumulatedText.trim() && !streamError) {
+          setStream({ conversationId, busy: true, status: "Preparing your file…" });
+          try {
+            const title = lastUserText
+              .replace(/(?:بساز|درست\s*کن|تهیه\s*کن|ایجاد\s*کن|make|create|generate|prepare)/gi, " ")
+              .replace(/\s+/g, " ")
+              .trim()
+              .slice(0, 72) || "Star-AI document";
+            const generated = await createGeneratedFile(title, accumulatedText, fileOutputType);
+            patch((m) => ({ ...m, generatedFiles: [generated] }));
+          } catch (error) {
+            console.error("Star-AI file creation failed:", error);
+            patch((m) => ({
+              ...m,
+              notice: "The answer was generated, but the downloadable file could not be packaged. Try again with a shorter document.",
+            }));
+          }
+        }
       } catch (err) {
         if ((err as Error)?.name !== "AbortError") {
           patch((m) => ({ ...m, error: "Something went wrong. Please try again." }));
@@ -414,6 +500,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
       settings.webSearch,
       settings.assistantName,
       settings.language,
+      settings.uiLanguage,
     ],
   );
 

@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as OauthBridgeRouteImport } from './routes/oauth-bridge'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ApiPublicChatRouteImport } from './routes/api/public/chat'
+import { Route as ApiPublicGenerateImageRouteImport } from './routes/api/public/generate-image'
 import { Route as ApiPublicSignupRouteImport } from './routes/api/public/signup'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const ApiPublicChatRoute = ApiPublicChatRouteImport.update({
   path: '/api/public/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicGenerateImageRoute = ApiPublicGenerateImageRouteImport.update({
+  id: '/api/public/generate-image',
+  path: '/api/public/generate-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicSignupRoute = ApiPublicSignupRouteImport.update({
   id: '/api/public/signup',
   path: '/api/public/signup',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/oauth-bridge': typeof OauthBridgeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/api/public/chat': typeof ApiPublicChatRoute
+  '/api/public/generate-image': typeof ApiPublicGenerateImageRoute
   '/api/public/signup': typeof ApiPublicSignupRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/oauth-bridge': typeof OauthBridgeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/api/public/chat': typeof ApiPublicChatRoute
+  '/api/public/generate-image': typeof ApiPublicGenerateImageRoute
   '/api/public/signup': typeof ApiPublicSignupRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/oauth-bridge': typeof OauthBridgeRoute
   '/reset-password': typeof ResetPasswordRoute
   '/api/public/chat': typeof ApiPublicChatRoute
+  '/api/public/generate-image': typeof ApiPublicGenerateImageRoute
   '/api/public/signup': typeof ApiPublicSignupRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/oauth-bridge'
     | '/reset-password'
     | '/api/public/chat'
+    | '/api/public/generate-image'
     | '/api/public/signup'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/oauth-bridge'
     | '/reset-password'
     | '/api/public/chat'
+    | '/api/public/generate-image'
     | '/api/public/signup'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/oauth-bridge'
     | '/reset-password'
     | '/api/public/chat'
+    | '/api/public/generate-image'
     | '/api/public/signup'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   OauthBridgeRoute: typeof OauthBridgeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ApiPublicChatRoute: typeof ApiPublicChatRoute
+  ApiPublicGenerateImageRoute: typeof ApiPublicGenerateImageRoute
   ApiPublicSignupRoute: typeof ApiPublicSignupRoute
 }
 
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/generate-image': {
+      id: '/api/public/generate-image'
+      path: '/api/public/generate-image'
+      fullPath: '/api/public/generate-image'
+      preLoaderRoute: typeof ApiPublicGenerateImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/signup': {
       id: '/api/public/signup'
       path: '/api/public/signup'
@@ -161,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   OauthBridgeRoute: OauthBridgeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ApiPublicChatRoute: ApiPublicChatRoute,
+  ApiPublicGenerateImageRoute: ApiPublicGenerateImageRoute,
   ApiPublicSignupRoute: ApiPublicSignupRoute,
 }
 export const routeTree = rootRouteImport

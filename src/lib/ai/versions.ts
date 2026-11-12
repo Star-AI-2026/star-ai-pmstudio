@@ -1,9 +1,11 @@
 /**
- * Client-safe metadata for the two Star-AI generations.
- * No secrets, no model ids â€” the backend alone decides which model runs.
+ * Client-safe metadata for Star-AI generations.
+ * No secrets or provider model IDs â€” the backend alone decides which model runs.
  */
 
-export type StarVersion = "2.0" | "3.0" | "4.0";
+export type StarVersion = "2.0" | "3.0" | "4.0" | "5.0";
+
+export type GeneratedFileKind = "docx" | "pptx" | "pdf" | "xlsx" | "csv" | "txt";
 
 export type ResponseStyle =
   | "balanced"
@@ -43,6 +45,8 @@ export type VersionMeta = {
   examples: string[];
   supportsImages: boolean;
   supportsFiles: boolean;
+  /** Creating downloadable documents is available from 4.0 onward. */
+  supportsFileCreation: boolean;
 };
 
 export const VERSIONS: Record<StarVersion, VersionMeta> = {
@@ -95,8 +99,9 @@ export const VERSIONS: Record<StarVersion, VersionMeta> = {
       "Give me a 20-minute healthy dinner recipe",
       "Fix this SQL query and explain the bug",
     ],
-    supportsImages: true,
+    supportsImages: false,
     supportsFiles: true,
+    supportsFileCreation: false,
   },
   "3.0": {
     id: "3.0",
@@ -119,6 +124,7 @@ export const VERSIONS: Record<StarVersion, VersionMeta> = {
       "Multi-step reasoning",
       "File understanding",
       "Image understanding",
+      "Image generation",
       "Conversation memory",
       "Context-aware responses",
     ],
@@ -148,6 +154,12 @@ export const VERSIONS: Record<StarVersion, VersionMeta> = {
         prompt: "Write the opening chapter of a hard sci-fi novel set on a dying star.",
       },
       {
+        title: "Create Image",
+        description: "Generate an image directly in the chat",
+        icon: "image",
+        prompt: "Create an image of a futuristic city at sunset.",
+      },
+      {
         title: "Understand Files",
         description: "PDF, DOCX, CSV, JSON and images",
         icon: "file",
@@ -167,6 +179,7 @@ export const VERSIONS: Record<StarVersion, VersionMeta> = {
     ],
     supportsImages: true,
     supportsFiles: true,
+    supportsFileCreation: false,
   },
   "4.0": {
     id: "4.0",
@@ -183,7 +196,9 @@ export const VERSIONS: Record<StarVersion, VersionMeta> = {
       "Long-form writing",
       "Data analysis",
       "Image understanding",
+      "Image generation",
       "File understanding",
+      "Document creation",
       "Multi-step reasoning",
       "Context-aware responses",
     ],
@@ -207,6 +222,18 @@ export const VERSIONS: Record<StarVersion, VersionMeta> = {
         prompt: "Analyze this dataset and summarize the most important findings.",
       },
       {
+        title: "Create Image",
+        description: "Generate and save images in chat",
+        icon: "image",
+        prompt: "Create a cinematic image of a mountain lake at sunrise.",
+      },
+      {
+        title: "Create a File",
+        description: "Generate Word, PowerPoint, PDF or Excel files",
+        icon: "file",
+        prompt: "Create a Word document about renewable energy with clear sections.",
+      },
+      {
         title: "Understand Files",
         description: "Work with documents and images",
         icon: "file",
@@ -220,10 +247,61 @@ export const VERSIONS: Record<StarVersion, VersionMeta> = {
     ],
     supportsImages: true,
     supportsFiles: true,
+    supportsFileCreation: true,
+  },
+  "5.0": {
+    id: "5.0",
+    name: "Star-AI 5.0 Beta",
+    badge: "Star-AI 5.0 Beta",
+    subtitle: "Experimental next-generation AI",
+    tagline: "Experimental Beta · Unstable",
+    advanced: true,
+    capabilities: [
+      "Experimental advanced reasoning",
+      "Complex problem solving",
+      "Coding and debugging",
+      "Image generation",
+      "Document creation",
+      "Data analysis",
+      "Multi-step reasoning",
+    ],
+    cards: [
+      {
+        title: "Experimental Reasoning",
+        description: "Try the experimental 5.0 Beta model",
+        icon: "brain",
+        prompt: "Explore a difficult problem and explain a practical solution.",
+      },
+      {
+        title: "Create an Image",
+        description: "Generate an image directly in chat",
+        icon: "image",
+        prompt: "Create an image of a futuristic city at sunset.",
+      },
+      {
+        title: "Create a Document",
+        description: "Generate a downloadable document",
+        icon: "file",
+        prompt: "Create a Word document explaining renewable energy.",
+      },
+    ],
+    examples: [
+      "Create an image of a peaceful mountain lake",
+      "Make a PowerPoint about the solar system",
+      "Analyze this problem and suggest a solution",
+    ],
+    supportsImages: true,
+    supportsFiles: true,
+    supportsFileCreation: true,
   }
 };
 
-export const VERSION_LIST: VersionMeta[] = [VERSIONS["2.0"], VERSIONS["3.0"], VERSIONS["4.0"]];
+export const VERSION_LIST: VersionMeta[] = [
+  VERSIONS["2.0"],
+  VERSIONS["3.0"],
+  VERSIONS["4.0"],
+  VERSIONS["5.0"],
+];
 
 /* ------------------------------------------------------------------ *
  * Version catalog â€” the SINGLE source of truth for which Star-AI
@@ -285,12 +363,12 @@ export const VERSION_CATALOG: VersionCatalogEntry[] = [
   },
   {
     id: "5.0",
-    name: "Star-AI 5.0",
+    name: "Star-AI 5.0 Beta",
     emoji: "🔥",
-    subtitle: "Powerful cosmic energy",
+    subtitle: "Experimental Beta · Unstable",
     theme: "cosmic-energy",
     swatch: ["oklch(0.75 0.2 35)", "oklch(0.7 0.19 320)"],
-    enabled: false,
+    enabled: true,
   },
   {
     id: "programming",
@@ -330,7 +408,7 @@ export function isVersionUnlocked(id: StarVersionId): boolean {
 
 /** Only unlocked ids that the chat runtime actually supports today. */
 export function isRuntimeVersion(id: StarVersionId): id is StarVersion {
-  return (id === "2.0" || id === "3.0" || id === "4.0") && isVersionUnlocked(id);
+  return (id === "2.0" || id === "3.0" || id === "4.0" || id === "5.0") && isVersionUnlocked(id);
 }
 
 /** Display label for a version id, e.g. "Star-AI 5.6". */

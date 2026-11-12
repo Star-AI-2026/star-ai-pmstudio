@@ -1,5 +1,6 @@
 import type { AIMode } from "@/lib/ai/modes";
 import type { ResponseStyle, StarVersion } from "@/lib/ai/versions";
+import type { GeneratedFile } from "./generated-files";
 
 export type Attachment = {
   id: string;
@@ -35,6 +36,8 @@ export type Message = {
   sources?: Source[];
   notice?: string;
   error?: string;
+  generatedImages?: { id: string; name: string; mimeType: string; size: number; dataUrl: string }[];
+  generatedFiles?: GeneratedFile[];
 };
 
 export type Folder = { id: string; name: string; createdAt: number };
@@ -79,8 +82,8 @@ export type Settings = {
 };
 
 export const DEFAULT_SETTINGS: Settings = {
-  version: "3.0",
-  defaultVersion: "3.0",
+  version: "5.0",
+  defaultVersion: "5.0",
   style: "balanced",
   mode: "general",
   assistantName: "",

@@ -4,6 +4,7 @@ import {
   Code2,
   FileText,
   Languages,
+  Image as ImageIcon,
   Orbit,
   PenLine,
   Sparkle,
@@ -29,6 +30,7 @@ const ICONS: Record<string, LucideIcon> = {
   chart: ChartNoAxesColumn,
   wand: Wand2,
   file: FileText,
+  image: ImageIcon,
   orbit: Orbit,
 };
 
