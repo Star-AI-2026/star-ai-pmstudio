@@ -23,6 +23,8 @@ execSync("npm run build", {
     ...process.env,
     STAR_AI_BASE: "/star-ai-pmstudio/",
     VITE_STAR_AI_API_BASE: process.env.VITE_STAR_AI_API_BASE || "https://star-ai-pmstudio.lovable.app",
+    VITE_STAR_AI_IMAGE_API_BASE:
+      process.env.VITE_STAR_AI_IMAGE_API_BASE || "https://star-ai-pmstudio.lovable.app",
   },
 });
 

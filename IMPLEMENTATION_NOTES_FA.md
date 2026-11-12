@@ -9,17 +9,25 @@
 - ساخت فایل DOCX، PPTX، PDF، XLSX، CSV و TXT از 4.0 به بعد انجام می‌شود و فایل به‌صورت قابل دانلود در پیام دستیار ظاهر می‌شود.
 - دکمه Check for update به هدر چت اضافه شده است. نسخه نصب‌شده و Release Notes آن را از `public/version.json` می‌خواند و سیاست فعلی Stable/Beta و پل Electron را برای دانلود استفاده می‌کند.
 
+## مسیر API و رفع خطای Not Found تولید تصویر
+
+در Build مربوط به GitHub Pages، چت از Cloudflare Worker استفاده می‌کند؛ اما Route ساخت تصویر در اپ Lovable قرار دارد. به همین دلیل `VITE_STAR_AI_IMAGE_API_BASE` جدا از `VITE_STAR_AI_API_BASE` تنظیم شده است و مقدار آن باید `https://star-ai-pmstudio.lovable.app` باشد. فایل `.github/workflows/deploy.yml` و اسکریپت ساخت نسخه دسکتاپ اکنون این مقدار را برای Build تنظیم می‌کنند. در خود Lovable این متغیر باید خالی بماند تا درخواست تصویر به همان دامنه Lovable ارسال شود.
+
+اگر هنوز 404 می‌بینی، آخرین کد همین پروژه (شامل `src/routes/api/public/generate-image.ts`) را نیز در پروژه Lovable وارد و همان پروژه را Deploy/Publish کن. GitHub Pages به‌تنهایی API سمت سرور را میزبانی نمی‌کند.
+
 ## فعال‌سازی تولید تصویر
 
 در تنظیمات Secrets / Environment سمت سرور Lovable این متغیر را اضافه کن:
 
-`OPENAI_API_KEY`
+`GEMINI_API_KEY`
 
-کلید را با پیشوند `VITE_` تعریف نکن و آن را داخل کد Frontend قرار نده. تا زمانی که این Secret تنظیم نشده باشد، درخواست تصویر پیام خطای پیکربندی نمایش می‌دهد و تصویر ساختگی تحویل داده نمی‌شود.
+کلید Gemini را با پیشوند `VITE_` تعریف نکن و آن را داخل کد Frontend قرار نده. Route سمت سرور از Gemini API استفاده می‌کند و کلید را فقط در سرور می‌خواند. نام‌های `GOOGLE_GEMINI_API_KEY` و `GOOGLE_API_KEY` نیز به‌عنوان نام جایگزین پشتیبانی می‌شوند.
 
-متغیر اختیاری مدل تصویر:
+مدل پیش‌فرض تولید تصویر:
 
-`STAR_AI_IMAGE_MODEL=gpt-image-2.6-flare`
+`STAR_AI_IMAGE_MODEL=gemini-3.1-flash-image`
+
+درخواست ابتدا از Gemini Interactions API استفاده می‌کند و اگر خود endpoint پشتیبانی نشود، به GenerateContent API برمی‌گردد. هر دو روش به یک کلید معتبر Gemini نیاز دارند.
 
 ## تنظیم مدل آزمایشی 5.0
 

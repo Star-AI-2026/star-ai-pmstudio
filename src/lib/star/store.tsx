@@ -348,11 +348,28 @@ export function StarProvider({ children }: { children: ReactNode }) {
           });
           if (!imageResponse.ok) {
             let errorMessage = "Image generation failed. Please try again.";
+            const responseText = await imageResponse.text().catch(() => "");
             try {
-              const payload = (await imageResponse.json()) as { error?: string };
-              if (payload.error) errorMessage = payload.error;
+              const payload = JSON.parse(responseText) as { error?: string };
+              if (imageResponse.status === 404) {
+                errorMessage = settings.uiLanguage === "fa"
+                  ? "مسیر ساخت تصویر پیدا نشد. آخرین نسخه پروژه Star-AI را روی Lovable منتشر کن تا مسیر /api/public/generate-image فعال شود."
+                  : "The image API route was not found. Deploy the latest Star-AI project to Lovable so /api/public/generate-image is available.";
+              } else if (payload.error) {
+                errorMessage = payload.error;
+              }
             } catch {
-              // Use the safe fallback message.
+              if (imageResponse.status === 404 || /\bnot found\b/i.test(responseText)) {
+                errorMessage = settings.uiLanguage === "fa"
+                  ? "مسیر ساخت تصویر پیدا نشد. آخرین نسخه پروژه Star-AI را روی Lovable منتشر کن تا مسیر /api/public/generate-image فعال شود."
+                  : "The image API route was not found. Deploy the latest Star-AI project to Lovable so /api/public/generate-image is available.";
+              } else if (imageResponse.status === 405) {
+                errorMessage = settings.uiLanguage === "fa"
+                  ? "مسیر ساخت تصویر درخواست POST را پشتیبانی نمی‌کند. تنظیمات سرور را بررسی کن."
+                  : "The image API route does not accept POST requests. Check the server deployment.";
+              } else if (responseText.trim()) {
+                errorMessage = responseText.slice(0, 240);
+              }
             }
             patch((m) => ({ ...m, error: errorMessage }));
             return;

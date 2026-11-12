@@ -24,8 +24,11 @@ jobs:
       STAR_AI_BASE: /star-ai-pmstudio/
       # Static hosting has no server runtime: the AI endpoint stays on the
       # Lovable deployment. No secrets are exposed — this is a public URL.
-            # Gemini API through Cloudflare Worker
+      # Gemini API through Cloudflare Worker
       VITE_STAR_AI_API_BASE: https://star-ai-gemini-api.star-ai-official-2026.workers.dev
+      # Chat uses the Cloudflare Worker above; image generation uses the
+      # server route deployed with the Lovable app.
+      VITE_STAR_AI_IMAGE_API_BASE: https://star-ai-pmstudio.lovable.app
 
     steps:
       - name: Checkout

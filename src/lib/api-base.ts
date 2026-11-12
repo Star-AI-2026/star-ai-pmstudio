@@ -1,19 +1,21 @@
 /**
  * When Star-AI is served from a static host (e.g. GitHub Pages) there is no
  * server runtime, so the AI endpoint lives on the Lovable-hosted deployment.
- * VITE_STAR_AI_API_BASE holds that origin at build time (inlined below).
- * Empty = same-origin (default).
+ * Chat and image generation can use different origins on static hosts.
+ * An empty image API base means same-origin (the Lovable server deployment).
  * No secrets here: the endpoint is public, all keys stay server-side.
  */
 declare const __STAR_AI_API_BASE__: string;
+declare const __STAR_AI_IMAGE_API_BASE__: string;
 
-const apiBase = (typeof __STAR_AI_API_BASE__ === "string" ? __STAR_AI_API_BASE__ : "").replace(
-  /\/+$/,
-  "",
+const trimOrigin = (value: string) => value.replace(/\/+$/, "");
+const apiBase = trimOrigin(typeof __STAR_AI_API_BASE__ === "string" ? __STAR_AI_API_BASE__ : "");
+const imageApiBase = trimOrigin(
+  typeof __STAR_AI_IMAGE_API_BASE__ === "string" ? __STAR_AI_IMAGE_API_BASE__ : "",
 );
 
 export const CHAT_ENDPOINT = `${apiBase}/api/public/chat`;
-export const IMAGE_GENERATION_ENDPOINT = `${apiBase}/api/public/generate-image`;
+export const IMAGE_GENERATION_ENDPOINT = `${imageApiBase}/api/public/generate-image`;
 
 /** Captcha-protected sign-up endpoint (verification happens server-side). */
 export const SIGNUP_ENDPOINT = `https://star-ai-pmstudio.lovable.app/api/public/signup`;
