@@ -17,20 +17,35 @@
     }
   },
   "beta": {
-    "version": "3.6.16",
+    "version": "3.300.1",
     "minimumVersion": "1.4.0",
     "releaseNotes": [
-      "Bug fixes and improvements."
+      "🚀 What's New in Star-AI 3.300.1 Beta",
+      "",
+      "✨ Image Generation",
+      "",
+      "- 🖼️ Added free AI image generation.",
+      "- ⚡ Improved image generation reliability.",
+      "- 🔧 Fixed errors during image creation.",
+      "- 💾 Improved generated image saving.",
+      "",
+      "🛠️ Chat & Stability",
+      "",
+      "- 🐛 Improved error handling.",
+      "- ⚡ Improved handling of temporary service interruptions.",
+      "- 🔄 Fixed minor bugs and improved overall stability.",
+      "",
+      "🌟 Enjoy the latest Star-AI Beta experience!"
     ],
     "setup": {
-      "sha256": "97161a39a54d778c50e62ffb9f53283833ae5911eeafc38a0f07baefe388bfba",
-      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.6.16-beta/Star-AI-Setup-3.6.16-Beta.exe",
-      "fileName": "Star-AI-Setup-3.6.16-Beta.exe"
+      "sha256": "8505bb3bb5b703d27e5cf9591df4c43d0180e6b4d118c90402d9fe35c26bee9a",
+      "fileName": "Star-AI-Setup-3.300.1-Beta.exe",
+      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.300.1-beta/Star-AI-Setup-3.300.1-Beta.exe"
     },
     "delta": {
-      "sha256": "240f99b5939cc96538196734bbfb7cac43e036767682c8eabc78bc0d038e4161",
-      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.6.16-beta/Star-AI-Update-3.6.16-Beta.exe",
-      "fileName": "Star-AI-Update-3.6.16-Beta.exe"
+      "sha256": "8b334cea41e25d040eb0aa201eb7ab75bebcdd64a24be9e8741a127649d928e4",
+      "fileName": "Star-AI-Update-3.300.1-Beta.exe",
+      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.300.1-beta/Star-AI-Update-3.300.1-Beta.exe"
     }
   },
   "policies": {
