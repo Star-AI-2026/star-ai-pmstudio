@@ -1,9 +1,9 @@
 /**
  * When Star-AI is served from a static host (e.g. GitHub Pages) there is no
- * server runtime, so the AI endpoint lives on the Lovable-hosted deployment.
- * Chat and image generation can use different origins on static hosts.
- * An empty image API base means same-origin (the Lovable server deployment).
- * No secrets here: the endpoint is public, all keys stay server-side.
+ * server runtime. Chat and image generation are routed to the Cloudflare Worker.
+ * They have separate build-time origins for backwards compatibility, but the
+ * default deployment uses the same Worker for both endpoints. No API key is
+ * included here; Gemini credentials stay in Cloudflare Worker Secrets.
  */
 declare const __STAR_AI_API_BASE__: string;
 declare const __STAR_AI_IMAGE_API_BASE__: string;
@@ -21,9 +21,8 @@ export const IMAGE_GENERATION_ENDPOINT = `${imageApiBase}/api/public/generate-im
 export const SIGNUP_ENDPOINT = `https://star-ai-pmstudio.lovable.app/api/public/signup`;
 
 /**
- * Origin of the Lovable-hosted deployment ("" when the app is served from it).
- * Google sign-in must start there: the OAuth broker only accepts the project's
- * own domains, so a static host (GitHub Pages) cannot talk to it directly.
+ * Origin of the hosted app API. The Cloudflare Worker is used for AI requests;
+ * the app's OAuth bridge may still use its configured hosted origin.
  */
 export const HOSTED_ORIGIN = apiBase;
 

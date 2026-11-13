@@ -4,7 +4,7 @@
 //   node scripts/build-desktop-web.mjs <path-to-electron-project> [version]
 //
 // Uses the exact same static build as GitHub Pages (base /star-ai-pmstudio/,
-// API on the Lovable deployment), so behaviour matches the website.
+// with chat and image generation routed through the Cloudflare Worker).
 import { execSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -22,9 +22,12 @@ execSync("npm run build", {
   env: {
     ...process.env,
     STAR_AI_BASE: "/star-ai-pmstudio/",
-    VITE_STAR_AI_API_BASE: process.env.VITE_STAR_AI_API_BASE || "https://star-ai-pmstudio.lovable.app",
+    VITE_STAR_AI_API_BASE:
+      process.env.VITE_STAR_AI_API_BASE || "https://star-ai-gemini-api.star-ai-official-2026.workers.dev",
     VITE_STAR_AI_IMAGE_API_BASE:
-      process.env.VITE_STAR_AI_IMAGE_API_BASE || "https://star-ai-pmstudio.lovable.app",
+      process.env.VITE_STAR_AI_IMAGE_API_BASE ||
+      process.env.VITE_STAR_AI_API_BASE ||
+      "https://star-ai-gemini-api.star-ai-official-2026.workers.dev",
   },
 });
 

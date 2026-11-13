@@ -200,8 +200,8 @@ export const Route = createFileRoute("/api/public/generate-image")({
             {
               error:
                 parsed.uiLanguage === "fa"
-                  ? "سرویس ساخت تصویر جمینای تنظیم نشده است. مدیر برنامه باید Secret با نام GEMINI_API_KEY را در محیط سرور Lovable تنظیم کند."
-                  : "Gemini image generation is not configured. The administrator must add GEMINI_API_KEY as a server-side secret in Lovable.",
+                  ? "سرویس ساخت تصویر جمینای تنظیم نشده است. مدیر برنامه باید Secret با نام GEMINI_API_KEY را در محیط سرور تنظیم کند."
+                  : "Gemini image generation is not configured. The administrator must add GEMINI_API_KEY as a server-side secret in the API hosting environment.",
             },
             503,
           );

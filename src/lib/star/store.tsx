@@ -353,16 +353,16 @@ export function StarProvider({ children }: { children: ReactNode }) {
               const payload = JSON.parse(responseText) as { error?: string };
               if (imageResponse.status === 404) {
                 errorMessage = settings.uiLanguage === "fa"
-                  ? "مسیر ساخت تصویر پیدا نشد. آخرین نسخه پروژه Star-AI را روی Lovable منتشر کن تا مسیر /api/public/generate-image فعال شود."
-                  : "The image API route was not found. Deploy the latest Star-AI project to Lovable so /api/public/generate-image is available.";
+                  ? "مسیر ساخت تصویر در Cloudflare Worker پیدا نشد. باید مسیر POST /api/public/generate-image را به Worker اضافه و آن را Deploy کنی."
+                  : "The image route was not found on the Cloudflare Worker. Add the POST /api/public/generate-image handler to the Worker and deploy it.";
               } else if (payload.error) {
                 errorMessage = payload.error;
               }
             } catch {
               if (imageResponse.status === 404 || /\bnot found\b/i.test(responseText)) {
                 errorMessage = settings.uiLanguage === "fa"
-                  ? "مسیر ساخت تصویر پیدا نشد. آخرین نسخه پروژه Star-AI را روی Lovable منتشر کن تا مسیر /api/public/generate-image فعال شود."
-                  : "The image API route was not found. Deploy the latest Star-AI project to Lovable so /api/public/generate-image is available.";
+                  ? "مسیر ساخت تصویر در Cloudflare Worker پیدا نشد. باید مسیر POST /api/public/generate-image را به Worker اضافه و آن را Deploy کنی."
+                  : "The image route was not found on the Cloudflare Worker. Add the POST /api/public/generate-image handler to the Worker and deploy it.";
               } else if (imageResponse.status === 405) {
                 errorMessage = settings.uiLanguage === "fa"
                   ? "مسیر ساخت تصویر درخواست POST را پشتیبانی نمی‌کند. تنظیمات سرور را بررسی کن."
