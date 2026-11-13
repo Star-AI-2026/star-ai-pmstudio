@@ -50,7 +50,7 @@
   },
   "policies": {
     "stableToStable": "mandatory",
-    "stableToBeta": "disabled",
+    "stableToBeta": "optional",
     "betaToBeta": "optional",
     "betaToStable": "mandatory"
   },
