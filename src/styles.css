@@ -745,69 +745,37 @@ html:not(.dark) {
 
 
 /*
- * NEW VERSION — optical Liquid Glass.
- * The glass is a separate backdrop-filter material layer. Keeping it in ::before
- * avoids animating/filtering the dialog's content and lets the page colors refract
- * through the surface instead of being covered by a gray fill.
+ * NEW VERSION — iOS-inspired optical Liquid Glass.
+ * The page behind the panel supplies its colors. No gray or blue tint is painted on top.
+ * SettingsDialog also removes its old black/60 modal scrim while this style is selected.
  */
-
-/* General cards, menus and message surfaces. */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass:not(.settings-dialog-panel) {
-  background-color: rgba(255, 255, 255, .018) !important;
-  background-image: linear-gradient(
-    138deg,
-    rgba(255, 255, 255, .085) 0%,
-    rgba(255, 255, 255, .012) 48%,
-    rgba(255, 255, 255, .045) 100%
-  ) !important;
-  border-color: rgba(255, 255, 255, .24) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .34),
-    inset 0 -1px 0 rgba(255, 255, 255, .07),
-    0 10px 28px rgba(0, 0, 0, .13) !important;
-  backdrop-filter: blur(22px) saturate(185%) brightness(1.04) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(185%) brightness(1.04) !important;
-}
-
-/* The settings scrim must not animate opacity: animated opacity creates a
-   backdrop root and prevents descendants from sampling the actual page. */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
-.settings-dialog-backdrop[data-settings-glass-style="new"] {
-  background: rgba(0, 0, 0, .10) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  animation: none !important;
-  transition: background-color 240ms ease;
-}
-
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
-.settings-dialog-backdrop[data-settings-glass-style="new"].settings-dialog-backdrop-exit {
-  background: rgba(0, 0, 0, 0) !important;
-  animation: none !important;
-}
-
-/* The panel itself is only a transparent frame. The optical material is ::before. */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
-.settings-dialog-panel[data-settings-glass-panel="true"] {
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [data-liquid-glass="true"] {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  border: 1px solid rgba(255, 255, 255, .38) !important;
+  background-color: rgba(255, 255, 255, .012) !important;
+  background-image: linear-gradient(
+    132deg,
+    rgba(255, 255, 255, .105) 0%,
+    rgba(255, 255, 255, .025) 24%,
+    rgba(255, 255, 255, .006) 56%,
+    rgba(255, 255, 255, .055) 100%
+  ) !important;
+  border: 1px solid rgba(255, 255, 255, .34) !important;
   box-shadow:
-    0 22px 70px rgba(0, 0, 0, .24),
-    0 3px 12px rgba(0, 0, 0, .10),
-    inset 0 1px 0 rgba(255, 255, 255, .38) !important;
-  /* Do not put backdrop-filter on the transformed panel. */
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+    inset 0 1px 0 rgba(255, 255, 255, .52),
+    inset 1px 0 0 rgba(255, 255, 255, .18),
+    inset -1px 0 0 rgba(255, 255, 255, .075),
+    inset 0 -1px 0 rgba(255, 255, 255, .15),
+    0 12px 36px rgba(0, 0, 0, .13),
+    0 2px 8px rgba(0, 0, 0, .055) !important;
+  backdrop-filter: blur(18px) saturate(190%) brightness(1.08) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(190%) brightness(1.08) !important;
 }
 
-/* Real glass material: samples and blurs the live app behind the panel. */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
-.settings-dialog-panel[data-settings-glass-panel="true"]::before {
+/* Optical highlights only — they should never fill the whole surface with gray. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass::before,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [data-liquid-glass="true"]::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -815,116 +783,229 @@ html:not(.dark) {
   border-radius: inherit;
   pointer-events: none;
   background:
+    radial-gradient(
+      ellipse at 13% 0%,
+      rgba(255, 255, 255, .32),
+      transparent 34%
+    ),
+    radial-gradient(
+      ellipse at 88% 100%,
+      rgba(255, 255, 255, .09),
+      transparent 40%
+    ),
     linear-gradient(
-      142deg,
-      rgba(255, 255, 255, .105) 0%,
-      rgba(255, 255, 255, .028) 24%,
-      rgba(255, 255, 255, .008) 58%,
-      rgba(255, 255, 255, .065) 100%
+      112deg,
+      rgba(255, 255, 255, .16) 0%,
+      rgba(255, 255, 255, .025) 25%,
+      transparent 53%,
+      rgba(255, 255, 255, .07) 100%
     );
-  backdrop-filter: blur(30px) saturate(190%) brightness(1.07);
-  -webkit-backdrop-filter: blur(30px) saturate(190%) brightness(1.07);
+  opacity: .78;
 }
 
-/* Specular edge and soft top reflection, with no gray or blue overlay. */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
-.settings-dialog-panel[data-settings-glass-panel="true"]::after {
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass::after,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [data-liquid-glass="true"]::after {
   content: "";
   position: absolute;
   inset: 1px;
   z-index: 2;
   border-radius: inherit;
-  pointer-events: none;
-  border: 1px solid rgba(255, 255, 255, .105);
+  border: 1px solid rgba(255, 255, 255, .085);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .25),
-    inset 1px 0 0 rgba(255, 255, 255, .09),
-    inset 0 -1px 0 rgba(255, 255, 255, .055);
-  background:
-    radial-gradient(
-      ellipse at 14% 0%,
-      rgba(255, 255, 255, .16),
-      transparent 34%
-    ),
-    linear-gradient(
-      115deg,
-      rgba(255, 255, 255, .045),
-      transparent 34%,
-      transparent 76%,
-      rgba(255, 255, 255, .025)
-    );
+    inset 0 1px 0 rgba(255, 255, 255, .12),
+    inset 0 -1px 0 rgba(255, 255, 255, .035);
+  pointer-events: none;
 }
 
-/* Keep dialog content above the glass plane and reflections. */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
-.settings-dialog-panel[data-settings-glass-panel="true"] > * {
+/* Keep actual panel content above the optical highlight layer. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass > *,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [data-liquid-glass="true"] > * {
   position: relative;
   z-index: 1;
 }
 
-/* Sidebar is a very subtle second glass layer, not an opaque gray column. */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
-.settings-dialog-panel[data-settings-glass-panel="true"] > nav {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, .045),
-    rgba(255, 255, 255, .008)
-  );
-  border-color: rgba(255, 255, 255, .16) !important;
-}
-
-/* Liquid Glass style selector uses the same clear optical material. */
+/* The settings style picker and its choices are glass too, not gray cards. */
 :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .liquid-glass-style-picker {
-  background: linear-gradient(
+  background-color: rgba(255, 255, 255, .012) !important;
+  background-image: linear-gradient(
     135deg,
-    rgba(255, 255, 255, .065),
-    rgba(255, 255, 255, .008) 58%,
-    rgba(255, 255, 255, .035)
+    rgba(255, 255, 255, .075),
+    rgba(255, 255, 255, .008) 55%,
+    rgba(255, 255, 255, .04)
   ) !important;
-  border: 1px solid rgba(255, 255, 255, .22) !important;
+  border: 1px solid rgba(255, 255, 255, .25) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .26),
+    inset 0 1px 0 rgba(255, 255, 255, .32),
     0 8px 24px rgba(0, 0, 0, .07) !important;
-  backdrop-filter: blur(18px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
+  backdrop-filter: blur(16px) saturate(185%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(185%) !important;
 }
 
 :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .liquid-glass-choice {
-  background: rgba(255, 255, 255, .012) !important;
-  border-color: rgba(255, 255, 255, .18) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14) !important;
+  background-color: rgba(255, 255, 255, .008) !important;
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .07),
+    rgba(255, 255, 255, .006) 60%,
+    rgba(255, 255, 255, .035)
+  ) !important;
+  border-color: rgba(255, 255, 255, .20) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18) !important;
   backdrop-filter: blur(14px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(14px) saturate(180%) !important;
 }
 
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
-.liquid-glass-choice[aria-checked="true"] {
-  background: rgba(255, 255, 255, .035) !important;
-  border-color: rgba(255, 255, 255, .48) !important;
-  outline: 1px solid rgba(255, 255, 255, .24);
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .liquid-glass-choice[aria-checked="true"] {
+  outline: 1px solid rgba(255, 255, 255, .62) !important;
   outline-offset: 1px;
+  background-color: rgba(255, 255, 255, .045) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .32),
-    0 0 16px rgba(255, 255, 255, .045) !important;
+    inset 0 1px 0 rgba(255, 255, 255, .38),
+    0 0 18px rgba(255, 255, 255, .055) !important;
 }
 
 /* Respect the independent Blur switch. */
 :root[data-star-blur="off"][data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass,
-:root[data-star-blur="off"][data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel::before {
+:root[data-star-blur="off"][data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [data-liquid-glass="true"] {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
-/* The panel still animates; the full-screen scrim does not fade via opacity. */
-:root[data-star-animations="on"][data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
-.settings-dialog-backdrop[data-settings-glass-style="new"] {
+/*
+ * SETTINGS DIALOG — iOS-inspired optical glass.
+ * IMPORTANT: the full-screen backdrop must NOT animate its own opacity.
+ * An ancestor opacity animation creates a Backdrop Root and prevents the
+ * child panel's backdrop-filter from sampling the page behind the overlay.
+ * The dim layer is therefore a sibling pseudo-element; the dialog panel can
+ * now refract/blur the real page content behind it.
+ */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop.settings-dialog-optical,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop.settings-dialog-optical.settings-dialog-backdrop-exit {
+  position: fixed;
+  isolation: auto;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   animation: none !important;
 }
 
-@media (max-width: 767px) {
-  :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
-  .settings-dialog-panel[data-settings-glass-panel="true"]::before {
-    backdrop-filter: blur(26px) saturate(185%) brightness(1.06);
-    -webkit-backdrop-filter: blur(26px) saturate(185%) brightness(1.06);
+/* The scrim is a sibling behind the glass, not an opacity layer on its ancestor. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop.settings-dialog-optical::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: rgba(8, 10, 18, .22);
+  animation: settings-optical-scrim-in 220ms ease both;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop.settings-dialog-optical.settings-dialog-backdrop-exit::before {
+  animation: settings-optical-scrim-out 220ms ease both;
+}
+
+@keyframes settings-optical-scrim-in {
+  from { background-color: rgba(8, 10, 18, 0); }
+  to { background-color: rgba(8, 10, 18, .22); }
+}
+
+@keyframes settings-optical-scrim-out {
+  from { background-color: rgba(8, 10, 18, .22); }
+  to { background-color: rgba(8, 10, 18, 0); }
+}
+
+/* Do not animate opacity or CSS filter on the optical glass surface itself.
+   A transform-only motion preserves the backdrop sampling throughout entry/exit. */
+@keyframes settings-optical-panel-in {
+  from { transform: translateY(12px) scale(.982); }
+  to { transform: translateY(0) scale(1); }
+}
+
+@keyframes settings-optical-panel-out {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(8px) scale(.988); }
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  background-color: rgba(255, 255, 255, .018) !important;
+  background-image: linear-gradient(
+    132deg,
+    rgba(255, 255, 255, .10) 0%,
+    rgba(255, 255, 255, .025) 23%,
+    rgba(255, 255, 255, .006) 58%,
+    rgba(255, 255, 255, .055) 100%
+  ) !important;
+  border: 1px solid rgba(255, 255, 255, .42) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .56),
+    inset 1px 0 0 rgba(255, 255, 255, .18),
+    inset -1px 0 0 rgba(255, 255, 255, .07),
+    inset 0 -1px 0 rgba(255, 255, 255, .15),
+    0 18px 52px rgba(0, 0, 0, .20),
+    0 2px 9px rgba(0, 0, 0, .08) !important;
+  -webkit-backdrop-filter: blur(34px) saturate(185%) brightness(1.08) !important;
+  backdrop-filter: blur(34px) saturate(185%) brightness(1.08) !important;
+  will-change: transform;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel:not(.settings-dialog-panel-exit) {
+  animation: settings-optical-panel-in 260ms cubic-bezier(.2, .85, .25, 1) both !important;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel.settings-dialog-panel-exit {
+  animation: settings-optical-panel-out 220ms cubic-bezier(.4, 0, .8, .3) both !important;
+}
+
+/* Optical reflections sit above the filtered backdrop; real content remains readable. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(255, 255, 255, .28), transparent 38%),
+    radial-gradient(ellipse at 92% 100%, rgba(255, 255, 255, .065), transparent 44%),
+    linear-gradient(115deg,
+      rgba(255, 255, 255, .13) 0%,
+      rgba(255, 255, 255, .025) 25%,
+      transparent 54%,
+      rgba(255, 255, 255, .055) 100%);
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: 2;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, .09);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .11);
+  pointer-events: none;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Preserve the independent Blur toggle. */
+:root[data-star-blur="off"][data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop.settings-dialog-optical::before,
+  :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel {
+    animation: none !important;
+    transition: none !important;
   }
 }

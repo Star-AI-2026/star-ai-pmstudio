@@ -97,15 +97,10 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
     <div
       dir={dir}
       data-settings-closing={closing ? "true" : "false"}
-      data-settings-glass-style={
-        settings.blur && settings.liquidGlass
-          ? settings.liquidGlassStyle ?? "old"
-          : "off"
-      }
       className={cn(
         "settings-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-2",
         settings.blur && settings.liquidGlass && settings.liquidGlassStyle === "new"
-          ? "settings-dialog-backdrop-new"
+          ? "settings-dialog-optical"
           : "bg-black/60 backdrop-blur-sm",
         closing && "settings-dialog-backdrop-exit",
       )}
@@ -113,13 +108,10 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div
-        data-settings-glass-panel="true"
-        className={cn(
-          "glass settings-dialog-panel flex h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl shadow-glow md:flex-row",
-          closing && "settings-dialog-panel-exit",
-        )}
-      >
+      <div className={cn(
+        "glass settings-dialog-panel flex h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl shadow-glow md:flex-row",
+        closing && "settings-dialog-panel-exit",
+      )}>
         <nav className="scrollbar-thin flex shrink-0 gap-1 overflow-x-auto border-b border-border p-3 md:w-48 md:flex-col md:overflow-y-auto md:border-b-0 md:border-r">
           <p className="hidden px-2 pb-2 font-display text-sm font-semibold md:block">{t("Settings")}</p>
           {SECTIONS.map((s) => (
