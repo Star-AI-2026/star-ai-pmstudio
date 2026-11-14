@@ -98,7 +98,10 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
       dir={dir}
       data-settings-closing={closing ? "true" : "false"}
       className={cn(
-        "settings-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 backdrop-blur-sm",
+        "settings-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-2",
+        settings.blur && settings.liquidGlass && settings.liquidGlassStyle === "new"
+          ? "bg-black/5"
+          : "bg-black/60 backdrop-blur-sm",
         closing && "settings-dialog-backdrop-exit",
       )}
       onMouseDown={(e) => {
