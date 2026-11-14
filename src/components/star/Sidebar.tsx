@@ -305,20 +305,23 @@ export function Sidebar({
         )}
       </div>
 
-      <div className="border-t border-sidebar-border p-2">
+      <div className="sidebar-footer-actions border-t border-sidebar-border p-2">
         <button
+          data-liquid-glass-exempt="true"
           onClick={onOpenSettings}
           className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
         >
           <Settings className="h-3.5 w-3.5" /> {t("Settings")}
         </button>
         <button
+          data-liquid-glass-exempt="true"
           onClick={onOpenHelp}
           className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
         >
           <CircleHelp className="h-3.5 w-3.5" /> {t("Help")}
         </button>
         <button
+          data-liquid-glass-exempt="true"
           onClick={onOpenProfile}
           className="mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2 transition-colors hover:bg-sidebar-accent"
         >
