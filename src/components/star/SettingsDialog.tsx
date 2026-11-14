@@ -256,12 +256,12 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                       className={cn(
                         "liquid-glass-choice liquid-glass-choice-new rounded-xl border px-3 py-2.5 text-start text-xs transition-all",
                         settings.liquidGlassStyle === "new"
-                          ? "border-cyan-300/70 bg-cyan-400/10 text-foreground shadow-sm"
+                          ? "border-foreground/35 bg-foreground/5 text-foreground shadow-sm"
                           : "border-border bg-background/20 text-muted-foreground hover:bg-secondary/70",
                       )}
                     >
                       <span className="block font-semibold">{t("New version")}</span>
-                      <span className="mt-1 block text-[10px] opacity-70">{t("New blue frosted glass appearance")}</span>
+                      <span className="mt-1 block text-[10px] opacity-70">{t("Neutral frosted glass appearance")}</span>
                     </button>
                   </div>
                 </div>
