@@ -633,43 +633,30 @@ html:not(.dark) {
 }
 
 
-/* Settings dialog: keep the glass panel free to sample the page behind it.
-   The scrim is a sibling element, never an opacity/filter ancestor of the panel. */
-@keyframes settings-dialog-scrim-in {
+/* Settings dialog enter/exit motion. Exit remains mounted until the transition completes. */
+@keyframes settings-dialog-backdrop-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-@keyframes settings-dialog-scrim-out {
+@keyframes settings-dialog-backdrop-out {
   from { opacity: 1; }
   to { opacity: 0; }
 }
 @keyframes settings-dialog-panel-in {
-  from { transform: translateY(12px) scale(.975); }
-  to { transform: translateY(0) scale(1); }
+  /* Do not animate the CSS filter on a backdrop-filter surface.
+     A filter creates a backdrop root and can prevent the glass from sampling the page behind it. */
+  from { opacity: 0; transform: translateY(12px) scale(.975); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes settings-dialog-panel-out {
-  from { transform: translateY(0) scale(1); }
-  to { transform: translateY(8px) scale(.985); }
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(8px) scale(.985); }
 }
-.settings-dialog-backdrop {
-  background: transparent !important;
-  opacity: 1 !important;
-  filter: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+:root[data-star-animations="on"] .settings-dialog-backdrop {
+  animation: settings-dialog-backdrop-in 220ms ease both;
 }
-.settings-dialog-scrim {
-  z-index: 0;
-  background: rgba(0, 0, 0, .32);
-}
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-scrim {
-  background: rgba(0, 0, 0, .24);
-}
-:root[data-star-animations="on"] .settings-dialog-scrim {
-  animation: settings-dialog-scrim-in 220ms ease both;
-}
-:root[data-star-animations="on"] .settings-dialog-scrim-exit {
-  animation: settings-dialog-scrim-out 220ms ease both;
+:root[data-star-animations="on"] .settings-dialog-backdrop-exit {
+  animation: settings-dialog-backdrop-out 220ms ease both;
   pointer-events: none;
 }
 :root[data-star-animations="on"] .settings-dialog-panel {
@@ -884,16 +871,23 @@ html:not(.dark) {
   -webkit-backdrop-filter: none !important;
 }
 
-/* SETTINGS DIALOG — readable optical glass.
-   A separate sibling scrim dims the page; this panel blurs the real backdrop. */
+/* SETTINGS DIALOG — corrected iOS-inspired optical glass.
+   Keep the page behind dim but recognizable; apply the strong refraction/blur
+   to the actual dialog surface, not to the full-screen scrim. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop {
+  background: rgba(0, 0, 0, .20) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel {
-  background-color: rgba(20, 16, 29, .40) !important;
+  background-color: rgba(255, 255, 255, .025) !important;
   background-image: linear-gradient(
     135deg,
-    rgba(255, 255, 255, .14) 0%,
-    rgba(255, 255, 255, .045) 25%,
-    rgba(255, 255, 255, .018) 62%,
-    rgba(255, 255, 255, .075) 100%
+    rgba(255, 255, 255, .105) 0%,
+    rgba(255, 255, 255, .025) 24%,
+    rgba(255, 255, 255, .008) 58%,
+    rgba(255, 255, 255, .065) 100%
   ) !important;
   border: 1px solid rgba(255, 255, 255, .42) !important;
   box-shadow:
@@ -901,12 +895,13 @@ html:not(.dark) {
     inset 1px 0 0 rgba(255, 255, 255, .18),
     inset -1px 0 0 rgba(255, 255, 255, .075),
     inset 0 -1px 0 rgba(255, 255, 255, .17),
-    0 18px 54px rgba(0, 0, 0, .24),
+    0 18px 54px rgba(0, 0, 0, .22),
     0 2px 10px rgba(0, 0, 0, .08) !important;
-  backdrop-filter: blur(34px) saturate(185%) contrast(1.05) !important;
-  -webkit-backdrop-filter: blur(34px) saturate(185%) contrast(1.05) !important;
+  backdrop-filter: blur(38px) saturate(185%) contrast(1.06) !important;
+  -webkit-backdrop-filter: blur(38px) saturate(185%) contrast(1.06) !important;
 }
 
+/* Restore dialog content stacking above the glass reflections. */
 :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel > * {
   position: relative;
   z-index: 1;
@@ -914,48 +909,144 @@ html:not(.dark) {
 
 @media (max-width: 767px) {
   :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel {
-    backdrop-filter: blur(28px) saturate(180%) contrast(1.04) !important;
-    -webkit-backdrop-filter: blur(28px) saturate(180%) contrast(1.04) !important;
+    backdrop-filter: blur(30px) saturate(180%) contrast(1.04) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(180%) contrast(1.04) !important;
   }
 }
 
+
+
 /* ============================================================
-   iOS 26-inspired Liquid Glass BUTTONS (New version only)
-   Sidebar Settings / Help / Account are deliberately excluded.
+   STAR-AI — REFINED iOS-INSPIRED LIQUID GLASS (NEW VERSION)
+   Smoked, colorful glass with soft refraction and restrained highlights.
+   This deliberately avoids the bright white / washed-out treatment.
    ============================================================ */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]):not([data-liquid-glass-exempt="true"]),
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button):not([data-liquid-glass-exempt="true"]) {
+
+/* Global glass containers: let the real page colors show through a tinted,
+   strongly blurred lens. Avoid painting a flat gray surface. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [data-liquid-glass="true"] {
+  background-color: rgba(33, 21, 30, .24) !important;
+  background-image:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, .065) 0%,
+      rgba(118, 70, 83, .045) 34%,
+      rgba(15, 11, 19, .13) 72%,
+      rgba(255, 255, 255, .035) 100%
+    ) !important;
+  border: 1px solid rgba(255, 255, 255, .19) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .20),
+    inset 1px 0 0 rgba(255, 255, 255, .075),
+    inset -1px 0 0 rgba(255, 255, 255, .045),
+    inset 0 -1px 0 rgba(0, 0, 0, .16),
+    0 12px 34px rgba(0, 0, 0, .19) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(175%) contrast(1.10) brightness(.96) !important;
+  backdrop-filter: blur(22px) saturate(175%) contrast(1.10) brightness(.96) !important;
+}
+
+/* Soft optical reflection, concentrated at the upper edge.
+   No full-surface white glow and no screen blend mode. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass::before,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [data-liquid-glass="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at 18% 0%,
+      rgba(255, 255, 255, .17) 0%,
+      rgba(255, 255, 255, .045) 24%,
+      transparent 48%
+    ),
+    linear-gradient(
+      110deg,
+      rgba(255, 255, 255, .065) 0%,
+      transparent 34%,
+      rgba(196, 106, 124, .035) 68%,
+      rgba(130, 170, 220, .035) 100%
+    );
+  opacity: .62;
+}
+
+/* Fine rim and restrained chromatic edge refraction. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass::after,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [data-liquid-glass="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: 2;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, .075);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .085),
+    inset 1px 0 0 rgba(255, 110, 125, .045),
+    inset -1px 0 0 rgba(100, 165, 255, .045),
+    inset 0 -1px 0 rgba(0, 0, 0, .10);
+  pointer-events: none;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass > *,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [data-liquid-glass="true"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   BUTTONS — iOS 26-style smoked glass capsules
+   Sidebar footer Settings / Help / Account are explicitly excluded.
+   ============================================================ */
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+button:not([role="switch"]):not([data-liquid-glass-exempt="true"]),
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+[role="button"]:not(button):not([data-liquid-glass-exempt="true"]) {
   position: relative !important;
   isolation: isolate;
-  overflow: hidden !important;
+  overflow: hidden;
   border-radius: 9999px !important;
-  border: 1px solid rgba(255, 255, 255, .34) !important;
-  background-color: rgba(255, 255, 255, .025) !important;
-  background-image: linear-gradient(145deg,
-    rgba(255,255,255,.16) 0%,
-    rgba(255,255,255,.055) 24%,
-    rgba(255,255,255,.012) 56%,
-    rgba(255,255,255,.085) 100%) !important;
-  background-clip: padding-box;
+
+  /* A subtle smoked plum tint: the background remains visible, but not clear. */
+  background-color: rgba(37, 23, 32, .29) !important;
+  background-image: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, .075) 0%,
+    rgba(118, 73, 84, .065) 28%,
+    rgba(16, 12, 19, .16) 72%,
+    rgba(255, 255, 255, .035) 100%
+  ) !important;
+
+  border: 1px solid rgba(255, 255, 255, .205) !important;
+
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.52),
-    inset 1px 0 0 rgba(255,255,255,.19),
-    inset -1px 0 0 rgba(255,255,255,.08),
-    inset 0 -1px 0 rgba(255,255,255,.17),
-    0 5px 16px rgba(0,0,0,.13),
-    0 1px 3px rgba(0,0,0,.08) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(190%) contrast(1.12) brightness(1.08) !important;
-  backdrop-filter: blur(16px) saturate(190%) contrast(1.12) brightness(1.08) !important;
-  text-shadow: 0 1px 1px rgba(0,0,0,.12);
+    inset 0 1px 0 rgba(255, 255, 255, .19),
+    inset 1px 0 0 rgba(255, 255, 255, .075),
+    inset -1px 0 0 rgba(255, 255, 255, .035),
+    inset 0 -1px 0 rgba(0, 0, 0, .18),
+    0 4px 12px rgba(0, 0, 0, .19) !important;
+
+  -webkit-backdrop-filter: blur(18px) saturate(175%) contrast(1.10) brightness(.96) !important;
+  backdrop-filter: blur(18px) saturate(175%) contrast(1.10) brightness(.96) !important;
+
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .16);
+  filter: none;
   transition:
-    background 180ms ease,
+    background-color 180ms ease,
+    background-image 180ms ease,
     border-color 180ms ease,
     box-shadow 180ms ease,
     transform 180ms cubic-bezier(.2,.8,.2,1) !important;
 }
 
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]):not([data-liquid-glass-exempt="true"])::before,
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button):not([data-liquid-glass-exempt="true"])::before {
+/* Refraction highlights: a small upper glint plus soft colored edge bleed. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+button:not([role="switch"]):not([data-liquid-glass-exempt="true"])::before,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+[role="button"]:not(button):not([data-liquid-glass-exempt="true"])::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -963,50 +1054,70 @@ html:not(.dark) {
   border-radius: inherit;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 20% -12%, rgba(255,255,255,.58) 0%, rgba(255,255,255,.20) 24%, transparent 52%),
-    linear-gradient(112deg, rgba(255,255,255,.19) 0%, rgba(255,255,255,.035) 36%, transparent 66%, rgba(255,255,255,.12) 100%);
-  opacity: .82;
-  mix-blend-mode: screen;
+    radial-gradient(
+      ellipse at 22% -12%,
+      rgba(255, 255, 255, .20) 0%,
+      rgba(255, 255, 255, .055) 27%,
+      transparent 52%
+    ),
+    linear-gradient(
+      105deg,
+      rgba(255, 104, 120, .055) 0%,
+      transparent 21%,
+      transparent 78%,
+      rgba(110, 170, 255, .06) 100%
+    );
+  opacity: .72;
 }
 
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]):not([data-liquid-glass-exempt="true"])::after,
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button):not([data-liquid-glass-exempt="true"])::after {
+/* The glass edge is darker and finer than the previous bright white outline. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+button:not([role="switch"]):not([data-liquid-glass-exempt="true"])::after,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+[role="button"]:not(button):not([data-liquid-glass-exempt="true"])::after {
   content: "";
   position: absolute;
   inset: 1px;
   z-index: -1;
   border-radius: inherit;
-  border: 1px solid rgba(255,255,255,.15);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.24), inset 0 -1px 0 rgba(255,255,255,.055);
+  border: 1px solid rgba(255, 255, 255, .075);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .10),
+    inset 0 -1px 0 rgba(0, 0, 0, .09),
+    inset 1px 0 0 rgba(255, 110, 125, .035),
+    inset -1px 0 0 rgba(105, 165, 255, .035);
   pointer-events: none;
 }
 
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]):not([data-liquid-glass-exempt="true"]):hover:not(:disabled),
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button):not([data-liquid-glass-exempt="true"]):hover {
-  border-color: rgba(255,255,255,.56) !important;
-  background-image: linear-gradient(145deg, rgba(255,255,255,.23) 0%, rgba(255,255,255,.075) 30%, rgba(255,255,255,.018) 62%, rgba(255,255,255,.12) 100%) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.66), inset 1px 0 0 rgba(255,255,255,.22), 0 7px 22px rgba(0,0,0,.16), 0 0 14px rgba(255,255,255,.08) !important;
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+button:not([role="switch"]):not([data-liquid-glass-exempt="true"]):hover:not(:disabled),
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+[role="button"]:not(button):not([data-liquid-glass-exempt="true"]):hover {
+  border-color: rgba(255, 255, 255, .27) !important;
+  background-color: rgba(53, 32, 43, .32) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .23),
+    inset 0 -1px 0 rgba(0, 0, 0, .16),
+    0 6px 16px rgba(0, 0, 0, .22) !important;
+  filter: none !important;
 }
 
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]):not([data-liquid-glass-exempt="true"]):active:not(:disabled),
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button):not([data-liquid-glass-exempt="true"]):active {
-  transform: scale(.965) !important;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.38), 0 2px 7px rgba(0,0,0,.10) !important;
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+button:not([role="switch"]):not([data-liquid-glass-exempt="true"]):active:not(:disabled),
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+[role="button"]:not(button):not([data-liquid-glass-exempt="true"]):active {
+  transform: scale(.975) !important;
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, .16),
+    inset 0 1px 0 rgba(255, 255, 255, .13),
+    0 2px 6px rgba(0, 0, 0, .14) !important;
 }
 
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]):not([data-liquid-glass-exempt="true"]):focus-visible,
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button):not([data-liquid-glass-exempt="true"]):focus-visible {
-  outline: 2px solid rgba(255,255,255,.62) !important;
-  outline-offset: 2px;
-}
-
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button[role="switch"] {
-  border-radius: 9999px;
-  overflow: visible;
-}
-
-/* Sidebar footer Settings, Help and account keep their normal flat style. */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .sidebar-footer-actions button[data-liquid-glass-exempt="true"] {
+/* Explicitly preserve the three flat Sidebar footer controls. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+.sidebar-footer-actions button,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+button[data-liquid-glass-exempt="true"] {
   position: relative !important;
   isolation: auto !important;
   overflow: visible !important;
@@ -1019,4 +1130,124 @@ html:not(.dark) {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
   text-shadow: none !important;
+  filter: none !important;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+.sidebar-footer-actions button::before,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+.sidebar-footer-actions button::after,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+button[data-liquid-glass-exempt="true"]::before,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+button[data-liquid-glass-exempt="true"]::after {
+  content: none !important;
+}
+
+/* Switches retain their original Star-AI appearance. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+button[role="switch"] {
+  border-radius: 9999px !important;
+  overflow: visible !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* ============================================================
+   SETTINGS DIALOG — true backdrop sampling
+   Never animate opacity/filter on the full-screen ancestor.
+   ============================================================ */
+
+.settings-dialog-backdrop {
+  isolation: auto !important;
+  opacity: 1 !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: transparent !important;
+  animation: none !important;
+}
+
+.settings-dialog-backdrop-exit {
+  animation: none !important;
+  pointer-events: none;
+}
+
+.settings-dialog-scrim {
+  z-index: 0;
+  background: rgba(8, 5, 13, .19);
+}
+
+.settings-dialog-scrim-exit {
+  animation: settings-scrim-out 180ms ease both;
+  pointer-events: none;
+}
+
+@keyframes settings-scrim-out {
+  from { background-color: rgba(8, 5, 13, .19); }
+  to { background-color: rgba(8, 5, 13, 0); }
+}
+
+/* The panel itself is a darker, colorful lens; not a white transparent sheet. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+.settings-dialog-panel {
+  position: relative;
+  z-index: 10;
+  background-color: rgba(34, 20, 31, .34) !important;
+  background-image: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, .075) 0%,
+    rgba(111, 64, 78, .055) 32%,
+    rgba(12, 9, 16, .18) 78%,
+    rgba(255, 255, 255, .035) 100%
+  ) !important;
+  border: 1px solid rgba(255, 255, 255, .23) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .23),
+    inset 1px 0 0 rgba(255, 255, 255, .09),
+    inset -1px 0 0 rgba(255, 255, 255, .04),
+    inset 0 -1px 0 rgba(0, 0, 0, .19),
+    0 18px 52px rgba(0, 0, 0, .25) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(170%) contrast(1.08) brightness(.94) !important;
+  backdrop-filter: blur(30px) saturate(170%) contrast(1.08) brightness(.94) !important;
+}
+
+/* Content remains crisp; only the surface behind it is blurred. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"]
+.settings-dialog-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Animate movement only: opacity/filter on the glass panel can create a backdrop root. */
+@keyframes settings-glass-panel-in {
+  from { transform: translateY(12px) scale(.982); }
+  to { transform: translateY(0) scale(1); }
+}
+
+@keyframes settings-glass-panel-out {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(8px) scale(.988); }
+}
+
+/* More specific than the legacy generic dialog animation above. */
+:root[data-star-animations="on"] .settings-dialog-backdrop > .settings-dialog-panel {
+  animation: settings-glass-panel-in 240ms cubic-bezier(.2,.85,.25,1) both !important;
+}
+
+:root[data-star-animations="on"] .settings-dialog-backdrop > .settings-dialog-panel-exit {
+  animation: settings-glass-panel-out 220ms cubic-bezier(.4,0,.8,.3) both !important;
+}
+
+/* Preserve the Blur and Liquid Glass switches independently. */
+:root[data-star-blur="off"] .settings-dialog-panel {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-dialog-scrim,
+  .settings-dialog-panel {
+    animation: none !important;
+  }
 }

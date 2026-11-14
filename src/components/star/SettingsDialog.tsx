@@ -99,9 +99,9 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
       data-settings-closing={closing ? "true" : "false"}
       className="settings-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-2"
     >
-      {/* The scrim is a sibling of the glass panel. It must not be an animated,
-          filtered or translucent ancestor of the panel, otherwise backdrop-filter
-          cannot sample the actual chat page behind the glass. */}
+      {/* Keep the dimming layer beside (not above) the glass panel.
+          An opacity/filter animation on an ancestor prevents backdrop-filter
+          from sampling the actual page behind the dialog. */}
       <div
         aria-hidden="true"
         className={cn(
