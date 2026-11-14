@@ -100,7 +100,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
       className={cn(
         "settings-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-2",
         settings.blur && settings.liquidGlass && settings.liquidGlassStyle === "new"
-          ? "bg-black/5"
+          ? "bg-black/20"
           : "bg-black/60 backdrop-blur-sm",
         closing && "settings-dialog-backdrop-exit",
       )}
