@@ -871,141 +871,189 @@ html:not(.dark) {
   -webkit-backdrop-filter: none !important;
 }
 
-/*
- * SETTINGS DIALOG — iOS-inspired optical glass.
- * IMPORTANT: the full-screen backdrop must NOT animate its own opacity.
- * An ancestor opacity animation creates a Backdrop Root and prevents the
- * child panel's backdrop-filter from sampling the page behind the overlay.
- * The dim layer is therefore a sibling pseudo-element; the dialog panel can
- * now refract/blur the real page content behind it.
- */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop.settings-dialog-optical,
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop.settings-dialog-optical.settings-dialog-backdrop-exit {
-  position: fixed;
-  isolation: auto;
-  opacity: 1 !important;
-  filter: none !important;
-  transform: none !important;
-  background: transparent !important;
+/* SETTINGS DIALOG — corrected iOS-inspired optical glass.
+   Keep the page behind dim but recognizable; apply the strong refraction/blur
+   to the actual dialog surface, not to the full-screen scrim. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop {
+  background: rgba(0, 0, 0, .20) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  animation: none !important;
-}
-
-/* The scrim is a sibling behind the glass, not an opacity layer on its ancestor. */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop.settings-dialog-optical::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: rgba(8, 10, 18, .22);
-  animation: settings-optical-scrim-in 220ms ease both;
-}
-
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop.settings-dialog-optical.settings-dialog-backdrop-exit::before {
-  animation: settings-optical-scrim-out 220ms ease both;
-}
-
-@keyframes settings-optical-scrim-in {
-  from { background-color: rgba(8, 10, 18, 0); }
-  to { background-color: rgba(8, 10, 18, .22); }
-}
-
-@keyframes settings-optical-scrim-out {
-  from { background-color: rgba(8, 10, 18, .22); }
-  to { background-color: rgba(8, 10, 18, 0); }
-}
-
-/* Do not animate opacity or CSS filter on the optical glass surface itself.
-   A transform-only motion preserves the backdrop sampling throughout entry/exit. */
-@keyframes settings-optical-panel-in {
-  from { transform: translateY(12px) scale(.982); }
-  to { transform: translateY(0) scale(1); }
-}
-
-@keyframes settings-optical-panel-out {
-  from { transform: translateY(0) scale(1); }
-  to { transform: translateY(8px) scale(.988); }
 }
 
 :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel {
-  position: relative;
-  z-index: 1;
-  isolation: isolate;
-  background-color: rgba(255, 255, 255, .018) !important;
+  background-color: rgba(255, 255, 255, .025) !important;
   background-image: linear-gradient(
-    132deg,
-    rgba(255, 255, 255, .10) 0%,
-    rgba(255, 255, 255, .025) 23%,
-    rgba(255, 255, 255, .006) 58%,
-    rgba(255, 255, 255, .055) 100%
+    135deg,
+    rgba(255, 255, 255, .105) 0%,
+    rgba(255, 255, 255, .025) 24%,
+    rgba(255, 255, 255, .008) 58%,
+    rgba(255, 255, 255, .065) 100%
   ) !important;
   border: 1px solid rgba(255, 255, 255, .42) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .56),
+    inset 0 1px 0 rgba(255, 255, 255, .55),
     inset 1px 0 0 rgba(255, 255, 255, .18),
-    inset -1px 0 0 rgba(255, 255, 255, .07),
-    inset 0 -1px 0 rgba(255, 255, 255, .15),
-    0 18px 52px rgba(0, 0, 0, .20),
-    0 2px 9px rgba(0, 0, 0, .08) !important;
-  -webkit-backdrop-filter: blur(34px) saturate(185%) brightness(1.08) !important;
-  backdrop-filter: blur(34px) saturate(185%) brightness(1.08) !important;
-  will-change: transform;
+    inset -1px 0 0 rgba(255, 255, 255, .075),
+    inset 0 -1px 0 rgba(255, 255, 255, .17),
+    0 18px 54px rgba(0, 0, 0, .22),
+    0 2px 10px rgba(0, 0, 0, .08) !important;
+  backdrop-filter: blur(38px) saturate(185%) contrast(1.06) !important;
+  -webkit-backdrop-filter: blur(38px) saturate(185%) contrast(1.06) !important;
 }
 
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel:not(.settings-dialog-panel-exit) {
-  animation: settings-optical-panel-in 260ms cubic-bezier(.2, .85, .25, 1) both !important;
-}
-
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel.settings-dialog-panel-exit {
-  animation: settings-optical-panel-out 220ms cubic-bezier(.4, 0, .8, .3) both !important;
-}
-
-/* Optical reflections sit above the filtered backdrop; real content remains readable. */
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse at 12% 0%, rgba(255, 255, 255, .28), transparent 38%),
-    radial-gradient(ellipse at 92% 100%, rgba(255, 255, 255, .065), transparent 44%),
-    linear-gradient(115deg,
-      rgba(255, 255, 255, .13) 0%,
-      rgba(255, 255, 255, .025) 25%,
-      transparent 54%,
-      rgba(255, 255, 255, .055) 100%);
-}
-
-:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel::after {
-  content: "";
-  position: absolute;
-  inset: 1px;
-  z-index: 2;
-  border-radius: inherit;
-  border: 1px solid rgba(255, 255, 255, .09);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .11);
-  pointer-events: none;
-}
-
+/* Restore dialog content stacking above the glass reflections. */
 :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel > * {
   position: relative;
   z-index: 1;
 }
 
-/* Preserve the independent Blur toggle. */
-:root[data-star-blur="off"][data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel {
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
+@media (max-width: 767px) {
+  :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel {
+    backdrop-filter: blur(30px) saturate(180%) contrast(1.04) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(180%) contrast(1.04) !important;
+  }
+}
+
+
+/* ============================================================
+   iOS 26-inspired Liquid Glass BUTTONS (New version only)
+   Apply the optical capsule effect to interactive buttons while
+   keeping switches independent and preserving the Old version.
+   ============================================================ */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]),
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button) {
+  position: relative !important;
+  isolation: isolate;
+  overflow: hidden !important;
+  border-radius: 9999px !important;
+  border: 1px solid rgba(255, 255, 255, .34) !important;
+  background-color: rgba(255, 255, 255, .025) !important;
+  background-image: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, .16) 0%,
+    rgba(255, 255, 255, .055) 24%,
+    rgba(255, 255, 255, .012) 56%,
+    rgba(255, 255, 255, .085) 100%
+  ) !important;
+  background-clip: padding-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .52),
+    inset 1px 0 0 rgba(255, 255, 255, .19),
+    inset -1px 0 0 rgba(255, 255, 255, .08),
+    inset 0 -1px 0 rgba(255, 255, 255, .17),
+    0 5px 16px rgba(0, 0, 0, .13),
+    0 1px 3px rgba(0, 0, 0, .08) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(190%) contrast(1.12) brightness(1.08) !important;
+  backdrop-filter: blur(16px) saturate(190%) contrast(1.12) brightness(1.08) !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .12);
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms cubic-bezier(.2,.8,.2,1) !important;
+}
+
+/* The specular highlight is a thin reflection, not a gray fill. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"])::before,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at 20% -12%,
+      rgba(255, 255, 255, .58) 0%,
+      rgba(255, 255, 255, .20) 24%,
+      transparent 52%
+    ),
+    linear-gradient(
+      112deg,
+      rgba(255, 255, 255, .19) 0%,
+      rgba(255, 255, 255, .035) 36%,
+      transparent 66%,
+      rgba(255, 255, 255, .12) 100%
+    );
+  opacity: .82;
+  mix-blend-mode: screen;
+}
+
+/* A bright optical rim gives the pill its glass-lens edge. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"])::after,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button)::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, .15);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .24),
+    inset 0 -1px 0 rgba(255, 255, 255, .055);
+  pointer-events: none;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]):hover:not(:disabled),
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button):hover {
+  border-color: rgba(255, 255, 255, .56) !important;
+  background-image: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, .23) 0%,
+    rgba(255, 255, 255, .075) 30%,
+    rgba(255, 255, 255, .018) 62%,
+    rgba(255, 255, 255, .12) 100%
+  ) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .66),
+    inset 1px 0 0 rgba(255, 255, 255, .22),
+    0 7px 22px rgba(0, 0, 0, .16),
+    0 0 14px rgba(255, 255, 255, .08) !important;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]):active:not(:disabled),
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button):active {
+  transform: scale(.965) !important;
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .38),
+    0 2px 7px rgba(0, 0, 0, .10) !important;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]):focus-visible,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button):focus-visible {
+  outline: 2px solid rgba(255, 255, 255, .62) !important;
+  outline-offset: 2px;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]):disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+
+/* Keep the switch control as a switch; it must not become a glass pill. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button[role="switch"] {
+  border-radius: 9999px;
+  overflow: visible;
+}
+
+/* Light appearance: use a clear bright lens edge and a softer shadow. */
+html:not(.dark)[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]),
+html:not(.dark)[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [role="button"]:not(button) {
+  border-color: rgba(255, 255, 255, .64) !important;
+  background-color: rgba(255, 255, 255, .075) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .82),
+    inset 1px 0 0 rgba(255, 255, 255, .34),
+    inset 0 -1px 0 rgba(255, 255, 255, .25),
+    0 4px 14px rgba(25, 35, 50, .10) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(175%) contrast(1.04) !important;
+  backdrop-filter: blur(16px) saturate(175%) contrast(1.04) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-backdrop.settings-dialog-optical::before,
-  :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .settings-dialog-panel {
-    animation: none !important;
+  :root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] button:not([role="switch"]) {
     transition: none !important;
   }
 }
