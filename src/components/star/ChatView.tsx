@@ -28,7 +28,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
   }, [active?.messages.length, active?.messages[active.messages.length - 1]?.content]);
 
   return (
-    <div dir={dir} className="flex h-full min-w-0 flex-1 flex-col">
+    <div dir={dir} className="relative flex h-full min-w-0 flex-1 flex-col">
       <header className="flex items-center gap-2 px-3 py-3 sm:px-5">
         <button
           onClick={onOpenSidebar}
@@ -113,7 +113,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
         )}
       </header>
 
-      <div className="scrollbar-thin flex-1 overflow-y-auto" role="log" aria-live="polite">
+      <div className="chat-scroll-area scrollbar-thin flex-1 overflow-y-auto" role="log" aria-live="polite">
         {!active || active.messages.length === 0 ? (
           <WelcomeScreen />
         ) : (
@@ -133,8 +133,10 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
         )}
       </div>
 
-            <AdBanner className="shrink-0" />
-      <Composer />
+      <div className="chat-bottom-dock">
+        <AdBanner className="shrink-0" />
+        <Composer />
+      </div>
       <UpdateCheckerDialog open={updateCheckerOpen} onClose={() => setUpdateCheckerOpen(false)} />
     </div>
   );

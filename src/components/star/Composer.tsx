@@ -183,7 +183,7 @@ export function Composer() {
 
       <div
         className={cn(
-          "glass rounded-3xl p-2 shadow-glow transition-all duration-500",
+          "glass chat-composer-surface rounded-3xl p-2 shadow-glow transition-all duration-500",
           dragging && "ring-2 ring-primary",
           dictation.listening && "ring-2 ring-accent",
         )}

@@ -25,9 +25,9 @@ export function AdBanner({ className = "" }: AdBannerProps) {
   return (
     <aside
       aria-label="تبلیغ مستقیم"
-      className={`mx-auto w-full max-w-3xl px-3 py-2 ${className}`}
+      className={`chat-ad-wrapper mx-auto w-full max-w-3xl px-3 py-2 ${className}`}
     >
-      <div className="flex items-center gap-3 overflow-hidden rounded-2xl border border-border bg-card/80 p-3 shadow-sm">
+      <div className="chat-ad-surface flex items-center gap-3 overflow-hidden rounded-2xl border border-border bg-card/80 p-3 shadow-sm">
         {hasImage ? (
           <img
             src={AD.image}
