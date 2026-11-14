@@ -225,6 +225,47 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
               <Row label={t("Liquid Glass")} hint={t("Enable translucent liquid glass surfaces")}>
                 <Toggle on={settings.blur && settings.liquidGlass} disabled={!settings.blur} onChange={(v) => updateSettings({ liquidGlass: v })} />
               </Row>
+              {settings.blur && settings.liquidGlass && (
+                <div
+                  className="liquid-glass-style-picker ml-2 mb-3 mt-1 rounded-2xl border border-border/70 bg-background/20 p-3 sm:ml-4"
+                  role="group"
+                  aria-label={t("Liquid Glass style")}
+                >
+                  <p className="mb-2 text-xs font-semibold">{t("Liquid Glass style")}</p>
+                  <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label={t("Liquid Glass style")}>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={(settings.liquidGlassStyle ?? "old") === "old"}
+                      onClick={() => updateSettings({ liquidGlassStyle: "old" })}
+                      className={cn(
+                        "liquid-glass-choice rounded-xl border px-3 py-2.5 text-start text-xs transition-all",
+                        (settings.liquidGlassStyle ?? "old") === "old"
+                          ? "border-primary bg-primary/10 text-foreground shadow-sm"
+                          : "border-border bg-background/20 text-muted-foreground hover:bg-secondary/70",
+                      )}
+                    >
+                      <span className="block font-semibold">{t("Old version")}</span>
+                      <span className="mt-1 block text-[10px] opacity-70">{t("Current Liquid Glass appearance")}</span>
+                    </button>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={settings.liquidGlassStyle === "new"}
+                      onClick={() => updateSettings({ liquidGlassStyle: "new" })}
+                      className={cn(
+                        "liquid-glass-choice liquid-glass-choice-new rounded-xl border px-3 py-2.5 text-start text-xs transition-all",
+                        settings.liquidGlassStyle === "new"
+                          ? "border-cyan-300/70 bg-cyan-400/10 text-foreground shadow-sm"
+                          : "border-border bg-background/20 text-muted-foreground hover:bg-secondary/70",
+                      )}
+                    >
+                      <span className="block font-semibold">{t("New version")}</span>
+                      <span className="mt-1 block text-[10px] opacity-70">{t("New blue frosted glass appearance")}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
               <Row label={t("Particle effects")}>
                 <Toggle on={settings.particles} onChange={(v) => updateSettings({ particles: v })} />
               </Row>

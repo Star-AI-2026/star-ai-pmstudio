@@ -51,11 +51,8 @@ export default defineConfig({
   vite: {
     ...(staticBase ? { base: staticBase } : {}),
     define: {
-      // Origin of the chat API for statically hosted builds ("" = same origin).
+      // Origin of the Star-AI API for statically hosted builds ("" = same origin).
       __STAR_AI_API_BASE__: JSON.stringify(process.env["VITE_STAR_AI_API_BASE"] ?? ""),
-      // Image generation has its own server route. It can live on the Lovable
-      // deployment while chat remains on the Cloudflare Worker.
-      __STAR_AI_IMAGE_API_BASE__: JSON.stringify(process.env["VITE_STAR_AI_IMAGE_API_BASE"] ?? ""),
     },
     plugins: [githubPagesStaticPlugin()],
   },

@@ -44,6 +44,27 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
   const [decision, setDecision] = useState<UpdateDecision | null>(null);
   const [error, setError] = useState("");
   const [progress, setProgress] = useState<DownloadProgress | null>(null);
+  const [mounted, setMounted] = useState(open);
+  const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    if (open) {
+      setMounted(true);
+      setClosing(false);
+    } else if (mounted) {
+      setClosing(true);
+      timer = setTimeout(() => {
+        setMounted(false);
+        setClosing(false);
+      }, 260);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [open, mounted]);
 
   useEffect(() => {
     if (!open) return;
@@ -93,7 +114,7 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
     };
   }, [open]);
 
-  if (!open) return null;
+  if (!mounted) return null;
 
   const check = async () => {
     const bridge = getDesktopBridge();
@@ -175,12 +196,13 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
       aria-labelledby="update-checker-title"
       dir="ltr"
       lang="en"
-      className="fixed inset-0 z-[75] flex items-center justify-center bg-black/65 p-3 backdrop-blur-sm"
+      data-update-checker-closing={closing ? "true" : "false"}
+      className={`update-checker-backdrop fixed inset-0 z-[75] flex items-center justify-center bg-black/65 p-3 backdrop-blur-sm${closing ? " update-checker-backdrop-exit" : ""}`}
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget && !mandatory && phase !== "downloading") onClose();
+        if (event.target === event.currentTarget && !mandatory && phase !== "downloading" && !closing) onClose();
       }}
     >
-      <div className="glass w-full max-w-lg rounded-3xl border border-white/15 p-5 shadow-glow sm:p-6">
+      <div className={`glass update-checker-panel w-full max-w-lg rounded-3xl border border-white/15 p-5 shadow-glow sm:p-6${closing ? " update-checker-panel-exit" : ""}`}>
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">

@@ -150,6 +150,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
       ...data.settings,
       uiLanguage: accountLanguage,
       liquidGlass: data.settings.blur ? data.settings.liquidGlass : false,
+      liquidGlassStyle: data.settings.liquidGlassStyle === "new" ? "new" : "old",
       version: data.settings.defaultVersion ?? data.settings.version,
     });
     setConversations(data.conversations);
@@ -191,6 +192,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
     root.dataset["starAnimations"] = settings.animations ? "on" : "off";
     root.dataset["starBlur"] = settings.blur ? "on" : "off";
     root.dataset["starLiquidGlass"] = settings.liquidGlass ? "on" : "off";
+    root.dataset["starLiquidGlassStyle"] = settings.liquidGlassStyle ?? "old";
     root.lang = settings.uiLanguage ?? "en";
     root.dir = (settings.uiLanguage ?? "en") === "fa" ? "rtl" : "ltr";
     root.dataset["uiLanguage"] = settings.uiLanguage ?? "en";
@@ -200,7 +202,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
     const dark = settings.colorMode === "dark" || (settings.colorMode === "system" && prefersDark);
     root.classList.toggle("dark", dark);
     root.style.setProperty("--bg-intensity", String(settings.backgroundIntensity / 100));
-  }, [settings.version, settings.colorMode, settings.animations, settings.blur, settings.liquidGlass, settings.backgroundIntensity, settings.uiLanguage]);
+  }, [settings.version, settings.colorMode, settings.animations, settings.blur, settings.liquidGlass, settings.liquidGlassStyle, settings.backgroundIntensity, settings.uiLanguage]);
 
   const updateSettings = useCallback((patch: Partial<Settings>) => {
     setSettings((s) => {
@@ -348,28 +350,11 @@ export function StarProvider({ children }: { children: ReactNode }) {
           });
           if (!imageResponse.ok) {
             let errorMessage = "Image generation failed. Please try again.";
-            const responseText = await imageResponse.text().catch(() => "");
             try {
-              const payload = JSON.parse(responseText) as { error?: string };
-              if (imageResponse.status === 404) {
-                errorMessage = settings.uiLanguage === "fa"
-                  ? "مسیر ساخت تصویر در Cloudflare Worker پیدا نشد. باید مسیر POST /api/public/generate-image را به Worker اضافه و آن را Deploy کنی."
-                  : "The image route was not found on the Cloudflare Worker. Add the POST /api/public/generate-image handler to the Worker and deploy it.";
-              } else if (payload.error) {
-                errorMessage = payload.error;
-              }
+              const payload = (await imageResponse.json()) as { error?: string };
+              if (payload.error) errorMessage = payload.error;
             } catch {
-              if (imageResponse.status === 404 || /\bnot found\b/i.test(responseText)) {
-                errorMessage = settings.uiLanguage === "fa"
-                  ? "مسیر ساخت تصویر در Cloudflare Worker پیدا نشد. باید مسیر POST /api/public/generate-image را به Worker اضافه و آن را Deploy کنی."
-                  : "The image route was not found on the Cloudflare Worker. Add the POST /api/public/generate-image handler to the Worker and deploy it.";
-              } else if (imageResponse.status === 405) {
-                errorMessage = settings.uiLanguage === "fa"
-                  ? "مسیر ساخت تصویر درخواست POST را پشتیبانی نمی‌کند. تنظیمات سرور را بررسی کن."
-                  : "The image API route does not accept POST requests. Check the server deployment.";
-              } else if (responseText.trim()) {
-                errorMessage = responseText.slice(0, 240);
-              }
+              // Use the safe fallback message.
             }
             patch((m) => ({ ...m, error: errorMessage }));
             return;

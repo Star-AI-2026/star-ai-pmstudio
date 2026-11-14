@@ -1,28 +1,27 @@
 /**
  * When Star-AI is served from a static host (e.g. GitHub Pages) there is no
- * server runtime. Chat and image generation are routed to the Cloudflare Worker.
- * They have separate build-time origins for backwards compatibility, but the
- * default deployment uses the same Worker for both endpoints. No API key is
- * included here; Gemini credentials stay in Cloudflare Worker Secrets.
+ * server runtime, so the AI endpoint lives on the Lovable-hosted deployment.
+ * VITE_STAR_AI_API_BASE holds that origin at build time (inlined below).
+ * Empty = same-origin (default).
+ * No secrets here: the endpoint is public, all keys stay server-side.
  */
 declare const __STAR_AI_API_BASE__: string;
-declare const __STAR_AI_IMAGE_API_BASE__: string;
 
-const trimOrigin = (value: string) => value.replace(/\/+$/, "");
-const apiBase = trimOrigin(typeof __STAR_AI_API_BASE__ === "string" ? __STAR_AI_API_BASE__ : "");
-const imageApiBase = trimOrigin(
-  typeof __STAR_AI_IMAGE_API_BASE__ === "string" ? __STAR_AI_IMAGE_API_BASE__ : "",
+const apiBase = (typeof __STAR_AI_API_BASE__ === "string" ? __STAR_AI_API_BASE__ : "").replace(
+  /\/+$/,
+  "",
 );
 
 export const CHAT_ENDPOINT = `${apiBase}/api/public/chat`;
-export const IMAGE_GENERATION_ENDPOINT = `${imageApiBase}/api/public/generate-image`;
+export const IMAGE_GENERATION_ENDPOINT = `${apiBase}/api/public/generate-image`;
 
 /** Captcha-protected sign-up endpoint (verification happens server-side). */
 export const SIGNUP_ENDPOINT = `https://star-ai-pmstudio.lovable.app/api/public/signup`;
 
 /**
- * Origin of the hosted app API. The Cloudflare Worker is used for AI requests;
- * the app's OAuth bridge may still use its configured hosted origin.
+ * Origin of the Lovable-hosted deployment ("" when the app is served from it).
+ * Google sign-in must start there: the OAuth broker only accepts the project's
+ * own domains, so a static host (GitHub Pages) cannot talk to it directly.
  */
 export const HOSTED_ORIGIN = apiBase;
 

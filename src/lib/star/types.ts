@@ -72,6 +72,7 @@ export type Settings = {
   animations: boolean;
   blur: boolean;
   liquidGlass: boolean;
+  liquidGlassStyle: "old" | "new";
   particles: boolean;
   backgroundIntensity: number;
   streaming: boolean;
@@ -94,6 +95,7 @@ export const DEFAULT_SETTINGS: Settings = {
   animations: true,
   blur: true,
   liquidGlass: true,
+  liquidGlassStyle: "old",
   particles: true,
   backgroundIntensity: 70,
   streaming: true,

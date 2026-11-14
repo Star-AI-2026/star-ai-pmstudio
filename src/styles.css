@@ -699,3 +699,78 @@ html:not(.dark) {
   background-image: none !important;
   background-color: var(--secondary) !important;
 }
+
+
+/* New Liquid Glass appearance: deep blue frosted-glass surfaces inspired by the supplied reference. */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [data-liquid-glass="true"] {
+  background: linear-gradient(145deg, rgba(9, 31, 45, .86), rgba(19, 67, 83, .68) 58%, rgba(10, 39, 57, .78)) !important;
+  border: 1px solid rgba(157, 231, 247, .28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(235, 252, 255, .22),
+    inset 0 -18px 38px rgba(45, 166, 194, .12),
+    0 14px 42px rgba(0, 0, 0, .27),
+    0 0 24px rgba(65, 190, 218, .09) !important;
+  backdrop-filter: blur(30px) saturate(175%) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(175%) !important;
+}
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .glass::before,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] [data-liquid-glass="true"]::before {
+  background:
+    radial-gradient(ellipse at 12% 4%, rgba(167, 242, 255, .20), transparent 37%),
+    linear-gradient(128deg, rgba(226, 250, 255, .13), transparent 42%, rgba(46, 177, 208, .12));
+  opacity: .95;
+}
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .liquid-glass-style-picker {
+  background: linear-gradient(145deg, rgba(9, 31, 45, .56), rgba(19, 67, 83, .32));
+  border-color: rgba(157, 231, 247, .22);
+  backdrop-filter: blur(18px) saturate(165%);
+  -webkit-backdrop-filter: blur(18px) saturate(165%);
+}
+.liquid-glass-choice[aria-checked="true"] {
+  outline: 2px solid color-mix(in oklab, var(--primary) 55%, transparent);
+  outline-offset: 1px;
+}
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .liquid-glass-choice-new[aria-checked="true"] {
+  outline-color: rgba(126, 226, 248, .72);
+}
+
+/* Update Checker enter/exit animation. Keep it mounted while the exit motion plays. */
+@keyframes update-checker-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes update-checker-backdrop-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes update-checker-panel-in {
+  from { opacity: 0; transform: translateY(18px) scale(.965); filter: blur(9px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes update-checker-panel-out {
+  from { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  to { opacity: 0; transform: translateY(12px) scale(.975); filter: blur(7px); }
+}
+:root[data-star-animations="on"] .update-checker-backdrop {
+  animation: update-checker-backdrop-in 200ms ease both;
+}
+:root[data-star-animations="on"] .update-checker-backdrop-exit {
+  animation: update-checker-backdrop-out 250ms ease both;
+  pointer-events: none;
+}
+:root[data-star-animations="on"] .update-checker-panel {
+  animation: update-checker-panel-in 280ms cubic-bezier(.2,.85,.25,1) both;
+  transform-origin: center;
+}
+:root[data-star-animations="on"] .update-checker-panel-exit {
+  animation: update-checker-panel-out 250ms cubic-bezier(.4,0,.8,.3) both;
+}
+
+@keyframes liquid-glass-options-in {
+  from { opacity: 0; transform: translateY(-5px) scale(.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+:root[data-star-animations="on"] .liquid-glass-style-picker {
+  animation: liquid-glass-options-in 190ms cubic-bezier(.2,.8,.2,1) both;
+}
