@@ -97,21 +97,19 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
     <div
       dir={dir}
       data-settings-closing={closing ? "true" : "false"}
-      className="settings-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-2"
+      className={cn(
+        "settings-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-2",
+        settings.blur && settings.liquidGlass && settings.liquidGlassStyle === "new"
+          ? "bg-black/20"
+          : "bg-black/60 backdrop-blur-sm",
+        closing && "settings-dialog-backdrop-exit",
+      )}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
-      {/* Keep the dimming layer beside (not above) the glass panel.
-          An opacity/filter animation on an ancestor prevents backdrop-filter
-          from sampling the actual page behind the dialog. */}
-      <div
-        aria-hidden="true"
-        className={cn(
-          "settings-dialog-scrim absolute inset-0",
-          closing && "settings-dialog-scrim-exit",
-        )}
-        onMouseDown={onClose}
-      />
       <div className={cn(
-        "glass settings-dialog-panel relative z-10 flex h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl shadow-glow md:flex-row",
+        "glass settings-dialog-panel flex h-[86vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl shadow-glow md:flex-row",
         closing && "settings-dialog-panel-exit",
       )}>
         <nav className="scrollbar-thin flex shrink-0 gap-1 overflow-x-auto border-b border-border p-3 md:w-48 md:flex-col md:overflow-y-auto md:border-b-0 md:border-r">

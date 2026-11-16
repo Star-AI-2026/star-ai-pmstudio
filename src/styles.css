@@ -992,3 +992,112 @@ html:not(.dark) {
     padding-bottom: clamp(225px, 34vh, 280px);
   }
 }
+
+
+/*
+ * iOS-style smoky liquid-glass controls inspired by the supplied video.
+ * Only elements explicitly marked with .ios26-glass-control or the composer dock
+ * receive this treatment. Sidebar Settings, Help and Account stay untouched.
+ */
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-control,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-dock {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--foreground);
+  background:
+    radial-gradient(120% 145% at 8% 0%, color-mix(in srgb, var(--glow) 17%, transparent), transparent 48%),
+    linear-gradient(145deg, rgba(28, 29, 43, .58), rgba(13, 15, 25, .43) 58%, rgba(24, 22, 35, .48)) !important;
+  border: 1px solid rgba(211, 216, 245, .19) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .14),
+    inset 0 -1px 0 rgba(0, 0, 0, .18),
+    0 4px 14px rgba(0, 0, 0, .19) !important;
+  backdrop-filter: blur(17px) saturate(155%) !important;
+  -webkit-backdrop-filter: blur(17px) saturate(155%) !important;
+  background-clip: padding-box;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-control::before,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-dock::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(255, 255, 255, .13), transparent 36%),
+    radial-gradient(ellipse at 94% 100%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 46%),
+    linear-gradient(180deg, rgba(255, 255, 255, .045), transparent 42%, rgba(0, 0, 0, .055));
+  opacity: .78;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-control > *,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-dock > * {
+  position: relative;
+  z-index: 1;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-control:hover:not(:disabled),
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-dock-item:hover {
+  border-color: rgba(225, 230, 255, .27) !important;
+  background-color: rgba(255, 255, 255, .045) !important;
+  filter: brightness(1.045);
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-control:active:not(:disabled),
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-dock-item:active {
+  transform: scale(.965);
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-dock-item {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: color-mix(in srgb, var(--foreground) 78%, transparent);
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  transition: background-color 180ms ease, color 180ms ease, transform 160ms ease;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-dock-item-active,
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-dock-item[aria-pressed="true"] {
+  color: var(--foreground) !important;
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 78%),
+    rgba(255, 255, 255, .065) !important;
+  border-color: rgba(225, 230, 255, .13) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12) !important;
+}
+
+:root[data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-send {
+  background:
+    radial-gradient(circle at 30% 15%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 72%),
+    linear-gradient(145deg, rgba(30, 31, 47, .68), rgba(12, 15, 25, .54)) !important;
+}
+
+:root[data-star-blur="off"][data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-control,
+:root[data-star-blur="off"][data-star-liquid-glass="on"][data-star-liquid-glass-style="new"] .ios26-glass-dock {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+:root[data-star-liquid-glass="off"] .ios26-glass-control,
+:root[data-star-liquid-glass="off"] .ios26-glass-dock {
+  background: revert !important;
+  border-color: revert !important;
+  box-shadow: revert !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ios26-glass-control,
+  .ios26-glass-dock-item {
+    transition: none !important;
+  }
+}

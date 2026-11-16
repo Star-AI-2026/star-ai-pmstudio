@@ -210,7 +210,7 @@ export function Sidebar({
             newConversation();
             onClose?.();
           }}
-          className="flex w-full items-center gap-2 rounded-2xl bg-brand-gradient px-3 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]"
+          className="ios26-glass-control flex w-full items-center gap-2 rounded-2xl px-3 py-2.5 text-sm font-semibold transition-transform hover:scale-[1.02]"
         >
           <MessageSquarePlus className="h-4 w-4" /> {t("New chat")}
         </button>
@@ -248,7 +248,7 @@ export function Sidebar({
             const name = window.prompt(t("Folder name"));
             if (name) createFolder(name);
           }}
-          className="rounded p-1 text-muted-foreground hover:text-foreground"
+          className="ios26-glass-control rounded-full p-1.5 text-muted-foreground"
           aria-label={t("New folder")}
         >
           <FolderPlus className="h-3.5 w-3.5" />
@@ -305,23 +305,20 @@ export function Sidebar({
         )}
       </div>
 
-      <div className="sidebar-footer-actions border-t border-sidebar-border p-2">
+      <div className="border-t border-sidebar-border p-2">
         <button
-          data-liquid-glass-exempt="true"
           onClick={onOpenSettings}
           className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
         >
           <Settings className="h-3.5 w-3.5" /> {t("Settings")}
         </button>
         <button
-          data-liquid-glass-exempt="true"
           onClick={onOpenHelp}
           className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
         >
           <CircleHelp className="h-3.5 w-3.5" /> {t("Help")}
         </button>
         <button
-          data-liquid-glass-exempt="true"
           onClick={onOpenProfile}
           className="mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2 transition-colors hover:bg-sidebar-accent"
         >

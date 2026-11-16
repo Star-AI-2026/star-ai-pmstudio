@@ -32,7 +32,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
       <header className="flex items-center gap-2 px-3 py-3 sm:px-5">
         <button
           onClick={onOpenSidebar}
-          className="glass rounded-xl p-2 md:hidden"
+          className="ios26-glass-control glass rounded-xl p-2 md:hidden"
           aria-label={t("Open menu")}
         >
           <Menu className="h-4 w-4" />
@@ -58,7 +58,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
         <button
           type="button"
           onClick={() => setUpdateCheckerOpen(true)}
-          className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:px-3"
+          className="ios26-glass-control ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground sm:px-3"
           aria-label="Check for update"
           title="Check for update"
         >
@@ -72,7 +72,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
               onClick={() => setExportOpen((o) => !o)}
               aria-haspopup="menu"
               aria-expanded={exportOpen}
-              className="flex items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground hover:bg-secondary hover:text-foreground"
+              className="ios26-glass-control flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[11px] text-muted-foreground hover:text-foreground"
             >
               <Download className="h-3 w-3" /> {t("Export")}
             </button>
@@ -105,7 +105,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
             )}
             <button
               onClick={() => clearConversation(active.id)}
-              className="flex items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground hover:bg-secondary hover:text-foreground"
+              className="ios26-glass-control flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[11px] text-muted-foreground hover:text-foreground"
             >
               <Eraser className="h-3 w-3" /> {t("Clear")}
             </button>
