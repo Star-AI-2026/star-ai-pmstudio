@@ -76,7 +76,7 @@ export function WelcomeScreen() {
             <button
               key={card.title}
               onClick={() => void sendMessage(card.prompt)}
-              dir={dir} className="ios26-glass-control glass group rounded-2xl p-4 text-start transition-all duration-300 hover:-translate-y-0.5"
+              dir={dir} className="glass group rounded-2xl p-4 text-start transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient text-primary-foreground">
                 <Icon className="h-4 w-4" />
@@ -97,7 +97,7 @@ export function WelcomeScreen() {
             <button
               key={ex}
               onClick={() => void sendMessage(ex)}
-              className="ios26-glass-control rounded-full px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
               {t(ex)}
             </button>

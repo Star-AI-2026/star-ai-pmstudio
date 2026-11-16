@@ -73,9 +73,6 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
   const [mounted, setMounted] = useState(open);
   const [closing, setClosing] = useState(false);
   const { t, dir } = useI18n();
-  const useNewGlass = Boolean(
-    settings.blur && settings.liquidGlass && settings.liquidGlassStyle === "new"
-  );
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -101,10 +98,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
       dir={dir}
       data-settings-closing={closing ? "true" : "false"}
       className={cn(
-        "settings-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-2",
-        useNewGlass
-          ? "settings-dialog-backdrop--new bg-black/20"
-          : "bg-black/60 backdrop-blur-sm",
+        "settings-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 backdrop-blur-sm",
         closing && "settings-dialog-backdrop-exit",
       )}
       onMouseDown={(e) => {
@@ -262,12 +256,12 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                       className={cn(
                         "liquid-glass-choice liquid-glass-choice-new rounded-xl border px-3 py-2.5 text-start text-xs transition-all",
                         settings.liquidGlassStyle === "new"
-                          ? "border-foreground/35 bg-foreground/5 text-foreground shadow-sm"
+                          ? "border-cyan-300/70 bg-cyan-400/10 text-foreground shadow-sm"
                           : "border-border bg-background/20 text-muted-foreground hover:bg-secondary/70",
                       )}
                     >
                       <span className="block font-semibold">{t("New version")}</span>
-                      <span className="mt-1 block text-[10px] opacity-70">{t("Neutral frosted glass appearance")}</span>
+                      <span className="mt-1 block text-[10px] opacity-70">{t("New blue frosted glass appearance")}</span>
                     </button>
                   </div>
                 </div>

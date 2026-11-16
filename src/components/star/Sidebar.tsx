@@ -210,7 +210,7 @@ export function Sidebar({
             newConversation();
             onClose?.();
           }}
-          className="ios26-glass-control flex w-full items-center gap-2 rounded-2xl px-3 py-2.5 text-sm font-semibold transition-transform hover:scale-[1.02]"
+          className="flex w-full items-center gap-2 rounded-2xl bg-brand-gradient px-3 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft transition-transform hover:scale-[1.02]"
         >
           <MessageSquarePlus className="h-4 w-4" /> {t("New chat")}
         </button>
@@ -248,7 +248,7 @@ export function Sidebar({
             const name = window.prompt(t("Folder name"));
             if (name) createFolder(name);
           }}
-          className="ios26-glass-control rounded-full p-1.5 text-muted-foreground"
+          className="rounded p-1 text-muted-foreground hover:text-foreground"
           aria-label={t("New folder")}
         >
           <FolderPlus className="h-3.5 w-3.5" />

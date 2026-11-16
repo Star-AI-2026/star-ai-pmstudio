@@ -183,7 +183,7 @@ export function Composer() {
 
       <div
         className={cn(
-          "glass chat-composer-surface rounded-3xl p-2 shadow-glow transition-all duration-500",
+          "glass rounded-3xl p-2 shadow-glow transition-all duration-500",
           dragging && "ring-2 ring-primary",
           dictation.listening && "ring-2 ring-accent",
         )}
@@ -213,7 +213,7 @@ export function Composer() {
           className="max-h-60 w-full resize-none bg-transparent px-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground"
         />
 
-        <div className="flex flex-wrap items-center gap-2 px-1 pb-0.5">
+        <div className="flex flex-wrap items-center gap-1 px-1 pb-0.5">
           <input
             ref={fileRef}
             type="file"
@@ -225,40 +225,38 @@ export function Composer() {
               e.target.value = "";
             }}
           />
-          <div className="ios26-glass-dock flex items-center gap-0.5 rounded-full p-1">
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className="ios26-glass-dock-item rounded-full p-2 text-muted-foreground"
-              aria-label={t("Attach file")}
-            >
-              <Paperclip className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={toggleMic}
-              className={cn(
-                "ios26-glass-dock-item rounded-full p-2",
-                dictation.listening && "ios26-glass-dock-item-active text-accent",
-              )}
-              aria-label={dictation.listening ? t("Stop voice input") : t("Start voice input")}
-              aria-pressed={dictation.listening}
-            >
-              <Mic className={cn("h-4 w-4", dictation.listening && "animate-pulse")} />
-            </button>
-            <button
-              type="button"
-              onClick={() => setWebSearch(!webSearch)}
-              aria-pressed={webSearch}
-              className={cn(
-                "ios26-glass-dock-item flex items-center gap-1.5 rounded-full px-3 py-2 text-[11px] font-medium",
-                webSearch && "ios26-glass-dock-item-active text-foreground",
-              )}
-            >
-              <Globe className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">{t("Web")}</span>
-            </button>
-          </div>
+          <button
+            onClick={() => fileRef.current?.click()}
+            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            aria-label={t("Attach file")}
+          >
+            <Paperclip className="h-4 w-4" />
+          </button>
+          <button
+            onClick={toggleMic}
+            className={cn(
+              "rounded-full p-2 transition-colors hover:bg-secondary hover:text-foreground",
+              dictation.listening ? "bg-accent/20 text-accent" : "text-muted-foreground",
+            )}
+            aria-label={dictation.listening ? t("Stop voice input") : t("Start voice input")}
+            aria-pressed={dictation.listening}
+          >
+            <Mic className={cn("h-4 w-4", dictation.listening && "animate-pulse")} />
+          </button>
+
+          <button
+            onClick={() => setWebSearch(!webSearch)}
+            aria-pressed={webSearch}
+            className={cn(
+              "flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[11px] font-medium transition-colors",
+              webSearch
+                ? "border-transparent bg-brand-gradient text-primary-foreground"
+                : "border-border text-muted-foreground hover:bg-secondary",
+            )}
+          >
+            <Globe className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">{t("Web")}</span>
+          </button>
 
           <span className="ml-1 hidden truncate rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground lg:inline">
             {meta.badge}
@@ -277,7 +275,7 @@ export function Composer() {
           {stream.busy ? (
             <button
               onClick={stopGenerating}
-              className="ios26-glass-control flex h-9 w-9 items-center justify-center rounded-full text-foreground transition-transform hover:scale-105"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-foreground transition-transform hover:scale-105"
               aria-label={t("Stop generating")}
             >
               <Square className="h-3.5 w-3.5 fill-current" />
@@ -286,7 +284,7 @@ export function Composer() {
             <button
               onClick={submit}
               disabled={!text.trim() && attachments.length === 0}
-              className="ios26-glass-control ios26-glass-send flex h-9 w-9 items-center justify-center rounded-full text-foreground transition-transform hover:scale-105 disabled:opacity-40 disabled:hover:scale-100"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gradient text-primary-foreground shadow-soft transition-transform hover:scale-105 disabled:opacity-40 disabled:hover:scale-100"
               aria-label={t("Send message")}
             >
               <ArrowUp className="h-4 w-4" />

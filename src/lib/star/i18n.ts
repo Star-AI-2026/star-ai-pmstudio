@@ -59,7 +59,7 @@ const fa: Record<string, string> = {
   "New version": "نسخه جدید",
   "Liquid Glass style": "سبک Liquid Glass",
   "Current Liquid Glass appearance": "ظاهر شیشه‌ای فعلی برنامه",
-  "Neutral frosted glass appearance": "ظاهر شیشه‌ای مات و خنثی مطابق تصویر",
+  "New blue frosted glass appearance": "ظاهر جدید شیشه‌ای آبی و مات",
   "Particle effects": "جلوه‌های ذره‌ای",
   "Send with Enter": "ارسال با Enter",
   "Shift + Enter adds a new line": "Shift + Enter خط جدید ایجاد می‌کند",

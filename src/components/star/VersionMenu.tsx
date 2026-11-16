@@ -52,7 +52,7 @@ export function VersionMenu() {
         onClick={() => setOpen((value) => !value)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="ios26-glass-control flex max-w-[170px] items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[11px] font-semibold transition-all duration-200 active:scale-[0.96]"
+        className="flex max-w-[170px] items-center gap-1.5 rounded-full border border-border/80 bg-background/35 px-2.5 py-1.5 text-[11px] font-semibold shadow-sm backdrop-blur-xl transition-all duration-200 hover:border-accent/50 hover:bg-secondary/80 active:scale-[0.96]"
       >
         <span
           className="h-2.5 w-2.5 shrink-0 rounded-full border border-white/20"

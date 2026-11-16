@@ -28,11 +28,11 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
   }, [active?.messages.length, active?.messages[active.messages.length - 1]?.content]);
 
   return (
-    <div dir={dir} className="relative flex h-full min-w-0 flex-1 flex-col">
+    <div dir={dir} className="flex h-full min-w-0 flex-1 flex-col">
       <header className="flex items-center gap-2 px-3 py-3 sm:px-5">
         <button
           onClick={onOpenSidebar}
-          className="ios26-glass-control glass rounded-xl p-2 md:hidden"
+          className="glass rounded-xl p-2 md:hidden"
           aria-label={t("Open menu")}
         >
           <Menu className="h-4 w-4" />
@@ -58,7 +58,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
         <button
           type="button"
           onClick={() => setUpdateCheckerOpen(true)}
-          className="ios26-glass-control ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground sm:px-3"
+          className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:px-3"
           aria-label="Check for update"
           title="Check for update"
         >
@@ -72,7 +72,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
               onClick={() => setExportOpen((o) => !o)}
               aria-haspopup="menu"
               aria-expanded={exportOpen}
-              className="ios26-glass-control flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+              className="flex items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
               <Download className="h-3 w-3" /> {t("Export")}
             </button>
@@ -105,7 +105,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
             )}
             <button
               onClick={() => clearConversation(active.id)}
-              className="ios26-glass-control flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[11px] text-muted-foreground hover:text-foreground"
+              className="flex items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
               <Eraser className="h-3 w-3" /> {t("Clear")}
             </button>
@@ -113,7 +113,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
         )}
       </header>
 
-      <div className="chat-scroll-area scrollbar-thin flex-1 overflow-y-auto" role="log" aria-live="polite">
+      <div className="scrollbar-thin flex-1 overflow-y-auto" role="log" aria-live="polite">
         {!active || active.messages.length === 0 ? (
           <WelcomeScreen />
         ) : (
@@ -133,10 +133,8 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
         )}
       </div>
 
-      <div className="chat-bottom-dock">
-        <AdBanner className="shrink-0" />
-        <Composer />
-      </div>
+            <AdBanner className="shrink-0" />
+      <Composer />
       <UpdateCheckerDialog open={updateCheckerOpen} onClose={() => setUpdateCheckerOpen(false)} />
     </div>
   );

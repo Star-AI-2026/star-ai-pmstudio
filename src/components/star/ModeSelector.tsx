@@ -50,7 +50,7 @@ export function ModeSelector() {
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="ios26-glass-control flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[11px] font-medium transition-all duration-200 active:scale-[0.97]"
+        className="flex items-center gap-1.5 rounded-full border border-border/80 bg-background/35 px-2.5 py-1.5 text-[11px] font-medium shadow-sm backdrop-blur-xl transition-all duration-200 hover:border-accent/40 hover:bg-secondary/80 active:scale-[0.97]"
       >
         <Icon className="h-3.5 w-3.5 text-accent" />
         <span className="hidden sm:inline">{t(current.label)}</span>
