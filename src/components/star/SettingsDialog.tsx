@@ -73,6 +73,9 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
   const [mounted, setMounted] = useState(open);
   const [closing, setClosing] = useState(false);
   const { t, dir } = useI18n();
+  const useNewGlass = Boolean(
+    settings.blur && settings.liquidGlass && settings.liquidGlassStyle === "new"
+  );
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -99,8 +102,8 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
       data-settings-closing={closing ? "true" : "false"}
       className={cn(
         "settings-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center p-2",
-        settings.blur && settings.liquidGlass && settings.liquidGlassStyle === "new"
-          ? "bg-black/20"
+        useNewGlass
+          ? "settings-dialog-backdrop--new bg-black/20"
           : "bg-black/60 backdrop-blur-sm",
         closing && "settings-dialog-backdrop-exit",
       )}
