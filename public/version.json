@@ -35,8 +35,8 @@
   },
   "policies": {
     "stableToStable": "mandatory",
-    "stableToBeta": "optional",
-    "betaToBeta": "optional",
+    "stableToBeta": "disabled",
+    "betaToBeta": "disabled",
     "betaToStable": "mandatory"
   },
   "featureRequirements": {
