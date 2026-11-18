@@ -36,7 +36,7 @@
   "policies": {
     "stableToStable": "mandatory",
     "stableToBeta": "disabled",
-    "betaToBeta": "disabled",
+    "betaToBeta": "optional",
     "betaToStable": "mandatory"
   },
   "featureRequirements": {
