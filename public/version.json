@@ -6,31 +6,31 @@
       "Bug fixes and improvements."
     ],
     "setup": {
-      "sha256": "2dcefe5dcbc9124324a84291b5b8afc0a8c9e11e7150be96f236f898dfb7fb19",
-      "fileName": "Star-AI-Setup-3.10.0.exe",
-      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.10.0/Star-AI-Setup-3.10.0.exe"
+      "fileName": "",
+      "sha256": "",
+      "downloadUrl": ""
     },
     "delta": {
-      "sha256": "791b06b7b9b600900eebd212a4e9cff3ad1d46373785a9318691d397893fdc38",
-      "fileName": "Star-AI-Update-3.10.0.exe",
-      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.10.0/Star-AI-Update-3.10.0.exe"
+      "fileName": "",
+      "sha256": "",
+      "downloadUrl": ""
     }
   },
   "beta": {
-    "version": "3.300.3",
+    "version": "3.301.100",
     "minimumVersion": "1.4.0",
     "releaseNotes": [
       "Bug fixes and improvements."
     ],
     "setup": {
-      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.300.3-beta/Star-AI-Setup-3.300.3-Beta.exe",
-      "sha256": "c86ad0f69be181adc001f6e1fe56cc19bb54528d10b2e0f52e7c1c4ff03aecf7",
-      "fileName": "Star-AI-Setup-3.300.3-Beta.exe"
+      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.301.100-beta/Star-AI-Setup-3.301.100-Beta.exe",
+      "fileName": "Star-AI-Setup-3.301.100-Beta.exe",
+      "sha256": "e5ff8fef126cb543a88c0fd9981b6f154a41796ae4cddd032671d3e54bc523bc"
     },
     "delta": {
-      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.300.3-beta/Star-AI-Update-3.300.3-Beta.exe",
-      "sha256": "d92e6a636fb0fc2fedd35de7c2685b90f4965cfdf10d66069425c9d118dd1644",
-      "fileName": "Star-AI-Update-3.300.3-Beta.exe"
+      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.301.100-beta/Star-AI-Update-3.301.100-Beta.exe",
+      "fileName": "Star-AI-Update-3.301.100-Beta.exe",
+      "sha256": "3e664f6f889bdadc7fca6014c708f7fad2b2aa49de01b2917009db73636cf387"
     }
   },
   "policies": {
