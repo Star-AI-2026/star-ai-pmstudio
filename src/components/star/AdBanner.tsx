@@ -27,7 +27,7 @@ export function AdBanner({ className = "" }: AdBannerProps) {
       aria-label="تبلیغ مستقیم"
       className={`mx-auto w-full max-w-3xl px-3 py-2 ${className}`}
     >
-      <div className="flex items-center gap-3 overflow-hidden rounded-2xl border border-border bg-card/80 p-3 shadow-sm">
+      <div className="glass flex items-center gap-3 overflow-hidden rounded-2xl p-3">
         {hasImage ? (
           <img
             src={AD.image}
@@ -59,7 +59,7 @@ export function AdBanner({ className = "" }: AdBannerProps) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="مشاهده تبلیغ"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border hover:bg-secondary"
+            className="glass flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors hover:bg-secondary"
           >
             <ExternalLink className="h-4 w-4" />
           </a>
