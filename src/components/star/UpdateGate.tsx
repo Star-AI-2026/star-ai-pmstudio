@@ -366,8 +366,9 @@ export function UpdateGate({ children }: { children: ReactNode }) {
                 </div>
               </>
             ) : (
-              <>
-                <Sparkles className="mx-auto h-8 w-8 text-primary" />
+              <div className="flex max-h-full min-h-0 w-full flex-col text-center">
+                <div className="shrink-0">
+                  <Sparkles className="mx-auto h-8 w-8 text-primary" />
 
                 <h2 className="mt-3 font-display text-lg font-semibold">
                   {mandatory
@@ -414,8 +415,17 @@ export function UpdateGate({ children }: { children: ReactNode }) {
                   </p>
                 </div>
 
+                </div>
+
                 {updateDecision.notes.length > 0 && (
-                  <div className="mt-3 text-left text-sm">
+                  <section
+                    aria-label="What's New"
+                    className="mt-3 min-h-0 flex-1 overflow-y-auto overscroll-contain pr-2 text-left text-sm"
+                    style={{
+                      scrollbarWidth: "thin",
+                      WebkitOverflowScrolling: "touch",
+                    }}
+                  >
                     <p className="font-medium">
                       What's New:
                     </p>
@@ -423,7 +433,7 @@ export function UpdateGate({ children }: { children: ReactNode }) {
                     <ul
                       dir="ltr"
                       lang="en"
-                      className="mt-1 space-y-1 text-left text-muted-foreground font-sans"
+                      className="mt-1 space-y-1 whitespace-pre-wrap break-words text-left text-muted-foreground font-sans"
                       style={{
                         direction: "ltr",
                         textAlign: "left",
@@ -443,10 +453,10 @@ export function UpdateGate({ children }: { children: ReactNode }) {
                         )
                       )}
                     </ul>
-                  </div>
+                  </section>
                 )}
 
-                <div className="mt-6 flex gap-2">
+                <div className="mt-4 flex shrink-0 gap-2">
                   <Primary
                     disabled={downloading}
                     onClick={() =>
@@ -465,7 +475,7 @@ export function UpdateGate({ children }: { children: ReactNode }) {
                     </Secondary>
                   )}
                 </div>
-              </>
+              </div>
             )}
           </Modal>
         )}
@@ -486,7 +496,7 @@ function Modal({
       lang="en"
       className="fixed inset-0 z-[70] flex items-center justify-center bg-black/65 p-4 backdrop-blur-sm"
     >
-      <div className="glass w-full max-w-sm rounded-3xl p-7 text-center shadow-glow">
+      <div className="glass flex max-h-[85dvh] w-full max-w-[560px] flex-col overflow-hidden rounded-3xl p-5 text-center shadow-glow sm:p-7">
         {children}
       </div>
     </div>
