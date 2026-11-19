@@ -1,19 +1,51 @@
 {
   "stable": {
-    "version": "3.305.0",
+    "version": "3.306.0",
     "minimumVersion": "1.4.0",
     "releaseNotes": [
-      "Bug fixes and improvements."
+      "🚀 What's New in 3.306.0",
+      "",
+      "🎉 Star-AI 5.0 Beta is Here!",
+      "",
+      "✨ Version 5 Launch",
+      "- 🚀 Introduced Star-AI 5.0 Beta with a refreshed experience.",
+      "- ⚡ Improved application startup and overall performance.",
+      "",
+      "🎨 UI & Effects",
+      "- 💎 Added enhanced Liquid Glass effects.",
+      "- 🌫️ Improved blur, transparency, shadows, and visual effects.",
+      "- ✨ Improved animations and transitions across the application.",
+      "- 🎭 Synchronized visual effects across Old and New interfaces.",
+      "",
+      "🔄 Interface Options",
+      "- 🆕 Added the New Version interface option.",
+      "- 🕰️ Added the Old Version interface option.",
+      "- ⚙️ Improved interface customization and switching.",
+      "",
+      "🖼️ Image Generation",
+      "- 🎨 Added image creation capabilities.",
+      "- ✨ Improved the image generation experience.",
+      "",
+      "📁 File Creation",
+      "- 📄 Added file creation capabilities.",
+      "- 🛠️ Improved file generation and handling.",
+      "",
+      "⚡ More Improvements",
+      "- 🚀 Improved overall responsiveness and user experience.",
+      "- 🐛 Fixed bugs and improved application stability.",
+      "- 🔧 Various UI and performance improvements.",
+      "",
+      "🌟 Enjoy Star-AI 5.0 Beta!"
     ],
     "setup": {
-      "sha256": "823811257a76d7df466da2abf1562258032bb9894df96517dca43cf6ec5c9ae4",
-      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.305.0/Star-AI-Setup-3.305.0.exe",
-      "fileName": "Star-AI-Setup-3.305.0.exe"
+      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.306.0/Star-AI-Setup-3.306.0.exe",
+      "sha256": "7c57db81858ac76d541611e4364f82c0842a9f567634f0f9f232050ef2d6dc31",
+      "fileName": "Star-AI-Setup-3.306.0.exe"
     },
     "delta": {
-      "sha256": "3d9897025b8a223b8d3a028668f684157dd13d0576f770f21176a955d8df1417",
-      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.305.0/Star-AI-Update-3.305.0.exe",
-      "fileName": "Star-AI-Update-3.305.0.exe"
+      "downloadUrl": "https://github.com/Star-AI-2026/star-ai-pmstudio/releases/download/v3.306.0/Star-AI-Update-3.306.0.exe",
+      "sha256": "ea5f1312ff1285139fea6a2b759c22d35dfb648b54543aab37ffd7c37ddbae09",
+      "fileName": "Star-AI-Update-3.306.0.exe"
     }
   },
   "beta": {
