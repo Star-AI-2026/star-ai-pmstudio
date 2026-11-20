@@ -18,7 +18,7 @@ export function VersionMenu() {
   const [menuMounted, setMenuMounted] = useState(false);
   const [locked, setLocked] = useState<VersionCatalogEntry | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
-  const current = VERSION_CATALOG.find((item) => item.id === version) ?? VERSION_CATALOG[0];
+  const current = VERSION_CATALOG.find((item) => item.id === version) ?? VERSION_CATALOG[0]!;
 
   useEffect(() => {
     if (open) {

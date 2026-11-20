@@ -136,18 +136,18 @@ function normalizeAsset(raw: unknown): ReleaseAsset {
 
   return {
     fileName:
-      typeof value.fileName === "string"
-        ? value.fileName.trim()
+      typeof value["fileName"] === "string"
+        ? value["fileName"].trim()
         : "",
 
     downloadUrl:
-      typeof value.downloadUrl === "string"
-        ? value.downloadUrl.trim()
+      typeof value["downloadUrl"] === "string"
+        ? value["downloadUrl"].trim()
         : "",
 
     sha256:
-      typeof value.sha256 === "string"
-        ? value.sha256.trim().toLowerCase()
+      typeof value["sha256"] === "string"
+        ? value["sha256"].trim().toLowerCase()
         : "",
   };
 }
@@ -163,13 +163,13 @@ function normalizeRelease(
   const value = raw as Record<string, unknown>;
 
   const version =
-    typeof value.version === "string"
-      ? value.version.trim()
+    typeof value["version"] === "string"
+      ? value["version"].trim()
       : "";
 
   const minimumVersion =
-    typeof value.minimumVersion === "string"
-      ? value.minimumVersion.trim()
+    typeof value["minimumVersion"] === "string"
+      ? value["minimumVersion"].trim()
       : "";
 
   if (!parseVersion(version)) {
@@ -186,8 +186,8 @@ function normalizeRelease(
     );
   }
 
-  const notes = Array.isArray(value.releaseNotes)
-    ? value.releaseNotes.filter(
+  const notes = Array.isArray(value["releaseNotes"])
+    ? value["releaseNotes"].filter(
         (item): item is string => typeof item === "string"
       )
     : [];
@@ -196,8 +196,8 @@ function normalizeRelease(
     version,
     minimumVersion,
     releaseNotes: notes,
-    setup: normalizeAsset(value.setup),
-    delta: normalizeAsset(value.delta),
+    setup: normalizeAsset(value["setup"]),
+    delta: normalizeAsset(value["delta"]),
   };
 }
 
@@ -221,19 +221,19 @@ export function normalizePolicy(raw: unknown): VersionPolicy {
   const value = raw as Record<string, unknown>;
 
   const policies =
-    value.policies && typeof value.policies === "object"
-      ? value.policies as Record<string, unknown>
+    value["policies"] && typeof value["policies"] === "object"
+      ? value["policies"] as Record<string, unknown>
       : {};
 
   const featureRequirements: Record<string, string> = {};
 
   if (
-    value.featureRequirements &&
-    typeof value.featureRequirements === "object"
+    value["featureRequirements"] &&
+    typeof value["featureRequirements"] === "object"
   ) {
     for (
       const [key, requirement] of Object.entries(
-        value.featureRequirements as Record<string, unknown>
+        value["featureRequirements"] as Record<string, unknown>
       )
     ) {
       if (
@@ -246,8 +246,8 @@ export function normalizePolicy(raw: unknown): VersionPolicy {
   }
 
   const history: Partial<Record<ReleaseChannel, Record<string, VersionHistoryEntry>>> = {};
-  if (value.history && typeof value.history === "object") {
-    const rawHistory = value.history as Record<string, unknown>;
+  if (value["history"] && typeof value["history"] === "object") {
+    const rawHistory = value["history"] as Record<string, unknown>;
     for (const channel of ["stable", "beta"] as const) {
       const channelHistory = rawHistory[channel];
       if (!channelHistory || typeof channelHistory !== "object") continue;
@@ -255,9 +255,9 @@ export function normalizePolicy(raw: unknown): VersionPolicy {
       for (const [version, entryValue] of Object.entries(channelHistory as Record<string, unknown>)) {
         if (!parseVersion(version) || !entryValue || typeof entryValue !== "object") continue;
         const entry = entryValue as Record<string, unknown>;
-        const entryVersion = typeof entry.version === "string" && parseVersion(entry.version) ? entry.version : version;
-        const releaseNotes = Array.isArray(entry.releaseNotes)
-          ? entry.releaseNotes.filter((note): note is string => typeof note === "string")
+        const entryVersion = typeof entry["version"] === "string" && parseVersion(entry["version"]) ? entry["version"] : version;
+        const releaseNotes = Array.isArray(entry["releaseNotes"])
+          ? entry["releaseNotes"].filter((note): note is string => typeof note === "string")
           : [];
         normalized[version] = { version: entryVersion, releaseNotes };
       }
@@ -266,15 +266,15 @@ export function normalizePolicy(raw: unknown): VersionPolicy {
   }
 
   return {
-    stable: normalizeRelease(value.stable, "stable"),
-    beta: normalizeRelease(value.beta, "beta"),
+    stable: normalizeRelease(value["stable"], "stable"),
+    beta: normalizeRelease(value["beta"], "beta"),
     ...(Object.keys(history).length ? { history } : {}),
 
     policies: {
-      stableToStable: normalizeMode(policies.stableToStable),
-      stableToBeta: normalizeMode(policies.stableToBeta),
-      betaToBeta: normalizeMode(policies.betaToBeta),
-      betaToStable: normalizeMode(policies.betaToStable),
+      stableToStable: normalizeMode(policies["stableToStable"]),
+      stableToBeta: normalizeMode(policies["stableToBeta"]),
+      betaToBeta: normalizeMode(policies["betaToBeta"]),
+      betaToStable: normalizeMode(policies["betaToStable"]),
     },
 
     featureRequirements,

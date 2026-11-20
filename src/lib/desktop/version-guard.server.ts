@@ -29,7 +29,7 @@ export async function validateDesktopRequest(
     return { ok: false, status: 503, error: "بررسی نسخه Star-AI انجام نشد." };
   }
   try {
-    if (compareVersions(version, p.minimumVersion) < 0) {
+    if (compareVersions(version, p.stable.minimumVersion) < 0) {
       return { ok: false, status: 426, error: "بروزرسانی Star-AI لازم است" };
     }
     if (feature && !isFeatureAllowed(feature, version, p)) {
