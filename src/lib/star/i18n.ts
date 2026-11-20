@@ -293,7 +293,6 @@ const fa: Record<string, string> = {
   "Compare three caching strategies for a read-heavy API": "سه روش کش‌کردن را برای یک API با درخواست‌های خواندن زیاد مقایسه کن",
   "Turn this messy spec into a prioritized engineering plan": "این مشخصات نامنظم را به یک برنامه مهندسی اولویت‌بندی‌شده تبدیل کن",
   "Next-generation intelligence": "هوش نسل جدید",
-  "Help": "راهنما",
   "Star-AI ships in three generations. Switch anytime from the version selector — the theme, animations and AI configuration all change with it.": "Star-AI در سه نسل ارائه می‌شود. هر زمان از انتخاب‌گر نسخه، نسخه موردنظر را انتخاب کنید؛ پوسته، پویانمایی‌ها و تنظیمات هوش مصنوعی نیز متناسب با آن تغییر می‌کنند.",
 };
 
@@ -308,10 +307,10 @@ export function useI18n() {
 
   useEffect(() => {
     const root = document.documentElement;
-    root.dataset.starAnimations = settings.animations ? "on" : "off";
-    root.dataset.starBlur = settings.blur ? "on" : "off";
-    root.dataset.starLiquidGlass = settings.liquidGlass ? "on" : "off";
-    root.dataset.starLiquidGlassStyle = settings.liquidGlassStyle ?? "old";
+    root.dataset["starAnimations"] = settings.animations ? "on" : "off";
+    root.dataset["starBlur"] = settings.blur ? "on" : "off";
+    root.dataset["starLiquidGlass"] = settings.liquidGlass ? "on" : "off";
+    root.dataset["starLiquidGlassStyle"] = settings.liquidGlassStyle ?? "old";
   }, [settings.animations, settings.blur, settings.liquidGlass, settings.liquidGlassStyle]);
   const t = (value: string) => language === "fa" ? (fa[value] ?? value) : value;
   return { language, dir: language === "fa" ? "rtl" as const : "ltr" as const, t };
