@@ -1,10 +1,14 @@
 {
   "currentVersion": "1.0.0",
-  "latestVersion": "1.0.3",
+  "latestVersion": "3.304.0",
   "currentChanges": [
-    "Initial release of Star-AI Telegram",
-    "AI chat interface",
-    "Image generation"
+    "🚀 What's New in 3.304.0",
+      "",
+      "🖼️ Image Generation",
+      "- 🎨 Fixed image generation issues.",
+      "- ✨ Improved image creation.",
+      "",
+      "🌟 Enjoy Star-AI!"
   ],
   "latestChanges": [
     "Improved Web App performance",
