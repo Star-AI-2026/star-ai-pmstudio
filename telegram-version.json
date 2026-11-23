@@ -1,0 +1,14 @@
+{
+  "currentVersion": "1.0.0",
+  "latestVersion": "1.0.1",
+  "currentChanges": [
+    "Initial release of Star-AI Telegram",
+    "AI chat interface",
+    "Image generation"
+  ],
+  "latestChanges": [
+    "Improved Web App performance",
+    "Updated user interface",
+    "Bug fixes"
+  ]
+}
