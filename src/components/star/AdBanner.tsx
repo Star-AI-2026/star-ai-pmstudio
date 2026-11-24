@@ -8,7 +8,7 @@ const AD = {
   title: "Ad placement in Star-AI",
   description: "Contact us to promote your product or service.",
   image: "/ad-banner.png",
-  destination: "https://star-ai-2026.github.io/star-ai-pmstudio/",
+  destination: "lroom.ir",
 };
 
 type AdBannerProps = {
