@@ -61,11 +61,11 @@ export function Composer() {
     const imageRequest = detectImageGenerationPrompt(text);
     const fileRequest = detectFileGenerationRequest(text);
     if (imageRequest && !meta.supportsImages) {
-      toast.error("Image generation is available from Star-AI 3.0 onward.");
+      toast.error(t("Image generation is available from Star-AI 3.0 onward."));
       return;
     }
     if (fileRequest && !meta.supportsFileCreation) {
-      toast.error("Downloadable file creation is available from Star-AI 4.0 onward.");
+      toast.error(t("Downloadable file creation is available from Star-AI 4.0 onward."));
       return;
     }
     if (dictation.listening) dictation.stop();
@@ -80,7 +80,7 @@ export function Composer() {
     const list = Array.from(files);
     if (!list.length) return;
     if (attachments.length + list.length > MAX_FILES) {
-      toast.error(`You can attach up to ${MAX_FILES} files per message.`);
+      toast.error(t("You can attach up to 6 files per message."));
       return;
     }
 
@@ -96,10 +96,10 @@ export function Composer() {
         }
         setAttachments((prev) => [...prev, a]);
       } catch (err) {
-        if (err instanceof FileTooLargeError) toast.error(`${file.name} is larger than 12 MB.`);
+        if (err instanceof FileTooLargeError) toast.error(`${file.name} ${t("is larger than 12 MB.")}`);
         else if (err instanceof UnreadableFileError)
-          toast.error(`${file.name} could not be read. It may be corrupted or protected.`);
-        else toast.error("Your file could not be processed.");
+          toast.error(`${file.name} ${t("could not be read. It may be corrupted or protected.")}`);
+        else toast.error(t("Your file could not be processed."));
       } finally {
         setUploads((u) => u.filter((x) => x.id !== tempId));
       }

@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 
 import { getDesktopBridge, versionJsonUrl, type DownloadProgress } from "@/lib/desktop/bridge";
+import { useI18n } from "@/lib/star/i18n";
 import {
   detectChannel,
   evaluatePolicy,
@@ -39,6 +40,7 @@ type Phase = "idle" | "checking" | "up-to-date" | "found" | "downloading" | "err
 type Props = { open: boolean; onClose: () => void };
 
 export function UpdateCheckerDialog({ open, onClose }: Props) {
+  const { t } = useI18n();
   const [initial, setInitial] = useState<InitialInfo>({ status: "loading" });
   const [phase, setPhase] = useState<Phase>("idle");
   const [decision, setDecision] = useState<UpdateDecision | null>(null);
@@ -81,7 +83,7 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
         if (active) {
           setInitial({
             status: "unavailable",
-            message: "Version checking is available in the installed Star-AI Desktop application.",
+            message: t("Version checking is available in the installed Star-AI Desktop application."),
           });
         }
         return;
@@ -120,7 +122,7 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
     const bridge = getDesktopBridge();
     if (!bridge) {
       setPhase("error");
-      setError("The desktop update service is unavailable in this browser.");
+      setError(t("The desktop update service is unavailable in this browser."));
       return;
     }
     setPhase("checking");
@@ -158,7 +160,7 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
     if (!bridge || !decision || decision.kind === "none" || phase === "downloading") return;
     const asset = isAssetAvailable(decision.delta) ? decision.delta : decision.setup;
     if (!isAssetAvailable(asset)) {
-      setError("A valid update installer is not available for this release.");
+      setError(t("A valid update installer is not available for this release."));
       setPhase("error");
       return;
     }
@@ -209,12 +211,12 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
               <RefreshCw className="h-5 w-5" />
             </span>
             <div>
-              <h2 id="update-checker-title" className="font-display text-lg font-semibold">Check for Updates</h2>
-              <p className="text-xs text-muted-foreground">Star-AI Desktop Update Center</p>
+              <h2 id="update-checker-title" className="font-display text-lg font-semibold">{t("Check for Updates")}</h2>
+              <p className="text-xs text-muted-foreground">{t("Star-AI Desktop Update Center")}</p>
             </div>
           </div>
           {!mandatory && phase !== "downloading" && (
-            <button onClick={onClose} className="rounded-xl p-2 text-muted-foreground hover:bg-secondary hover:text-foreground" aria-label="Close">
+            <button onClick={onClose} className="rounded-xl p-2 text-muted-foreground hover:bg-secondary hover:text-foreground" aria-label={t("Close")}>
               <X className="h-4 w-4" />
             </button>
           )}
@@ -222,9 +224,9 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
 
         <div className="mt-5 rounded-2xl border border-border/80 bg-background/30 p-4">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-semibold">Installed Version</p>
+            <p className="text-sm font-semibold">{t("Installed Version")}</p>
             <span className="rounded-full bg-secondary px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-              {initial.status === "ready" ? initial.channel : "Desktop"}
+              {initial.status === "ready" ? t(initial.channel) : t("Desktop")}
             </span>
           </div>
           <p className="mt-1 text-2xl font-bold tabular-nums" dir="ltr">
@@ -233,13 +235,13 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
           <div className="mt-4 border-t border-border/70 pt-3">
             <p className="text-xs font-semibold">What's New in Your Installed Version</p>
             {initial.status === "loading" ? (
-              <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading release notes…</p>
+              <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground"><Loader2 className="h-3.5 w-3.5 animate-spin" /> {t("Loading release notes…")}</p>
             ) : initial.status === "ready" && currentNotes.length ? (
               <ul className="mt-2 max-h-36 space-y-1.5 overflow-y-auto text-left text-xs text-muted-foreground">
                 {currentNotes.map((note, index) => <li key={`${index}-${note}`} className="whitespace-pre-wrap">{note}</li>)}
               </ul>
             ) : initial.status === "ready" ? (
-              <p className="mt-2 text-xs text-muted-foreground">Release notes for this installed version are not available in version history.</p>
+              <p className="mt-2 text-xs text-muted-foreground">{t("Release notes for this installed version are not available in version history.")}</p>
             ) : (
               <p className="mt-2 text-xs text-muted-foreground">{initial.message}</p>
             )}
@@ -260,12 +262,12 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
 
         {phase === "found" && decision && decision.kind !== "none" && (
           <div className="mt-5 rounded-2xl border border-primary/30 bg-primary/5 p-4">
-            <div className="flex items-center gap-2 font-semibold"><Sparkles className="h-4 w-4 text-primary" /> {decision.kind === "mandatory" ? "Mandatory Update" : decision.targetChannel === "beta" ? "New Beta Update" : "Update Available"}</div>
+            <div className="flex items-center gap-2 font-semibold"><Sparkles className="h-4 w-4 text-primary" /> {decision.kind === "mandatory" ? t("Mandatory Update") : decision.targetChannel === "beta" ? t("New Beta Update") : t("Update Available")}</div>
             <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
-              <div><p className="text-muted-foreground">Current</p><p className="mt-1 font-semibold" dir="ltr">{decision.current}</p></div>
-              <div><p className="text-muted-foreground">New version</p><p className="mt-1 font-semibold" dir="ltr">{decision.target}</p></div>
-              <div><p className="text-muted-foreground">Channel</p><p className="mt-1 font-semibold">{decision.targetChannel}</p></div>
-              <div><p className="text-muted-foreground">Update type</p><p className="mt-1 font-semibold">{decision.kind}</p></div>
+              <div><p className="text-muted-foreground">{t("Current")}</p><p className="mt-1 font-semibold" dir="ltr">{decision.current}</p></div>
+              <div><p className="text-muted-foreground">{t("New version")}</p><p className="mt-1 font-semibold" dir="ltr">{decision.target}</p></div>
+              <div><p className="text-muted-foreground">{t("Channel")}</p><p className="mt-1 font-semibold">{t(decision.targetChannel)}</p></div>
+              <div><p className="text-muted-foreground">{t("Update type")}</p><p className="mt-1 font-semibold">{decision.kind}</p></div>
             </div>
             {!!decision.notes.length && (
               <div className="mt-4 border-t border-border/70 pt-3">
@@ -280,7 +282,7 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
 
         {phase === "downloading" && (
           <div className="mt-5 rounded-2xl border border-border p-4">
-            <p className="flex items-center gap-2 text-sm font-semibold"><Download className="h-4 w-4 animate-pulse text-primary" /> Downloading Update…</p>
+            <p className="flex items-center gap-2 text-sm font-semibold"><Download className="h-4 w-4 animate-pulse text-primary" /> {t("Downloading Update…")}</p>
             <p className="mt-1 text-xs text-muted-foreground" dir="ltr">Star-AI {decision && decision.kind !== "none" ? decision.target : ""}</p>
             <div className="mt-4 h-2 overflow-hidden rounded-full bg-secondary"><div className="h-full bg-brand-gradient transition-all" style={{ width: `${progress?.percent ?? 0}%` }} /></div>
             <p className="mt-2 text-xs text-muted-foreground">{progress?.total ? `${progress.percent}% · ${mb(progress.received)} MB / ${mb(progress.total)} MB` : "Downloading…"}</p>
@@ -290,19 +292,19 @@ export function UpdateCheckerDialog({ open, onClose }: Props) {
         {phase === "error" && (
           <div className="mt-5 flex items-start gap-2 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
             <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
-            <span>{error || (initial.status === "error" ? initial.message : "Unable to check for updates.")}</span>
+            <span>{error || (initial.status === "error" ? initial.message : t("Unable to check for updates."))}</span>
           </div>
         )}
 
         <div className="mt-5 flex flex-wrap justify-end gap-2">
           {phase === "found" && decision && decision.kind !== "none" ? (
             <>
-              <button onClick={() => void install()} className="inline-flex items-center gap-2 rounded-xl bg-brand-gradient px-4 py-2.5 text-xs font-semibold text-primary-foreground"><Download className="h-4 w-4" /> Download & Install</button>
-              {!mandatory && <button onClick={onClose} className="rounded-xl border border-border px-4 py-2.5 text-xs font-medium hover:bg-secondary">Later</button>}
+              <button onClick={() => void install()} className="inline-flex items-center gap-2 rounded-xl bg-brand-gradient px-4 py-2.5 text-xs font-semibold text-primary-foreground"><Download className="h-4 w-4" /> {t("Download & Install")}</button>
+              {!mandatory && <button onClick={onClose} className="rounded-xl border border-border px-4 py-2.5 text-xs font-medium hover:bg-secondary">{t("Later")}</button>}
             </>
           ) : phase === "downloading" ? null : (
             <>
-              {!mandatory && <button onClick={onClose} className="rounded-xl border border-border px-4 py-2.5 text-xs font-medium hover:bg-secondary">Close</button>}
+              {!mandatory && <button onClick={onClose} className="rounded-xl border border-border px-4 py-2.5 text-xs font-medium hover:bg-secondary">{t("Close")}</button>}
               <button onClick={() => void check()} disabled={phase === "checking" || initial.status === "loading" || initial.status === "unavailable"} className="inline-flex items-center gap-2 rounded-xl bg-brand-gradient px-4 py-2.5 text-xs font-semibold text-primary-foreground disabled:opacity-50">
                 {phase === "checking" ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                 {phase === "checking" ? "Checking" : phase === "up-to-date" || phase === "error" ? "Check Again" : "Check"}

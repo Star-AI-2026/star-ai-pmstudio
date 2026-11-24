@@ -18,12 +18,12 @@ export const Route = createFileRoute("/auth")({
       {
         name: "description",
         content:
-          "به حساب Star-AI خود وارد شوید یا ثبت نام کنید و از دستیار هوش مصنوعی Star-AI ۲.۰ و ۳.۰ استفاده کنید.",
+          "Sign in or create a Star-AI account to use the Star-AI assistant.",
       },
-      { property: "og:title", content: "ورود و ثبت نام — Star-AI" },
+      { property: "og:title", content: "Sign In / Sign Up — Star-AI" },
       {
         property: "og:description",
-        content: "ورود، ثبت نام، تأیید ایمیل و بازیابی رمز عبور برای دستیار هوش مصنوعی Star-AI.",
+        content: "Sign in, sign up, email verification and password recovery for Star-AI.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -67,7 +67,7 @@ function AuthScreen() {
   const signIn = async (e: FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password) {
-      toast.error("ایمیل و رمز عبور را وارد کنید.");
+      toast.error("Enter your email and password.");
       return;
     }
     setBusy(true);
@@ -77,10 +77,10 @@ function AuthScreen() {
     });
     setBusy(false);
     if (error) {
-      toast.error("ایمیل یا رمز عبور اشتباه است.");
+      toast.error("Incorrect email or password.");
       return;
     }
-    toast.success("خوش آمدید!");
+    toast.success("Welcome back!");
     void navigate({ to: "/", replace: true });
   };
 
@@ -88,23 +88,23 @@ function AuthScreen() {
     e.preventDefault();
     const cleanName = name.trim();
     if (!cleanName) {
-      toast.error("نام نمی‌تواند خالی باشد.");
+      toast.error("Name cannot be empty.");
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      toast.error("ایمیل معتبر وارد کنید.");
+      toast.error("Enter a valid email address.");
       return;
     }
     if (password.length < 8) {
-      toast.error("رمز عبور باید حداقل ۸ کاراکتر باشد.");
+      toast.error("Password must be at least 8 characters.");
       return;
     }
     if (password !== confirm) {
-      toast.error("رمز عبور و تکرار آن یکسان نیستند.");
+      toast.error("Passwords do not match.");
       return;
     }
     if (!captchaToken) {
-      toast.error("لطفاً ابتدا تیک «I'm not a robot» را بزنید و CAPTCHA را کامل کنید.");
+      toast.error("Please complete the CAPTCHA first.");
       return;
     }
     setBusy(true);
@@ -129,8 +129,8 @@ function AuthScreen() {
       setCaptchaReset((n) => n + 1);
       toast.error(
         payload.error ?? (err instanceof Error && err.message !== "signup failed"
-          ? "ثبت نام انجام نشد. دوباره تلاش کنید."
-          : "ثبت نام انجام نشد. دوباره تلاش کنید."),
+          ? "Sign-up failed. Please try again."
+          : "Sign-up failed. Please try again."),
       );
       return;
     }
@@ -141,18 +141,18 @@ function AuthScreen() {
     });
     setBusy(false);
     if (signInError) {
-      toast.error("ورود خودکار انجام نشد. لطفاً وارد شوید.");
+      toast.error("Automatic sign-in failed. Please sign in.");
       setView("signin");
       return;
     }
-    toast.success("حساب شما ساخته شد.");
+    toast.success("Your account has been created.");
     void navigate({ to: "/", replace: true });
   };
 
   const forgot = async (e: FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
-      toast.error("ایمیل خود را وارد کنید.");
+      toast.error("Enter your email address.");
       return;
     }
     setBusy(true);
@@ -161,40 +161,40 @@ function AuthScreen() {
     });
     setBusy(false);
     if (error) {
-      toast.error("ارسال ایمیل بازیابی انجام نشد. دوباره تلاش کنید.");
+      toast.error("Could not send the recovery email. Please try again.");
       return;
     }
-    toast.success("ایمیل بازیابی رمز عبور ارسال شد.");
+    toast.success("Password recovery email sent.");
     setView("signin");
   };
 
   
 
   return (
-    <div dir="rtl" className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-10">
+    <div dir="ltr" lang="en" className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-10">
       <div className="pointer-events-none absolute inset-0 bg-brand-gradient opacity-[0.12]" />
       <div className="glass relative w-full max-w-md rounded-3xl p-7 shadow-glow">
         <div className="flex flex-col items-center text-center">
           <StarLogo className="h-11 w-11 text-primary drop-shadow-[0_0_18px_var(--glow)]" />
           <h1 className="mt-4 text-2xl font-semibold text-brand-gradient">Star-AI</h1>
           <p className="mt-1 text-xs text-muted-foreground">
-            دستیار هوش مصنوعی نسل ۲.۰ و ۳.۰
+            Smart AI assistant for everyday tasks
           </p>
         </div>
 
         {view === "forgot" ? (
           <form onSubmit={forgot} className="mt-7 space-y-3">
-            <h2 className="text-center text-lg font-semibold">فراموشی رمز عبور</h2>
+            <h2 className="text-center text-lg font-semibold">Forgot password?</h2>
             <p className="text-center text-xs text-muted-foreground">
-              ایمیل حساب خود را وارد کنید تا لینک بازیابی برایتان ارسال شود.
+              Enter your account email and we’ll send you a password reset link.
             </p>
             <input
               type="email"
               dir="ltr"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="ایمیل"
-              aria-label="ایمیل"
+              placeholder="Email"
+              aria-label="Email"
               className={field}
             />
             <button
@@ -202,14 +202,14 @@ function AuthScreen() {
               disabled={busy}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-gradient px-4 py-3 text-sm font-semibold text-primary-foreground shadow-glow disabled:opacity-60"
             >
-              {busy && <Loader2 className="h-4 w-4 animate-spin" />} ارسال ایمیل بازیابی
+              {busy && <Loader2 className="h-4 w-4 animate-spin" />} Send password reset email
             </button>
             <button
               type="button"
               onClick={() => setView("signin")}
               className="w-full px-4 py-2 text-xs text-muted-foreground hover:text-foreground"
             >
-              بازگشت به ورود
+              Back to sign in
             </button>
           </form>
         ) : (
@@ -221,7 +221,7 @@ function AuthScreen() {
                   view === "signin" ? "bg-brand-gradient text-primary-foreground" : "text-muted-foreground"
                 }`}
               >
-                ورود
+                Sign in
               </button>
               <button
                 onClick={() => setView("signup")}
@@ -229,7 +229,7 @@ function AuthScreen() {
                   view === "signup" ? "bg-brand-gradient text-primary-foreground" : "text-muted-foreground"
                 }`}
               >
-                ثبت نام
+                Sign up
               </button>
             </div>
 
@@ -238,8 +238,8 @@ function AuthScreen() {
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="نام و نام نمایشی"
-                  aria-label="نام"
+                  placeholder="Name"
+                  aria-label="Name"
                   className={field}
                 />
               )}
@@ -248,8 +248,8 @@ function AuthScreen() {
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="ایمیل"
-                aria-label="ایمیل"
+                placeholder="Email"
+                aria-label="Email"
                 autoComplete="email"
                 className={field}
               />
@@ -258,8 +258,8 @@ function AuthScreen() {
                 dir="ltr"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="رمز عبور"
-                aria-label="رمز عبور"
+                placeholder="Password"
+                aria-label="Password"
                 autoComplete={view === "signin" ? "current-password" : "new-password"}
                 className={field}
               />
@@ -269,8 +269,8 @@ function AuthScreen() {
                   dir="ltr"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
-                  placeholder="تکرار رمز عبور"
-                  aria-label="تکرار رمز عبور"
+                  placeholder="Confirm password"
+                  aria-label="Confirm password"
                   autoComplete="new-password"
                   className={field}
                 />
@@ -281,7 +281,7 @@ function AuthScreen() {
                   <Recaptcha onChange={setCaptchaToken} resetKey={captchaReset} />
                   {!captchaToken && (
                     <p className="mt-2 text-center text-[11px] text-muted-foreground">
-                      برای ثبت نام ابتدا CAPTCHA را کامل کنید.
+                      Complete the CAPTCHA to create an account.
                     </p>
                   )}
                 </div>
@@ -293,7 +293,7 @@ function AuthScreen() {
                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-gradient px-4 py-3 text-sm font-semibold text-primary-foreground shadow-glow disabled:opacity-60"
               >
                 {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-                {view === "signin" ? "ورود" : "ثبت نام"}
+                {view === "signin" ? "Sign in" : "Sign up"}
               </button>
             </form>
 
@@ -302,7 +302,7 @@ function AuthScreen() {
                 onClick={() => setView("forgot")}
                 className="mt-2 w-full text-xs text-muted-foreground hover:text-foreground"
               >
-                فراموشی رمز عبور
+                Forgot password?
               </button>
             )}
 

@@ -1,11 +1,12 @@
 
 import { ExternalLink, Megaphone } from "lucide-react";
+import { useI18n } from "@/lib/star/i18n";
 
 const AD = {
   enabled: true,
-  label: "تبلیغ",
-  title: "جای تبلیغ شما در Star-AI",
-  description: "برای معرفی محصول یا خدمات خود با ما تماس بگیرید.",
+  label: "Advertisement",
+  title: "Ad placement in Star-AI",
+  description: "Contact us to promote your product or service.",
   image: "/ad-banner.png",
   destination: "https://star-ai-2026.github.io/star-ai-pmstudio/",
 };
@@ -15,6 +16,7 @@ type AdBannerProps = {
 };
 
 export function AdBanner({ className = "" }: AdBannerProps) {
+  const { t } = useI18n();
   if (!AD.enabled) return null;
 
   const hasImage = Boolean(AD.image);
@@ -24,7 +26,7 @@ export function AdBanner({ className = "" }: AdBannerProps) {
 
   return (
     <aside
-      aria-label="تبلیغ مستقیم"
+      aria-label={t("Direct advertisement")}
       className={`mx-auto w-full max-w-3xl px-3 py-2 ${className}`}
     >
       <div className="glass flex items-center gap-3 overflow-hidden rounded-2xl p-3">
@@ -45,11 +47,11 @@ export function AdBanner({ className = "" }: AdBannerProps) {
 
         <div className="min-w-0 flex-1">
           <span className="mb-1 inline-block rounded-md bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">
-            {AD.label}
+            {t(AD.label)}
           </span>
-          <h2 className="truncate text-sm font-semibold">{AD.title}</h2>
+          <h2 className="truncate text-sm font-semibold">{t(AD.title)}</h2>
           <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-            {AD.description}
+            {t(AD.description)}
           </p>
         </div>
 
@@ -58,7 +60,7 @@ export function AdBanner({ className = "" }: AdBannerProps) {
             href={AD.destination}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="مشاهده تبلیغ"
+            aria-label={t("View advertisement")}
             className="glass flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors hover:bg-secondary"
           >
             <ExternalLink className="h-4 w-4" />

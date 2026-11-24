@@ -675,15 +675,7 @@ html:not(.dark) {
   -webkit-backdrop-filter: none !important;
 }
 
-/* Blur ON + Liquid Glass OFF: simple translucent controls, without glass highlights or depth. */
-:root[data-star-blur="on"][data-star-liquid-glass="off"] .glass button:not([role="switch"]),
-:root[data-star-blur="on"][data-star-liquid-glass="off"] [data-liquid-glass="true"] button:not([role="switch"]) {
-  background-color: color-mix(in oklab, var(--surface) 72%, transparent) !important;
-  background-image: none !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
+/* Liquid Glass OFF affects panel surfaces only; nested buttons keep their semantic colors and gradients. */
 
 
 /* Preserve Star-AI accent colors on switches in every blur mode. */

@@ -24,12 +24,14 @@ import type { Conversation, SortMode } from "@/lib/star/types";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/star/i18n";
 
-function relative(ts: number) {
-  const d = Date.now() - ts;
-  if (d < 60_000) return "just now";
-  if (d < 3_600_000) return `${Math.floor(d / 60_000)}m ago`;
-  if (d < 86_400_000) return `${Math.floor(d / 3_600_000)}h ago`;
-  return new Date(ts).toLocaleDateString();
+function relative(ts: number, language: string) {
+  const elapsed = Date.now() - ts;
+  const locale = language === "fa" ? "fa" : "en";
+  const formatter = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  if (elapsed < 60_000) return formatter.format(0, "second");
+  if (elapsed < 3_600_000) return formatter.format(-Math.floor(elapsed / 60_000), "minute");
+  if (elapsed < 86_400_000) return formatter.format(-Math.floor(elapsed / 3_600_000), "hour");
+  return new Date(ts).toLocaleDateString(language === "fa" ? "fa-IR" : "en-US");
 }
 
 const SORTS: { id: SortMode; label: string }[] = [
@@ -140,7 +142,7 @@ export function Sidebar({
             <span className="truncate text-xs font-medium">{c.title}</span>
           </span>
           <span className="mt-0.5 block text-[10px] text-muted-foreground">
-            Star-AI {c.version} · {c.messages.length} msg · {relative(c.updatedAt)}
+            Star-AI {c.version} · {c.messages.length} {t("messages")} · {relative(c.updatedAt, dir === "rtl" ? "fa" : "en")}
           </span>
         </button>
       )}
@@ -149,7 +151,7 @@ export function Sidebar({
         <button
           onClick={() => togglePin(c.id)}
           className="rounded p-1 text-muted-foreground hover:text-foreground"
-          aria-label={c.pinned ? "Unpin" : "Pin"}
+          aria-label={t(c.pinned ? "Unpin" : "Pin")}
         >
           {c.pinned ? <PinOff className="h-3 w-3" /> : <Pin className="h-3 w-3" />}
         </button>
@@ -198,7 +200,7 @@ export function Sidebar({
           <p className="text-[11px] text-muted-foreground">{t("AI platform")}</p>
         </div>
         {onClose && (
-          <button onClick={onClose} className="ml-auto p-1 text-muted-foreground md:hidden" aria-label="Close menu">
+          <button onClick={onClose} className="ml-auto p-1 text-muted-foreground md:hidden" aria-label={t("Close menu")}>
             <X className="h-5 w-5" />
           </button>
         )}
