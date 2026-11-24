@@ -1,8 +1,8 @@
 {
-  "currentVersion": "3.304.0",
-  "latestVersion": "3.305.0",
+  "currentVersion": "3.305.0",
+  "latestVersion": "3.306.0",
   "currentChanges": [
-    "🚀 What's New in 3.304.0",
+    "🚀 What's New in 3.305.0",
       "",
       "🖼️ Image Generation",
       "- 🎨 Fixed image generation issues.",
@@ -11,12 +11,21 @@
       "🌟 Enjoy Star-AI!"
   ],
   "latestChanges": [
-    "🚀 What's New in 3.305.0",
-      "",
-      "🖼️ Image Generation",
-      "- 🎨 Fixed image generation issues.",
-      "- ✨ Improved image creation.",
-      "",
-      "🌟 Enjoy Star-AI!"
+    "🌟 What's New in 3.306.0",
+"",
+"🌐 Language & Localization",
+"- 🇮🇷 Improved Persian translations across the website.",
+"- ✨ Fixed untranslated interface elements.",
+"",
+"🔐 Authentication",
+"- 🌍 Login and Sign Up pages remain fully English.",
+"- ↔️ Preserved LTR layout on authentication pages.",
+"",
+"🎨 UI Improvements",
+"- 💎 Improved Liquid Glass styling.",
+"- 🎨 Fixed button colors when Liquid Glass is disabled.",
+"- ✨ Improved button appearance and visual consistency.",
+"",
+"🌟 Enjoy Star-AI!"
   ]
 }
