@@ -261,7 +261,7 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
                       )}
                     >
                       <span className="block font-semibold">{t("New version")}</span>
-                      <span className="mt-1 block text-[10px] opacity-70">{t("iOS-inspired refractive glass appearance")}</span>
+                      <span className="mt-1 block text-[10px] opacity-70">{t("Refractive glass appearance")}</span>
                     </button>
                   </div>
                 </div>
