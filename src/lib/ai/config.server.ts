@@ -121,7 +121,7 @@ export function buildSystemPrompt(opts: {
   assistantName?: string | undefined;
   userName?: string | undefined;
   language?: string | undefined;
-  uiLanguage?: "fa" | "en" | undefined;
+  uiLanguage?: "fa" | "en" | "ar" | undefined;
   memories?: string[] | undefined;
   searchContext?: string | undefined;
   fileOutputType?: GeneratedFileKind | undefined;
@@ -151,6 +151,8 @@ export function buildSystemPrompt(opts: {
     );
     if (opts.uiLanguage === "fa") {
       parts.push("The current app interface language is Persian (Farsi). For short or language-ambiguous greetings, respond in Persian (Farsi), not Arabic.");
+    } else if (opts.uiLanguage === "ar") {
+      parts.push("The current app interface language is Arabic. For short or language-ambiguous greetings, respond in Arabic.");
     } else if (opts.uiLanguage === "en") {
       parts.push("The current app interface language is English. For short or language-ambiguous greetings, respond in English.");
     }

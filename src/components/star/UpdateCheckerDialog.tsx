@@ -10,7 +10,6 @@ import {
 import { useEffect, useState } from "react";
 
 import { getDesktopBridge, versionJsonUrl, type DownloadProgress } from "@/lib/desktop/bridge";
-import { useI18n } from "@/lib/star/i18n";
 import {
   detectChannel,
   evaluatePolicy,
@@ -40,8 +39,7 @@ type Phase = "idle" | "checking" | "up-to-date" | "found" | "downloading" | "err
 type Props = { open: boolean; onClose: () => void };
 
 export function UpdateCheckerDialog({ open, onClose }: Props) {
-  const { t } = useI18n();
-  const [initial, setInitial] = useState<InitialInfo>({ status: "loading" });
+  // The update checker is intentionally English-only, independent of app locale.\n  const t = (value: string) => value;\n  const [initial, setInitial] = useState<InitialInfo>({ status: "loading" });
   const [phase, setPhase] = useState<Phase>("idle");
   const [decision, setDecision] = useState<UpdateDecision | null>(null);
   const [error, setError] = useState("");

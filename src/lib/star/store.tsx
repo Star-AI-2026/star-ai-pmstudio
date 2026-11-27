@@ -110,7 +110,7 @@ type StarContextValue = {
 
   stream: StreamState;
   sendMessage: (text: string, attachments?: Attachment[]) => Promise<void>;
-  regenerate: () => Promise<void>;
+  regenerate: (messageId?: string) => Promise<void>;
   editMessage: (messageId: string, text: string) => Promise<void>;
   stopGenerating: () => void;
 };
@@ -139,10 +139,10 @@ export function StarProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const data = load();
-    let accountLanguage: "fa" | "en" = "en";
+    let accountLanguage: "fa" | "en" | "ar" = "en";
     try {
       const savedLanguage = window.localStorage.getItem(languageStorageKey);
-      if (savedLanguage === "fa" || savedLanguage === "en") accountLanguage = savedLanguage;
+      if (savedLanguage === "fa" || savedLanguage === "en" || savedLanguage === "ar") accountLanguage = savedLanguage;
     } catch {
       // Keep English as the first-visit default when storage is unavailable.
     }
@@ -194,7 +194,7 @@ export function StarProvider({ children }: { children: ReactNode }) {
     root.dataset["starLiquidGlass"] = settings.liquidGlass ? "on" : "off";
     root.dataset["starLiquidGlassStyle"] = settings.liquidGlassStyle ?? "old";
     root.lang = settings.uiLanguage ?? "en";
-    root.dir = (settings.uiLanguage ?? "en") === "fa" ? "rtl" : "ltr";
+    root.dir = settings.uiLanguage === "fa" || settings.uiLanguage === "ar" ? "rtl" : "ltr";
     root.dataset["uiLanguage"] = settings.uiLanguage ?? "en";
     const prefersDark =
       typeof window !== "undefined" &&
@@ -557,16 +557,43 @@ export function StarProvider({ children }: { children: ReactNode }) {
     [activeId, conversations, run, settings.version, settings.mode],
   );
 
-  const regenerate = useCallback(async () => {
-    if (!activeId) return;
-    const convo = conversations.find((c) => c.id === activeId);
-    if (!convo) return;
-    const msgs = [...convo.messages];
-    while (msgs.length && msgs[msgs.length - 1]!.role === "assistant") msgs.pop();
-    if (!msgs.length) return;
-    setConversations((cs) => cs.map((c) => (c.id === activeId ? { ...c, messages: msgs } : c)));
-    await run(activeId, msgs, settings.version);
-  }, [activeId, conversations, run, settings.version]);
+  const regenerate = useCallback(
+    async (messageId?: string) => {
+      if (!activeId) return;
+      const convo = conversations.find((c) => c.id === activeId);
+      if (!convo) return;
+
+      const allMessages = [...convo.messages];
+      const targetIndex = messageId
+        ? allMessages.findIndex((message) => message.id === messageId)
+        : allMessages.map((message) => message.role).lastIndexOf("assistant");
+
+      if (targetIndex < 0 || allMessages[targetIndex]?.role !== "assistant") return;
+
+      // Regenerate the response belonging to the selected assistant message,
+      // not simply the last response in the conversation.
+      let userIndex = targetIndex - 1;
+      while (userIndex >= 0 && allMessages[userIndex]?.role !== "user") {
+        userIndex -= 1;
+      }
+      if (userIndex < 0) return;
+
+      const userMessage = allMessages[userIndex]!;
+      const history = allMessages.slice(0, userIndex + 1);
+      const responseVersion = userMessage.version ?? convo.version ?? settings.version;
+
+      setConversations((cs) =>
+        cs.map((c) =>
+          c.id === activeId
+            ? { ...c, messages: history, updatedAt: Date.now() }
+            : c,
+        ),
+      );
+
+      await run(activeId, history, responseVersion);
+    },
+    [activeId, conversations, run, settings.version],
+  );
 
   const editMessage = useCallback(
     async (messageId: string, text: string) => {
@@ -577,8 +604,9 @@ export function StarProvider({ children }: { children: ReactNode }) {
       if (idx === -1) return;
       const msgs = convo.messages.slice(0, idx + 1);
       msgs[idx] = { ...msgs[idx]!, content: text };
-      setConversations((cs) => cs.map((c) => (c.id === activeId ? { ...c, messages: msgs } : c)));
-      await run(activeId, msgs, settings.version);
+      const responseVersion = msgs[idx]!.version ?? convo.version ?? settings.version;
+      setConversations((cs) => cs.map((c) => (c.id === activeId ? { ...c, messages: msgs, updatedAt: Date.now() } : c)));
+      await run(activeId, msgs, responseVersion);
     },
     [activeId, conversations, run, settings.version],
   );

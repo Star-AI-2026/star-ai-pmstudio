@@ -313,13 +313,89 @@ const fa: Record<string, string> = {
   "Unable to check for updates.": "امکان بررسی به‌روزرسانی‌ها وجود ندارد.",
 };
 
+
+const ar: Record<string, string> = {
+  "Settings": "الإعدادات", "Done": "تم", "General": "عام", "Language": "اللغة",
+  "Appearance": "المظهر", "AI": "الذكاء الاصطناعي", "Memory": "الذاكرة",
+  "Privacy": "الخصوصية", "Notifications": "الإشعارات", "Shortcuts": "اختصارات",
+  "About": "حول التطبيق", "New chat": "محادثة جديدة", "Search conversations": "البحث في المحادثات",
+  "Most recent": "الأحدث", "Oldest first": "الأقدم أولاً", "Help": "المساعدة",
+  "Profile": "الملف الشخصي", "Close": "إغلاق", "No conversations yet.": "لا توجد محادثات بعد.",
+  "No conversations match your search.": "لا توجد محادثات تطابق بحثك.", "Empty folder": "مجلد فارغ",
+  "No folder": "بدون مجلد", "Folder name": "اسم المجلد", "Rename conversation": "إعادة تسمية المحادثة",
+  "Rename": "إعادة تسمية", "Delete": "حذف", "Pin": "تثبيت", "Unpin": "إلغاء التثبيت",
+  "Move to folder": "نقل إلى مجلد", "New folder": "مجلد جديد", "Message Star-AI": "أرسل رسالة إلى Star-AI",
+  "Attach file": "إرفاق ملف", "Stop generating": "إيقاف التوليد", "Send message": "إرسال الرسالة",
+  "Stop voice input": "إيقاف الإدخال الصوتي", "Start voice input": "بدء الإدخال الصوتي",
+  "Listening…": "جارٍ الاستماع…", "Web": "الويب", "Advanced Mode": "الوضع المتقدم",
+  "Star-AI can make mistakes. Verify important information.": "قد يخطئ Star-AI. تحقق من المعلومات المهمة.",
+  "Color mode": "وضع الألوان", "Background intensity": "شدة الخلفية", "Animations": "الحركات",
+  "Blur": "التمويه", "Enable background blur effects": "تفعيل تأثيرات تمويه الخلفية",
+  "Liquid Glass": "الزجاج السائل", "Enable translucent liquid glass surfaces": "تفعيل الأسطح الزجاجية الشفافة",
+  "Old version": "الإصدار القديم", "New version": "الإصدار الجديد", "Liquid Glass style": "نمط الزجاج السائل",
+  "Particle effects": "تأثيرات الجسيمات", "Send with Enter": "الإرسال باستخدام Enter",
+  "Shift + Enter adds a new line": "Shift + Enter لإضافة سطر جديد", "Always on": "مفعّل دائمًا",
+  "AI reply language": "لغة ردود الذكاء الاصطناعي", "Automatic": "تلقائي", "Call me by": "نادني باسم",
+  "Default version": "الإصدار الافتراضي", "Used when Star-AI starts": "يُستخدم عند تشغيل Star-AI",
+  "Response style": "أسلوب الرد", "Web search": "البحث على الويب", "Read answers aloud": "قراءة الإجابات بصوت",
+  "Streaming responses": "عرض الردود أثناء إنشائها", "Enable memory": "تفعيل الذاكرة", "Save": "حفظ",
+  "No saved memories yet.": "لا توجد ذكريات محفوظة بعد.", "Attachments": "المرفقات",
+  "Try an example": "جرّب مثالاً", "Welcome to Star-AI": "مرحبًا بك في Star-AI",
+  "Ask anything": "اسأل عن أي شيء", "Write": "كتابة", "Translate": "ترجمة", "Code": "برمجة",
+  "Advanced Reasoning": "استدلال متقدم", "Analyze": "تحليل", "Create": "إنشاء",
+  "Understand Files": "فهم الملفات", "Complex Problems": "مسائل معقدة",
+  "conversationsStored": "المحادثات المحفوظة", "savedOnDevice": "محفوظة على هذا الجهاز",
+  "replyLanguage": "لغة ردود الذكاء الاصطناعي", "uiLanguage": "لغة الواجهة",
+  "Choose the language used throughout the app": "اختر اللغة المستخدمة في التطبيق",
+  "Assistant name": "اسم المساعد", "Default mode": "الوضع الافتراضي",
+  "Task framing applied to new messages": "يُطبّق على الرسائل الجديدة", "Requires a search provider key on the server": "يتطلب مفتاح مزوّد بحث على الخادم",
+  "Speak each response when it finishes": "قراءة كل رد بعد اكتماله", "Show text as it is generated": "عرض النص أثناء توليده",
+  "Model configuration": "إعداد النموذج", "Chosen on the server per version": "يُحدد على الخادم لكل إصدار",
+  "Let Star-AI remember useful details": "السماح لـ Star-AI بتذكر التفاصيل المفيدة",
+  "Clear all memories": "مسح جميع الذكريات", "Cancel": "إلغاء", "English": "English",
+  "Arabic": "العربية", "فارسی": "الفارسية", "Dark": "داكن", "Light": "فاتح", "System": "النظام",
+  "Balanced": "متوازن", "Concise": "موجز", "Detailed": "مفصل", "Creative": "إبداعي",
+  "Precise": "دقيق", "Coding": "برمجة", "Writing": "كتابة", "Research": "بحث",
+  "Open menu": "فتح القائمة", "Export": "تصدير", "Clear": "مسح", "locked": "مقفل",
+  "This version is locked": "هذا الإصدار مقفل", "Edit your message": "تعديل رسالتك",
+  "Send": "إرسال", "Copy message": "نسخ الرسالة", "Edit message": "تعديل الرسالة",
+  "Thought process": "خطوات التفكير", "Copy response": "نسخ الرد", "Regenerate response": "إعادة إنشاء الرد",
+  "Stop reading aloud": "إيقاف القراءة الصوتية", "Read response aloud": "قراءة الرد بصوت",
+  "Star-AI version": "إصدار Star-AI", "Next-generation intelligence": "ذكاء الجيل التالي",
+  "Deep Reasoning": "استدلال عميق", "Code & Build": "برمجة وبناء", "Analyze Data": "تحليل البيانات",
+  "Star-AI": "Star-AI", "You": "أنت", "Copy": "نسخ", "Regenerate": "إعادة إنشاء",
+  "Sources": "المصادر", "Thinking…": "جارٍ التفكير…", "Searching the web…": "جارٍ البحث على الويب…",
+  "Copied": "تم النسخ", "Copy failed": "تعذر النسخ", "Retry": "إعادة المحاولة",
+  "Confirm": "تأكيد", "Loading…": "جارٍ التحميل", "Upload": "رفع", "Download": "تنزيل",
+  "Sign in": "تسجيل الدخول", "Sign up": "إنشاء حساب", "Email": "البريد الإلكتروني",
+  "Password": "كلمة المرور", "Forgot password?": "هل نسيت كلمة المرور؟",
+  "Continue with Google": "المتابعة باستخدام Google", "Log out": "تسجيل الخروج", "Account": "الحساب",
+  "Smart AI for everyday tasks": "ذكاء اصطناعي للمهام اليومية", "Fast, simple and reliable": "سريع وبسيط وموثوق",
+  "Advanced intelligence for complex tasks": "ذكاء متقدم للمهام المعقدة", "General conversation": "محادثة عامة",
+  "Question answering": "الإجابة عن الأسئلة", "Text generation": "إنشاء النصوص", "Summarization": "تلخيص",
+  "Translation": "ترجمة", "Coding assistance": "مساعدة في البرمجة", "Mathematics": "رياضيات",
+  "Creative writing": "كتابة إبداعية", "Basic reasoning": "استدلال أساسي", "Advanced reasoning": "استدلال متقدم",
+  "Complex problem solving": "حل المشكلات المعقدة", "Debugging": "تصحيح الأخطاء",
+  "Long-form writing": "كتابة مطولة", "Creative generation": "إنشاء إبداعي", "Data analysis": "تحليل البيانات",
+  "Multi-step reasoning": "استدلال متعدد الخطوات", "File understanding": "فهم الملفات",
+  "Image understanding": "فهم الصور", "Conversation memory": "ذاكرة المحادثة",
+  "Context-aware responses": "ردود تراعي السياق", "Friendly": "ودّي", "Professional": "احترافي",
+  "Short": "قصير", "Clear, neutral, well-rounded": "واضح ومحايد ومتوازن",
+  "Imaginative and expressive": "خيالي ومعبر", "Exact, minimal speculation": "دقيق مع أقل قدر من التخمين",
+  "Warm and conversational": "ودّي وحواري", "Formal business tone": "أسلوب رسمي للأعمال",
+  "Tight, to the point": "موجز ومباشر", "Thorough and structured": "شامل ومنظم",
+  "Your memories are private to your account.": "ذكرياتك خاصة بحسابك.",
+  "mode": "الوضع", "This version is locked": "هذا الإصدار مقفل",
+  "is currently locked and will become available in future Star-AI updates.": "مقفل حاليًا وسيصبح متاحًا في تحديثات Star-AI القادمة.",
+};
+
 export function useI18n() {
   const { settings } = useStar();
   const language = settings.uiLanguage ?? "en";
   useEffect(() => {
     document.documentElement.lang = language;
-    document.documentElement.dir = language === "fa" ? "rtl" : "ltr";
-    document.body.dir = language === "fa" ? "rtl" : "ltr";
+    document.documentElement.dir = language === "fa" || language === "ar" ? "rtl" : "ltr";
+    document.body.dir = language === "fa" || language === "ar" ? "rtl" : "ltr";
   }, [language]);
 
   useEffect(() => {
@@ -329,6 +405,6 @@ export function useI18n() {
     root.dataset["starLiquidGlass"] = settings.liquidGlass ? "on" : "off";
     root.dataset["starLiquidGlassStyle"] = settings.liquidGlassStyle ?? "old";
   }, [settings.animations, settings.blur, settings.liquidGlass, settings.liquidGlassStyle]);
-  const t = (value: string) => language === "fa" ? (fa[value] ?? value) : value;
-  return { language, dir: language === "fa" ? "rtl" as const : "ltr" as const, t };
+  const t = (value: string) => language === "fa" ? (fa[value] ?? value) : language === "ar" ? (ar[value] ?? value) : value;
+  return { language, dir: language === "fa" || language === "ar" ? "rtl" as const : "ltr" as const, t };
 }

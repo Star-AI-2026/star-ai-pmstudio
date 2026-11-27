@@ -177,12 +177,13 @@ export function SettingsDialog({ open, onClose }: { open: boolean; onClose: () =
               >
                 <select
                   value={settings.uiLanguage ?? "en"}
-                  onChange={(e) => updateSettings({ uiLanguage: e.target.value as "fa" | "en" })}
+                  onChange={(e) => updateSettings({ uiLanguage: e.target.value as "fa" | "en" | "ar" })}
                   className="min-w-32 rounded-xl border border-border bg-popover px-3 py-2 text-xs"
                   aria-label={t("uiLanguage")}
                 >
                   <option value="en">English</option>
                   <option value="fa">فارسی</option>
+                  <option value="ar">العربية</option>
                 </select>
               </Row>
             </div>

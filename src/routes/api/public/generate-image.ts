@@ -7,7 +7,7 @@ import { clientKey, rateLimit } from "@/lib/ai/rate-limit.server";
 const BodySchema = z.object({
   version: z.enum(["3.0", "4.0", "5.0"]),
   prompt: z.string().trim().min(3).max(8000),
-  uiLanguage: z.enum(["fa", "en"]).optional(),
+  uiLanguage: z.enum(["fa", "en", "ar"]).optional(),
 });
 
 const CORS: Record<string, string> = {

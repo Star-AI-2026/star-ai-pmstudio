@@ -59,12 +59,12 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
           type="button"
           onClick={() => setUpdateCheckerOpen(true)}
           className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-border px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:px-3"
-          aria-label={t("Check for update")}
-          title={t("Check for update")}
+          aria-label="Check for updates"
+          title="Check for updates"
         >
           <RefreshCw className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">{t("Check for update")}</span>
-          <span className="sm:hidden">{t("Update")}</span>
+          <span className="hidden sm:inline">Check for updates</span>
+          <span className="sm:hidden">Update</span>
         </button>
         {active && active.messages.length > 0 && (
           <div className="relative flex shrink-0 items-center gap-1.5">
@@ -124,7 +124,7 @@ export function ChatView({ onOpenSidebar }: { onOpenSidebar: () => void }) {
                 message={m}
                 streaming={stream.busy && i === active.messages.length - 1}
                 autoSpeak={settings.autoSpeak}
-                onRegenerate={() => void regenerate()}
+                onRegenerate={() => void regenerate(m.id)}
                 onEdit={(text) => void editMessage(m.id, text)}
               />
             ))}

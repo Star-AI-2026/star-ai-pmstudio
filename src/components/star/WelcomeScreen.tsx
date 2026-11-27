@@ -46,8 +46,8 @@ export function WelcomeScreen() {
         <StarLogo className="h-14 w-14 text-primary drop-shadow-[0_0_18px_var(--glow)]" />
         {displayName ? (
           <div dir={dir} className="mt-5">
-            <p className="text-lg font-semibold sm:text-xl">{language === "fa" ? `سلام ${displayName}` : `Hello ${displayName}`} 👋</p>
-            <p className="mt-1 text-sm text-muted-foreground">{language === "fa" ? "امروز چطور می‌تونم کمکت کنم؟" : "How can I help you today?"}</p>
+            <p className="text-lg font-semibold sm:text-xl">{language === "fa" ? `سلام ${displayName}` : language === "ar" ? `مرحبًا ${displayName}` : `Hello ${displayName}`} 👋</p>
+            <p className="mt-1 text-sm text-muted-foreground">{language === "fa" ? "امروز چطور می‌تونم کمکت کنم؟" : language === "ar" ? "كيف يمكنني مساعدتك اليوم؟" : "How can I help you today?"}</p>
           </div>
         ) : (
           <p className="mt-5 text-sm font-medium uppercase tracking-[0.3em] text-muted-foreground">

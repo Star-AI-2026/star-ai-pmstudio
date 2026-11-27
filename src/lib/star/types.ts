@@ -66,7 +66,7 @@ export type Settings = {
   mode: AIMode;
   assistantName: string;
   language: string;
-  uiLanguage: "fa" | "en";
+  uiLanguage: "fa" | "en" | "ar";
   webSearch: boolean;
   colorMode: "dark" | "light" | "system";
   animations: boolean;

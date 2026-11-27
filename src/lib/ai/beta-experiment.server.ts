@@ -12,7 +12,11 @@ export function betaExperimentFailure(version: string, uiLanguage?: string): str
 
   if (Math.random() < successRate) return null;
 
-  return uiLanguage === "fa"
-    ? "خطای آزمایشی Star-AI 5.0 Beta: این نسخه عمداً ناپایدار است. لطفاً دوباره تلاش کنید یا به یک نسخه پایدارتر بروید."
-    : "Experimental Star-AI 5.0 Beta error: this model is intentionally unstable. Please try again or switch to a more stable version.";
+  if (uiLanguage === "fa") {
+    return "خطای آزمایشی Star-AI 5.0 Beta: این نسخه عمداً ناپایدار است. لطفاً دوباره تلاش کنید یا به یک نسخه پایدارتر بروید.";
+  }
+  if (uiLanguage === "ar") {
+    return "خطأ تجريبي في Star-AI 5.0 Beta: هذا النموذج غير مستقر عمدًا. يرجى المحاولة مرة أخرى أو التبديل إلى إصدار أكثر استقرارًا.";
+  }
+  return "Experimental Star-AI 5.0 Beta error: this model is intentionally unstable. Please try again or switch to a more stable version.";
 }

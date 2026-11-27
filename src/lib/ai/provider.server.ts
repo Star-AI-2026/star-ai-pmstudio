@@ -31,7 +31,7 @@ export type GenerateOptions = {
   assistantName?: string | undefined;
   userName?: string | undefined;
   language?: string | undefined;
-  uiLanguage?: "fa" | "en" | undefined;
+  uiLanguage?: "fa" | "en" | "ar" | undefined;
   memories?: string[] | undefined;
   searchContext?: string | undefined;
   fileOutputType?: GeneratedFileKind | undefined;
