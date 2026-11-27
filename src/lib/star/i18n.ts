@@ -350,6 +350,8 @@ const fa: Record<string, string> = {
   "Try the experimental 5.0 Beta model": "مدل آزمایشی 5.0 Beta را امتحان کن",
   "Document creation": "ایجاد سند",
   "Image generation": "تولید تصویر",
+
+  "New-generation intelligence": "هوش مصنوعی نسل جدید",
 };
 
 
@@ -509,6 +511,16 @@ const ar: Record<string, string> = {
   "Conversation memory": "ذاكرة المحادثة",
   "File understanding": "فهم الملفات",
   "Summarization": "تلخيص",
+
+  "Star-AI includes multiple generations, including experimental Beta models. Switch anytime from the sidebar — the theme, animations and AI configuration all change with it.": "يتضمن Star-AI عدة أجيال، بما فيها نماذج بيتا التجريبية. يمكنك التبديل في أي وقت من الشريط الجانبي؛ وسيتغير المظهر والرسوم المتحركة وإعدادات الذكاء الاصطناعي معها.",
+  "Images, PDFs and text-based files (TXT, MD, CSV, JSON) can be attached for analysis. Image generation is available from Star-AI 3.0, and downloadable DOCX, PPTX, PDF, XLSX, CSV and TXT creation is available from Star-AI 4.0 onward.": "يمكن إرفاق الصور وملفات PDF والملفات النصية (TXT وMD وCSV وJSON) لتحليلها. يتوفر إنشاء الصور بدءًا من Star-AI 3.0، وإنشاء ملفات DOCX وPPTX وPDF وXLSX وCSV وTXT القابلة للتنزيل بدءًا من Star-AI 4.0.",
+  "New-generation intelligence": "ذكاء من الجيل الجديد",
+  "Coding": "البرمجة",
+  "Debugging": "تصحيح الأخطاء",
+  "Creative generation": "إنشاء إبداعي",
+  "Attachments": "المرفقات",
+  "Help": "المساعدة",
+  "Close": "إغلاق",
 };
 
 export function useI18n() {
