@@ -39,7 +39,9 @@ type Phase = "idle" | "checking" | "up-to-date" | "found" | "downloading" | "err
 type Props = { open: boolean; onClose: () => void };
 
 export function UpdateCheckerDialog({ open, onClose }: Props) {
-  // The update checker is intentionally English-only, independent of app locale.\n  const t = (value: string) => value;\n  const [initial, setInitial] = useState<InitialInfo>({ status: "loading" });
+  // The update checker is intentionally English-only, independent of app locale.
+  const t = (value: string) => value;
+  const [initial, setInitial] = useState<InitialInfo>({ status: "loading" });
   const [phase, setPhase] = useState<Phase>("idle");
   const [decision, setDecision] = useState<UpdateDecision | null>(null);
   const [error, setError] = useState("");

@@ -1,0 +1,16 @@
+Star-AI language and English-only sections
+
+This archive is based on the source ZIP supplied in this conversation.
+
+Verified behavior in source:
+- Interface languages include English, Persian, and Arabic.
+- Persian and Arabic use RTL direction.
+- The authentication page is hard-coded English and explicitly LTR/lang=en.
+- The "Check for updates" action is hard-coded English.
+- The update checker dialog is explicitly English and LTR, independent of interface locale.
+- Fixed a malformed literal escaped newline in UpdateCheckerDialog.tsx that could break the build.
+
+Important:
+- The archive contains the full project source, not a compiled/deployed release.
+- node_modules was not included in the supplied source; run npm install, then npm run build.
+- Arabic translations are present in the i18n dictionary. Any keys not yet translated by the dictionary may still fall back to their original English text and should be translated before claiming complete Arabic coverage.
