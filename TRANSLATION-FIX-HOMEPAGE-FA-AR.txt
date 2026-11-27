@@ -1,0 +1,12 @@
+Star-AI Persian/Arabic translation completion
+
+Updates in this source:
+- Added missing Persian and Arabic translations for homepage capability card descriptions.
+- Added translations for Create Image, file understanding, complex problems and the visible capability labels.
+- Added translations for the ad label/title/description/accessibility text.
+- Added translations for suggested example prompts and sample cards across supported model versions.
+- Kept the update checker and authentication page in English as requested.
+
+This is source code, not a deployed website or installer.
+To publish: extract, merge with your latest repository changes, run npm install and npm run build, then deploy the build output.
+Build was not run in this environment because node_modules is not present.
